@@ -14,5 +14,6 @@ print("New configuration version {0}".format(cv_id))
 
 print("upload the tgz")
 myapi.config_versions.upload('/tmp/terraform.tar.gz',cv_id)
+context.setAttribute(deployed.name+"_cv_id", cv_id)
 
 

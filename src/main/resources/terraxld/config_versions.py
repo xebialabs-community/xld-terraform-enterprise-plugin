@@ -59,7 +59,14 @@ class TFEConfigVersions(TFEEndpoint):
         Properties without a default value are required.
         """
 
-        payload = {'data': {'type':'configuration-version'}}
+        payload = {
+                "data": {
+                    "type": "configuration-versions",
+                    "attributes": {
+                        "auto-queue-runs": 'false'
+                        }
+                    }
+                }
 
         url = "{0}/{1}/configuration-versions".format(self._ws_base_url,workspace_id)
         return self._create(url, payload)

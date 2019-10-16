@@ -23,7 +23,15 @@ class TFEWorkspaces(TFEEndpoint):
         """
         POST /organizations/:organization_name/workspaces
         """
-        payload = {'data': {'attributes':{'name':workspace_name},'type':'workspace'}}
+        payload = {
+                "data": {
+                    "attributes": {
+                        "name": workspace_name,
+                        "auto-apply":"true"
+                        },
+                    "type": "workspaces"
+                    }
+                }
         return self._create(self._org_base_url, payload)
 
     def destroy(self, workspace_id=None, workspace_name=None):
