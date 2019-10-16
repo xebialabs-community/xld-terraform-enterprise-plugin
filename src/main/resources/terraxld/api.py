@@ -21,7 +21,7 @@ class TFE():
     def __init__(self, api_token, url):
         if api_token is None:
             raise InvalidTFETokenException
-        self.configure_logger_stdout()
+        TFE.configure_logger_stdout()
 
         self._instance_url = "{url}/api/v2".format(url=url)
         self._token = api_token
@@ -50,14 +50,20 @@ class TFE():
         self.runs = TFERuns(self._instance_url,
                             self._current_organization, self._headers)
 
-    def configure_logger_stdout(self):
-        import logging
-        import sys
-        root = logging.getLogger()
-        root.setLevel(logging.DEBUG)
+    initializedLogger = 0
 
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        root.addHandler(handler)
+    @staticmethod
+    def configure_logger_stdout():
+        if TFE.initializedLogger == 0:
+            import logging
+            import sys
+            root = logging.getLogger()
+            root.setLevel(logging.DEBUG)
+
+            handler = logging.StreamHandler(sys.stdout)
+            handler.setLevel(logging.DEBUG)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            root.addHandler(handler)
+            TFE.initializedLogger = 1
+
