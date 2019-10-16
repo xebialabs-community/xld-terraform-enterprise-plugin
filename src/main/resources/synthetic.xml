@@ -4,7 +4,7 @@
   <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">
     <property name="url" />
     <property name="token"/>
-    <property name="userToken"/>
+    <property name="deleteWorkspace" kind="boolean" default="false" required="false"/>
   </type>
 
   <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">

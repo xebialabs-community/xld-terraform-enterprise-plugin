@@ -12,12 +12,13 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
     <steps>
       <jython>
         <order>60</order>
-        <description expression="true">"Create a new Workspace in {0}/{1}".format(deployed.container.organization.name,deployed.workspaceName)</description>
+        <description expression="true">"Create a new Workspace {0}/{1}".format(deployed.container.organization.name,deployed.workspaceName)</description>
         <script-path>xldtfe/create_workspace.py</script-path>
       </jython>
     </steps>
   </rule>
- <rule name="tfe.destroy.workspace" scope="deployed">
+
+  <rule name="tfe.destroy.workspace" scope="deployed">
     <conditions>
       <type>terraformEnterprise.ExecutedModule</type>
       <operation>DESTROY</operation>
@@ -31,7 +32,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
     </steps>
   </rule>
 
-   <rule name="tfe.create.configuration_version" scope="deployed">
+  <rule name="tfe.create.configuration_version" scope="deployed">
     <conditions>
       <type>terraformEnterprise.ExecutedModule</type>
       <operation>CREATE</operation>
