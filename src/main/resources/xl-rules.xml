@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+Note: If you modify this file and automatic reloading is disabled in `planner.conf`, you must restart the XL Deploy server.
+-->
+<rules xmlns="http://www.xebialabs.com/xl-deploy/xl-rules">
+  
+  <rule name="tfe.create.workspace" scope="deployed">
+    <conditions>
+      <type>terraformEnterprise.ExecutedModule</type>
+      <operation>CREATE</operation>
+    </conditions>
+    <steps>
+      <jython>
+        <order>60</order>
+        <description expression="true">"Create a new Workspace in {0}".format(deployed.container.organization.name)</description>
+        <script-path>xldtfe/create_workspace.py</script-path>
+        <jython-context>
+          <deployedApplication expression="true">deployedApplication</deployedApplication>
+        </jython-context>
+      </jython>
+    </steps>
+  </rule>
+ <rule name="tfe.destroy.workspace" scope="deployed">
+    <conditions>
+      <type>terraformEnterprise.ExecutedModule</type>
+      <operation>DESTROY</operation>
+    </conditions>
+    <steps>
+      <jython>
+        <order>90</order>
+        <description expression="true">"Delete a Workspace {0}".format(previousDeployed.container.organization.name)</description>
+        <script-path>xldtfe/destroy_workspace.py</script-path>
+        <jython-context>
+          <previousDeployedApplication expression="true">previousDeployedApplication</previousDeployedApplication>
+        </jython-context>
+      </jython>
+    </steps>
+  </rule>
+
+
+</rules>
