@@ -5,6 +5,8 @@ API access.
 
 from .workspaces import TFEWorkspaces
 from .organizations import TFEOrganizations
+from .config_versions import TFEConfigVersions
+from .variables import TFEVariables
 
 class InvalidTFETokenException(Exception):
     """Cannot instantiate TFE Api class without a valid TFE_TOKEN."""
@@ -27,7 +29,8 @@ class TFE():
             "Authorization": "Bearer {0}".format(api_token),
             "Content-Type": "application/vnd.api+json"
         }
-
+        self.config_versions = None
+        self.variables = None
         self.organizations = TFEOrganizations( self._instance_url, None, self._headers)
 
     def set_organization(self, organization_name):
@@ -37,6 +40,10 @@ class TFE():
         """
         self._current_organization = organization_name
         self.workspaces = TFEWorkspaces(
+            self._instance_url, self._current_organization, self._headers)
+        self.config_versions = TFEConfigVersions(
+            self._instance_url, self._current_organization, self._headers)
+        self.variables = TFEVariables(
             self._instance_url, self._current_organization, self._headers)
 
     def configure_logger_stdout(self):
