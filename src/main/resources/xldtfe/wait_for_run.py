@@ -10,7 +10,7 @@ run=myapi.runs.show(run_id)['data']
 run_id = run['id']
 run_status = run['attributes']['status']
 print("{0}     {1}".format(run_id, run_status))
-if run_status == 'applied':
+if run_status == 'applied' or run_status == 'planned_and_finished':
     print "done"
 else:
     result = "RETRY"

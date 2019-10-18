@@ -82,7 +82,7 @@ class TFEConfigVersions(TFEEndpoint):
         # TODO: Exception and error handling
         req = None
         with open(path_to_tarball, 'rb') as data:
-            req = requests.put(upload_url, data=data, headers=self._headers, verify=self.verify)
+            req = requests.put(upload_url, data=data, headers=self._headers, verify=self._verify)
 
         if req.status_code == 200:
             self._logger.debug("Config version successfully uploaded.")
