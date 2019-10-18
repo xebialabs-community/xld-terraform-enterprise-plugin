@@ -73,6 +73,59 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
     </steps>
   </rule>
 
+  <rule name="tfe.destroy.configuration_version" scope="deployed">
+    <conditions>
+      <type>terraformEnterprise.ExecutedModule</type>
+      <operation>DESTROY</operation>
+      <expression>previousDeployed.applyDestroyOperation</expression>
+    </conditions>
+    <steps>
+      <jython>
+        <order>62</order>
+        <description expression="true">"Generate a new configuration version for {0} in {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
+        <script-path>xldtfe/create_configuration_version.py</script-path>
+        <jython-context>
+          <deployed expression="true">previousDeployed</deployed>
+        </jython-context>
+      </jython>
+      <wait>
+        <order>62</order>
+        <description>Wait for the load of the configuration</description>
+        <seconds>15</seconds>
+      </wait>
+      <jython>
+        <order>62</order>
+        <description expression="true">"Set the variables for {0} in {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
+        <script-path>xldtfe/set_variables.py</script-path>
+        <jython-context>
+          <deployed expression="true">previousDeployed</deployed>
+        </jython-context>
+      </jython>
+      <jython>
+        <order>62</order>
+        <description expression="true">"Set the environment for {0} in {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
+        <script-path>xldtfe/set_environment.py</script-path>
+        <jython-context>
+          <deployed expression="true">previousDeployed</deployed>
+        </jython-context>
+      </jython>
+      <jython>
+        <order>65</order>
+        <description expression="true">"Trigger the run of a DESTROY plan for {0} on {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
+        <script-path>xldtfe/trigger_destroy.py</script-path>
+      </jython>
+      <jython>
+        <order>67</order>
+        <description expression="true">"Wait for the end of the execution of the plan {0} on {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
+        <script-path>xldtfe/wait_for_run.py</script-path>
+        <jython-context>
+          <deployed expression="true">previousDeployed</deployed>
+        </jython-context>
+      </jython>
+    </steps>
+  </rule>
+
+
 
 
 </rules>

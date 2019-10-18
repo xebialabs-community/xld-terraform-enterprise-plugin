@@ -67,6 +67,44 @@ class TFERuns(TFEEndpoint):
                         }
                     }
                 }
+
+        self._logger.info(json.dumps(payload))
+        return self._create(self._runs_base_url, payload)
+
+    def destroy(self, ws_id, config_id, message):
+        """
+        POST /runs
+
+        A run performs a plan and apply, using a configuration version and the workspace’s
+        current variables. You can specify a configuration version when creating a run; if
+        you don’t provide one, the run defaults to the workspace’s most recently used version.
+        """
+
+        payload = {
+                "data": {
+                    "attributes": {
+                        "is-destroy":"true",
+                        "message": message
+                        },
+                    "type":"runs",
+                    "relationships": {
+                        "workspace": {
+                            "data": {
+                                "type": "workspaces",
+                                "id": ws_id
+                                }
+                            },
+                        "configuration-version": {
+                            "data": {
+                                "type": "configuration-versions",
+                                "id": config_id
+                                }
+                            }
+                        }
+                    }
+                }
+
+        self._logger.info(json.dumps(payload))
         return self._create(self._runs_base_url, payload)
 
     def apply(self, run_id):
