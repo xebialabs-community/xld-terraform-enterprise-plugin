@@ -29,7 +29,10 @@ class TFEEndpoint(object):
         Implementation the common create resource pattern for the TFE API.
         """
         results = None
-        #self._logger.debug(json.dumps(payload))
+        self._logger.debug(json.dumps(payload))
+        print("----")
+        print(json.dumps(payload))
+        print("BENOIT")
         req = requests.post(url, json.dumps(payload), headers=self._headers, verify=self._verify)
 
         if req.status_code == 201:

@@ -14,7 +14,7 @@ class TFEVariables(TFEEndpoint):
         super(TFEVariables,self).__init__(base_url, organization_name, headers)
         self._base_url = "{base_url}/vars".format(base_url=base_url)
 
-    def create(self, workspace_id,key,value, category):
+    def create(self, workspace_id,key,value, category, sensitive):
         """
         POST /vars
         """
@@ -24,7 +24,7 @@ class TFEVariables(TFEEndpoint):
                 "value":value,
                 "category":category,
                 "hcl":"false",
-                "sensitive":"false"
+                "sensitive":sensitive
                 },
             "relationships": {
                 "workspace": {

@@ -12,5 +12,5 @@ print("workspace {0},id {1}".format(workspace_name,ws_id))
 
 for key in deployed.container.credentials:
     value = deployed.container.credentials[key]
-    print("{0} -> {1}".format(key,value))
-    myapi.variables.create(ws_id,key,value,'env')
+    print("new env variable {0} -> xxxxxxx".format(key))
+    myapi.variables.create(ws_id,key,value,'env','true')
