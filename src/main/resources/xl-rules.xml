@@ -48,7 +48,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
       <wait>
         <order>62</order>
         <description>Wait for the load of the configuration</description>
-        <seconds>15</seconds>
+        <seconds>10</seconds>
       </wait>
       <jython>
         <order>62</order>
@@ -69,6 +69,11 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
         <order>67</order>
         <description expression="true">"Wait for the end of the execution of the plan {0} on {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
         <script-path>xldtfe/wait_for_run.py</script-path>
+      </jython>
+      <jython>
+        <description expression="true">"Capture terraform output variables"</description>
+        <script>xldtfe/capture_output_variables.py</script>
+        <order>68</order>
       </jython>
     </steps>
   </rule>

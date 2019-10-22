@@ -8,6 +8,7 @@ from .organizations import TFEOrganizations
 from .config_versions import TFEConfigVersions
 from .variables import TFEVariables
 from .runs import TFERuns
+from .state_versions import TFEStateVersions
 
 class InvalidTFETokenException(Exception):
     """Cannot instantiate TFE Api class without a valid TFE_TOKEN."""
@@ -33,6 +34,7 @@ class TFE():
         self.config_versions = None
         self.variables = None
         self.runs = None
+        self.state_versions = None
         self.organizations = TFEOrganizations( self._instance_url, None, self._headers)
 
     def set_organization(self, organization_name):
@@ -49,6 +51,8 @@ class TFE():
             self._instance_url, self._current_organization, self._headers)
         self.runs = TFERuns(self._instance_url,
                             self._current_organization, self._headers)
+        self.state_versions = TFEStateVersions(
+            self._instance_url, self._current_organization, self._headers)
 
     initializedLogger = 0
 
