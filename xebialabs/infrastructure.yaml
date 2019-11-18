@@ -12,5 +12,5 @@ spec:
     type: terraformEnterprise.Provider
     credentials:
       CONFIRM_DESTROY: "1"
-      AWS_SECRET_ACCESS_KEY: !value "aws_access_key_id"
-      AWS_ACCESS_KEY_ID: !value "aws_secret_access_key"
+      AWS_SECRET_ACCESS_KEY: !value "aws_secret_access_key"
+      AWS_ACCESS_KEY_ID: !value "aws_access_key_id"

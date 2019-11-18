@@ -44,11 +44,11 @@ class TFEEndpoint(object):
 
         if req.status_code == 201:
             results = json.loads(req.content)
+            return results
         else:
             err = json.loads(req.content.decode("utf-8"))
             self._logger.error(err)
-
-        return results
+            return err
 
     def _destroy(self, url):
         """

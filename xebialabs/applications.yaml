@@ -25,10 +25,8 @@ spec:
       type: terraform.Module
       inputVariables:
         aws_region: '{{aws_region}}'
-        instance_type: '{{instance_type}}'
-        ami_id: '{{ami_id}}'
-      secretInputVariables:
-        secret: "A secret value"
+        instance_type: '{{instance_type}}'      
+        ami_id: '{{ami_id}}'      
       workspaceName: myapp-{{aws_region}}
       applyDestroyOperation: "true"
       file: !file "artifacts/1.0.0/ec2"
