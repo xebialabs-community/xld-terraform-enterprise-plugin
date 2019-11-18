@@ -1,3 +1,5 @@
 xl-deploy-9.0.5-server
 wip
 .DS_Store
+build
+.gradle
