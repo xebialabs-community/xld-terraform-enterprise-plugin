@@ -5,8 +5,7 @@
     <property name="url" />
     <property name="token"/>
     <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
-    <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>
-    <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>
+    <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>   
   </type>
 
   <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
