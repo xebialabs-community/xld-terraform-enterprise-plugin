@@ -4,4 +4,4 @@ metadata:
  imports:
    - xebialabs/infrastructure.yaml
    - xebialabs/environment.yaml
-   - xebialabs/application.yaml
+   - xebialabs/applications.yaml

@@ -15,7 +15,7 @@ spec:
         aws_region: '{{aws_region}}'
         instance_type: '{{instance_type}}'
         ami_id: '{{ami_id}}'
-      workspaceName: benoit-test
+      workspaceName: myapp-{{aws_region}}
       applyDestroyOperation: "true"
       file: !file "artifacts/1.0.1/ec2"
   - name: 1.0.0
@@ -29,6 +29,6 @@ spec:
         ami_id: '{{ami_id}}'
       secretInputVariables:
         secret: "A secret value"
-      workspaceName: benoit-test
+      workspaceName: myapp-{{aws_region}}
       applyDestroyOperation: "true"
       file: !file "artifacts/1.0.0/ec2"
