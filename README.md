@@ -27,7 +27,8 @@ A sample configuration is available in the project.
 
 ```
 $cp cp  ~/.aws/credentials ~/.xebialabs/aws.secrets.xlvals
-$xl apply --xl-deploy-url http://localhost:4556 -f xebialabs.yaml --values tfe_token=XXXXXXXX
+$XL_VALUES_tfe_token="6SPlj2JkS5LMuw.atlasv1.Lmuf1KzHzQ9FX82lM80Qjf96TrzWG4q3F4XTvxpeLehBBXmr7MjQmbGWrnkSUZy1oCg"
+$xl apply --xl-deploy-url http://localhost:4516 -f xebialabs.yaml 
 
 
 ```
