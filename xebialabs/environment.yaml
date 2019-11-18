@@ -1,0 +1,20 @@
+---
+apiVersion: xl-deploy/v1
+kind: Environments
+spec:
+- name: Environments/dev
+  type: udm.Environment
+  members:
+  - Infrastructure/xebialabs-france
+  - Infrastructure/xebialabs-france/AWSProvider
+  dictionaries:
+  - Environments/dev.conf
+  - Environments/ec2-dictionary
+- name: Environments/dev.conf
+  type: udm.Dictionary
+  entries:
+    aws_region: eu-west-3
+    instance_type: t2.micro
+    ami_id: ami-087855b6c8b59a9e4
+- name: Environments/ec2-dictionary
+  type: udm.Dictionary

@@ -1,0 +1,16 @@
+---
+apiVersion: xl-deploy/v1
+kind: Infrastructure
+spec:
+- name: Infrastructure/xebialabs-france
+  type: terraformEnterprise.Organization
+  url: https://app.terraform.io
+  token: !tfe_token
+  deleteWorkspace: true
+  children:
+  - name: AWSProvider
+    type: terraformEnterprise.Provider
+    credentials:
+      CONFIRM_DESTROY: "1"
+      AWS_SECRET_ACCESS_KEY: !value "aws_access_key_id"
+      AWS_ACCESS_KEY_ID: !value "aws_secret_access_key"

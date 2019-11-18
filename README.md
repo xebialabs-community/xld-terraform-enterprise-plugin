@@ -26,7 +26,8 @@ This document describes the functionality provided by the XL Deploy Terraform En
 A sample configuration is available in the project.
 
 ```
-$xl apply --xl-deploy-url http://localhost:4556 -f xebialabs.yaml 
+$cp cp  ~/.aws/credentials ~/.xebialabs/aws.secrets.xlvals
+$xl apply --xl-deploy-url http://localhost:4556 -f xebialabs.yaml --values tfe_token=XXXXXXXX
 
 
 ```
