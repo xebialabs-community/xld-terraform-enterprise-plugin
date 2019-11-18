@@ -5,7 +5,7 @@ spec:
 - name: Infrastructure/xebialabs-france
   type: terraformEnterprise.Organization
   url: https://app.terraform.io
-  token: !tfe_token
+  token: !tfe_token   
   deleteWorkspace: true
   children:
   - name: AWSProvider
