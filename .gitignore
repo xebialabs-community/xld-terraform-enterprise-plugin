@@ -3,3 +3,5 @@ wip
 .DS_Store
 build
 .gradle
+.project
+.settings

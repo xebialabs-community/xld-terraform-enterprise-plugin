@@ -13,14 +13,14 @@
 <synthetic xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd" xmlns="http://www.xebialabs.com/deployit/synthetic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">
     <property name="url" />
-    <property name="token"/>
+    <property name="token" password="true" />
     <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
     <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>   
   </type>
 
   <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
     <property name="organization" kind="ci" as-containment="true" referenced-type="terraformEnterprise.Organization"/>
-    <property name="credentials" kind="map_string_string"/>
+    <property name="credentials" kind="map_string_string" password="true"/>
   </type>
 
   <type type="terraformEnterprise.ExecutedModule" extends="udm.BaseDeployedInfrastructureAsCode" 
