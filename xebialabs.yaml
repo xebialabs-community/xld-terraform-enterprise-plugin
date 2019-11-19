@@ -5,3 +5,5 @@ metadata:
    - xebialabs/infrastructure.yaml
    - xebialabs/environment.yaml
    - xebialabs/applications.yaml
+   - xebialabs/applications-bucket.yaml
+   - xebialabs/applications-content.yaml

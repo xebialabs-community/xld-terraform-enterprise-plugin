@@ -89,6 +89,25 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
     </steps>
   </rule>
 
+  <rule name="tfe.ExecutedModule.CREATE_resources" scope="deployed">
+        <conditions>
+             <type>terraformEnterprise.ExecutedModule</type>
+            <operation>CREATE</operation>
+            <operation>MODIFY</operation>
+            <expression>deployed.generateCIsFromResources</expression>
+        </conditions>
+        <steps>
+            <jython>
+                <order>85</order>
+                <description expression="true">"Create infrastructure items from resources deployed"</description>
+                <script>xldtfe/create_resources.py</script>
+                <jython-context>
+                    <deployedApplication expression="true">deployedApplication</deployedApplication>
+                </jython-context>
+            </jython>
+        </steps>
+    </rule>
+
   <rule name="tfe.destroy.configuration_version" scope="deployed">
     <conditions>
       <type>terraformEnterprise.ExecutedModule</type>
