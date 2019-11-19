@@ -9,7 +9,7 @@
 
 from terraxld.api import TFE
 import os
-
+import sys
 
 organization = deployed.container.organization
 myapi = TFE(api_token=organization.token, url=organization.url)
@@ -18,10 +18,23 @@ workspace_name = deployed.workspaceName
 
 print("create a new workspace {0}".format(workspace_name))
 workspace=myapi.workspaces.create(workspace_name)
-ws_id = workspace["data"]["id"]
-print("Workspace id {0}".format(ws_id))
+print workspace
+raise_error = False
+if 'errors' in workspace:
+    for error in workspace['errors']:
+        print error['detail']
+        if error['detail']== "Name has already been taken":
+            continue
+        else:
+            raise_error = True
+    if raise_error:
+        raise Exception("Cannot create workspace")    
+else:
+    ws_id = workspace["data"]["id"]
+    print("Workspace id {0}".format(ws_id))
+    print(myapi.workspaces.show(workspace_id=ws_id))
 
-print(myapi.workspaces.show(workspace_id=ws_id))
+
 print(myapi.workspaces.show(workspace_name=workspace_name))    
 
   

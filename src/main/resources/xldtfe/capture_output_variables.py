@@ -23,7 +23,11 @@ ws_id = workspace["data"]["id"]
 print("workspace {0},id {1}".format(workspace_name,ws_id))
 
 sv_current=myapi.state_versions.get_current(ws_id)
+if 'errors' in sv_current:
+    raise Exception("error when getting the state of the workspace {0}".format(sv_current))
+        
 
+print(sv_current)
 sv_id=sv_current["data"]["id"]
 print("current state version {0}".format(sv_id))
 

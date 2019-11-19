@@ -40,11 +40,13 @@ class TFEStateVersions(TFEEndpoint):
 
         if req.status_code == 200:
             results = json.loads(req.content)
+            return results
         else:
             err = json.loads(req.content.decode("utf-8"))
             self._logger.error(err)
+            return err
 
-        return results
+        
 
     def get_current_state_content(self, url):
         results = None
