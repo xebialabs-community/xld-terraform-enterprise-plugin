@@ -1,0 +1,12 @@
+language: java
+deploy:
+  provider: releases
+  api_key:
+    secure: pgB4kt8AHqKTHQkejC6q970Y7SLiBA1fSzxWRoQ9Tr0S7guZUQ+mRyWw7h6rXEdRsCtxsvNMAePt2L9oAT6rz7CRh5cKcplJ4lZAzWlWkg6h1158ZZkNvjGJMkrLzP7S6tn4eTYIhjlWvSYg2P8P9nu/09m5syegsByhTfnm2yyoUpfmLLk9U+0o4fZn9KGK+7hylF33SYxhXdU9DK2e1T8OkkmkLXguX4+crxmUlU3pdpfi9gjyERW2l77Q3utEG8/MC8T3ZOM004gD/EPYtHrcfjUrB5Y0gASHCAJBhU5EOfA79vk6GxAmlb1JxNdzYD1rRLijN3EKQHTtSJKHjgLr4fh6yUp+qQg3sPoWP2OVX7eox0i0s6Am4uDOCzWFxNuYiYIyLHvuPZ+2URt3ISCoggSstnxsY3ltB+tb66IO7uPYaOO6ATF2qM9iai4QMny7lG6rmXhNJKinCye8qYZqoQgD45JUP7KlteOGRcmW454ImUgxMoUS66LzGf20QHe8DpnzL2WBFHpm2uJUk+t7RFa1hko+nXdiEo5l+pmewtaKPT2eweCYl9b6mRCxCelJa/ODHr3lDO1NB52IPsirwHoeTZa43GWiD7IPoKffPVFAJOy/A7lOQE+RJ1FL0gkS862dcQ5GRagF2qDc5tqnUxD/dVs/QBOuMU+8rs8=
+  file_glob: true
+  file: build/distributions/*
+  skip_cleanup: true
+  on:
+    all_branches: true
+    tags: true
+    repo: xebialabs-community/xld-terraform-enterprise-plugin
