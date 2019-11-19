@@ -92,15 +92,17 @@ class CreateResources(object):
                         self.cis_to_delete.append(ci.id)
 
     def update_environment_members(self):
+        print ("update_environment_members {0}".format(self.environment_id))
+        
         environment = ProvisionHelper.getOrCreateEnvironment(
             self.environment_id, self.context)
         members = environment.members
         for ci in self.generated_cis:
+            print("...generated ci {0}".format(ci.id))
             if 'Environments/' not in ci.id:
-                if 'kube-system' in ci.name:
-                    self.create_kube_system_environment(ci)
-                else:
-                    members.add(ci)
+                print("...{0} added to 'members' property of environment '{1}'".format(ci.id,self.environment_id))
+                members.add(ci)
+
         members_to_remove = []
         for ci in members:
             if ci.id in self.cis_to_delete:
@@ -110,6 +112,7 @@ class CreateResources(object):
         for ci in members_to_remove:
             members.remove(ci)
         environment.setMembers(members)
+        print(".members {0}".format(members))
         self.repository.update(self.environment_id, environment)
 
     def update_generated_cis(self):

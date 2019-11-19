@@ -16,4 +16,15 @@ spec:
       workspaceName: demo-{{aws_region}}
       applyDestroyOperation: "true"
       file: !file "artifacts/1.0.0/bucket"
+  - name: 1.0.1
+    type: udm.DeploymentPackage
+    deployables:
+    - name: mybucket
+      type: terraform.Module
+      inputVariables:
+        aws_region: '{{aws_region}}'        
+        bucket_name: "demo-tfe-s3"
+      workspaceName: demo-{{aws_region}}
+      applyDestroyOperation: "true"
+      file: !file "artifacts/1.0.1/bucket"
   

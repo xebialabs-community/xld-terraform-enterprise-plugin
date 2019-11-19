@@ -12,4 +12,10 @@ spec:
       type: aws.s3.Folder      
       acl: public-read      
       file: !file "artifacts/1.0.0/files"
-  
+  - name: 1.0.1
+    type: udm.DeploymentPackage
+    deployables:
+    - name: content
+      type: aws.s3.Folder      
+      acl: public-read      
+      file: !file "artifacts/1.0.1/files"
