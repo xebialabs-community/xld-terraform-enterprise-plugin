@@ -30,6 +30,38 @@ $cp  ~/.aws/credentials ~/.xebialabs/aws.secrets.xlvals
 $XL_VALUES_tfe_token="6SPlj2J5LMuw.atlasv1.Lm.........GWrnkSUZy1oCg"
 $xl apply --xl-deploy-url http://localhost:4516 -f xebialabs.yaml 
 
+[1/6] Applying infrastructure.yaml (imported by xebialabs.yaml)
+    Updated CI Infrastructure/xebialabs-france/AWSProvider
+    Updated CI Infrastructure/xebialabs-france
+
+[2/6] Applying environment.yaml (imported by xebialabs.yaml)
+    Updated CI Environments/dev
+    Updated CI Environments/dev.conf
+    Updated CI Environments/ec2-dictionary
+
+[3/6] Applying applications.yaml (imported by xebialabs.yaml)
+    Updated CI Applications/micro-vm/1.0.1/ec2
+    Updated CI Applications/micro-vm/1.0.1
+    Updated CI Applications/micro-vm/1.0.0/ec2
+    Updated CI Applications/micro-vm/1.0.0
+    Updated CI Applications/micro-vm
+
+[4/6] Applying applications-bucket.yaml (imported by xebialabs.yaml)
+    Updated CI Applications/s3-bucket/1.0.0/mybucket
+    Updated CI Applications/s3-bucket/1.0.0
+    Updated CI Applications/s3-bucket/1.0.1/mybucket
+    Updated CI Applications/s3-bucket/1.0.1
+    Updated CI Applications/s3-bucket
+
+[5/6] Applying applications-content.yaml (imported by xebialabs.yaml)
+    Updated CI Applications/s3-content/1.0.0/content
+    Updated CI Applications/s3-content/1.0.0
+    Updated CI Applications/s3-content/1.0.1/content
+    Updated CI Applications/s3-content/1.0.1
+    Updated CI Applications/s3-content
+
+[6/6] Applying xebialabs.yaml
+Done
 
 ```
 ## Features
