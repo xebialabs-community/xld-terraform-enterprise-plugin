@@ -6,6 +6,7 @@ deploy:
   file_glob: true
   file: build/distributions/*
   skip_cleanup: true
+  edge: true
   on:
     all_branches: true
     tags: true
