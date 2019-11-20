@@ -12,10 +12,34 @@
 from terraform.capture_output import capture_output
 import com.xebialabs.overthere.CmdLine as CmdLine
 import json
+
+from com.xebialabs.deployit.provision import ProvisionHelper
+
+
 from terraform.mapper.gke_cluster_mapper import GKEClusterMapper
 from terraform.mapper.aks_cluster_mapper import AKSClusterMapper
-from com.xebialabs.deployit.provision import ProvisionHelper
 from xldtfe.mapper.aws_s3_mapper import AWSS3Mapper
+
+class MapperFactory(object):
+    @staticmethod
+    def mappers():
+        resource_mappers = {
+            'google_container_cluster': GKEClusterMapper(),
+            'azurerm_kubernetes_cluster': AKSClusterMapper()
+        }
+
+        for mapper in MapperFactory.mappers_dynlist():
+            print mapper
+            print type(mapper)
+            resource_mappers[mapper.accepted_type()]=mapper
+
+        return resource_mappers
+
+    @staticmethod
+    def mappers_dynlist():
+        return [AWSS3Mapper()]
+     
+
 
 class CreateResources(object):
     def __init__(self, task_context):
@@ -33,11 +57,7 @@ class CreateResources(object):
         self.generated_ids = []
         self.generated_cis = []
         self.cis_to_delete = []
-        self.resource_mappers = {
-            'google_container_cluster': GKEClusterMapper(),
-            'azurerm_kubernetes_cluster': AKSClusterMapper(),
-            'aws_s3_bucket':  AWSS3Mapper()
-        }
+        self.resource_mappers = MapperFactory.mappers()
 
     def process(self, output):
         self.process_resources(output)
