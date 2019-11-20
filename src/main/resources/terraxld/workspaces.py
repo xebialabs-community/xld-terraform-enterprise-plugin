@@ -77,4 +77,10 @@ class TFEWorkspaces(TFEEndpoint):
             self._logger.error("Arguments workspace_name or workspace_id must be defined")
 
         return self._show(url)
+    
+    def get_id(self, workspace_name):
+        workspace = self.show(workspace_name=workspace_name)
+        ws_id = workspace["data"]["id"]
+        self._logger.info("workspace {0} -> id {1}".format(workspace_name,ws_id))
+        return ws_id
 

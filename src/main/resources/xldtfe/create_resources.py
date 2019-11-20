@@ -152,10 +152,7 @@ organization = deployed.container.organization
 myapi = TFE(api_token=organization.token, url=organization.url)
 myapi.set_organization(organization.name)
 workspace_name = deployed.workspaceName
-
-workspace = myapi.workspaces.show(workspace_name=workspace_name)
-ws_id = workspace["data"]["id"]
-print("workspace {0},id {1}".format(workspace_name,ws_id))
+ws_id = myapi.workspaces.get_id(workspace_name)
 
 sv_current=myapi.state_versions.get_current(ws_id)
 if 'errors' in sv_current:

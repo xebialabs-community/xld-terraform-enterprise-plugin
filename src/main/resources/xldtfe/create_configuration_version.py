@@ -36,9 +36,7 @@ organization = deployed.container.organization
 myapi = TFE(api_token=organization.token, url=organization.url)
 myapi.set_organization(organization.name)
 workspace_name = deployed.workspaceName
-
-workspace = myapi.workspaces.show(workspace_name=workspace_name)
-ws_id = workspace["data"]["id"]
+ws_id = myapi.workspaces.get_id(workspace_name)
 
 config_version=myapi.config_versions.create(ws_id)['data']
 cv_id = config_version["id"]
