@@ -154,19 +154,6 @@ myapi.set_organization(organization.name)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
-sv_current=myapi.state_versions.get_current(ws_id)
-if 'errors' in sv_current:
-    raise Exception("error when getting the state of the workspace {0}".format(sv_current))
-        
-
-print(sv_current)
-sv_id=sv_current["data"]["id"]
-print("current state version {0}".format(sv_id))
-
-state_file_url=sv_current["data"]["attributes"]["hosted-state-download-url"]
-
-print("current state file {0}".format(state_file_url))
-
-output = myapi.state_versions.get_current_state_content(state_file_url)
+output = myapi.state_versions.get_current_state_content_workspace(ws_id)
 
 CreateResources(locals()).process(output)

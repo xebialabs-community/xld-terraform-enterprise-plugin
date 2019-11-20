@@ -66,3 +66,19 @@ class TFEStateVersions(TFEEndpoint):
         """
         url = "{0}/{1}".format(self._state_version_base_url,state_version_id)
         return self._show(url)
+
+    def get_current_state_content_workspace(self, ws_id):
+        sv_current=self.get_current(ws_id)
+        if 'errors' in sv_current:
+            raise Exception("error when getting the state of the workspace {0}".format(sv_current))
+                
+        self._logger.info(sv_current)
+        sv_id=sv_current["data"]["id"]
+        self._logger.debug("..current state version {0}".format(sv_id))
+
+        state_file_url=sv_current["data"]["attributes"]["hosted-state-download-url"]
+
+        self._logger.debug("..current state file {0}".format(state_file_url))
+
+        output = self.get_current_state_content(state_file_url)
+        return output
