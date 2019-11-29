@@ -24,8 +24,8 @@ class TFEOrganizations(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/organizations.html
     """
 
-    def __init__(self, base_url, organization_name, headers):
-        super(TFEOrganizations,self).__init__(base_url, organization_name, headers)
+    def __init__(self, base_url, organization_name, headers, proxy_server):
+        super(TFEOrganizations,self).__init__(base_url, organization_name, headers, proxy_server)
         self._org_base_url = "{base_url}/organizations".format(base_url = base_url)
 
     def lst(self):

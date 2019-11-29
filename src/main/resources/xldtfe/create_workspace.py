@@ -12,9 +12,8 @@ from terraxld.api import TFE
 import os
 import sys
 
-organization = deployed.container.organization
-myapi = TFE(api_token=organization.token, url=organization.url)
-myapi.set_organization(organization.name)
+
+myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 
 print("create a new workspace {0}".format(workspace_name))

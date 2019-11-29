@@ -22,13 +22,14 @@ class TFEEndpoint(object):
     Base class providing common CRUD operation implementations across all TFE Endpoints.
     """
 
-    def __init__(self, base_url, organization_name, headers):
+    def __init__(self, base_url, organization_name, headers, proxy_server):
         self._base_url = base_url
         self._headers = headers
         self._organization_name = organization_name
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.INFO)
         self._verify = False
+        self._proxy_server = proxy_server
         if self._verify == False:
             import urllib3
             urllib3.disable_warnings()

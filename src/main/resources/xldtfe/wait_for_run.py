@@ -11,9 +11,7 @@
 from terraxld.api import TFE
 import os
 
-organization = deployed.container.organization
-myapi = TFE(api_token=organization.token, url=organization.url)
-myapi.set_organization(organization.name)
+myapi = TFE(deployed.container.organization)
 
 run_id = context.getAttribute(deployed.name+"_run_id")
 run=myapi.runs.show(run_id)['data']

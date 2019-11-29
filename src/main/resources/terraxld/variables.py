@@ -20,8 +20,8 @@ class TFEVariables(TFEEndpoint):
 
     https://www.terraform.io/docs/enterprise/api/variables.html
     """
-    def __init__(self, base_url, organization_name, headers):
-        super(TFEVariables,self).__init__(base_url, organization_name, headers)
+    def __init__(self, base_url, organization_name, headers, proxy_server):
+        super(TFEVariables,self).__init__(base_url, organization_name, headers, proxy_server)
         self._base_url = "{base_url}/vars".format(base_url=base_url)
 
     def create(self, workspace_id,key,value, category, sensitive):

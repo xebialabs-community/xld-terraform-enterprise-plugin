@@ -14,7 +14,8 @@
   <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">
     <property name="url" />
     <property name="token" password="true" />
-    <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
+    <property name="proxyServer" required="false" kind="ci" referenced-type="credentials.ProxyServer" />
+    <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>    
     <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>   
   </type>
 

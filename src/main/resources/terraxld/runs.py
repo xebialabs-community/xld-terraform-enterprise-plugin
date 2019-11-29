@@ -28,8 +28,8 @@ class TFERuns(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/run.html
     """
 
-    def __init__(self, base_url, organization_name, headers):
-        super(TFERuns,self).__init__(base_url, organization_name, headers)
+    def __init__(self, base_url, organization_name, headers, proxy_server):
+        super(TFERuns,self).__init__(base_url, organization_name, headers, proxy_server)
         self._ws_base_url = "{base_url}/workspaces".format(base_url=base_url)
         self._runs_base_url = "{base_url}/runs".format(base_url=base_url)
 

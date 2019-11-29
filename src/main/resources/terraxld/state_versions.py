@@ -22,8 +22,8 @@ class TFEStateVersions(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/state-versions.html
     """
 
-    def __init__(self, base_url, organization_name, headers):
-        super(TFEStateVersions,self).__init__(base_url, organization_name, headers)
+    def __init__(self, base_url, organization_name, headers, proxy_server):
+        super(TFEStateVersions,self).__init__(base_url, organization_name, headers, proxy_server)
         self._state_version_base_url = "{base_url}/state-versions".format(base_url=base_url)
         self._workspace_base_url = "{base_url}/workspaces".format(base_url=base_url)
 

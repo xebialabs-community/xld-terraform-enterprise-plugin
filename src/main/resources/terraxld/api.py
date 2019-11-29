@@ -29,40 +29,42 @@ class TFE():
     Super class for access to all TFE Endpoints.
     """
 
-    def __init__(self, api_token, url):
-        if api_token is None:
+    def __init__(self,organization):       
+        self.organization = organization
+        if self.organization.token is None:
             raise InvalidTFETokenException
         TFE.configure_logger_stdout()
 
-        self._instance_url = "{url}/api/v2".format(url=url)
-        self._token = api_token
+        self._instance_url = "{url}/api/v2".format(url=self.organization.url)
+        self._token = self.organization.token
         self._current_organization = None
         self._headers = {
-            "Authorization": "Bearer {0}".format(api_token),
+            "Authorization": "Bearer {0}".format(self.organization.token),
             "Content-Type": "application/vnd.api+json"
         }
         self.config_versions = None
         self.variables = None
         self.runs = None
         self.state_versions = None
-        self.organizations = TFEOrganizations( self._instance_url, None, self._headers)
+        self.organizations = TFEOrganizations( self._instance_url, None, self._headers, self.organization.proxyServer)
+        self._set_organization(self.organization.name)
 
-    def set_organization(self, organization_name):
+    def _set_organization(self, organization_name):
         """
         Sets the organization to use for org specific endpoints.
         This method must be called for their respective endpoints to work.
         """
         self._current_organization = organization_name
         self.workspaces = TFEWorkspaces(
-            self._instance_url, self._current_organization, self._headers)
+            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
         self.config_versions = TFEConfigVersions(
-            self._instance_url, self._current_organization, self._headers)
+            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
         self.variables = TFEVariables(
-            self._instance_url, self._current_organization, self._headers)
-        self.runs = TFERuns(self._instance_url,
-                            self._current_organization, self._headers)
+            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
+        self.runs = TFERuns(
+            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
         self.state_versions = TFEStateVersions(
-            self._instance_url, self._current_organization, self._headers)
+            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
 
     initializedLogger = 0
 

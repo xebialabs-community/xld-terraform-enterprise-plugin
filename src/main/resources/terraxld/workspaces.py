@@ -24,8 +24,8 @@ class TFEWorkspaces(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/workspaces.html
     """
 
-    def __init__(self, base_url, organization_name, headers):
-        super(TFEWorkspaces,self).__init__(base_url, organization_name, headers)
+    def __init__(self, base_url, organization_name, headers,proxy_server):
+        super(TFEWorkspaces,self).__init__(base_url, organization_name, headers, proxy_server)
         self._ws_base_url = "{base_url}/workspaces".format(base_url=base_url)
         self._org_base_url = "{base_url}/organizations/{organization_name}/workspaces".format(base_url=base_url, organization_name=organization_name)
 

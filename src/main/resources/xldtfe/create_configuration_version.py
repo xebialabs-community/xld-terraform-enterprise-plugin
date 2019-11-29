@@ -32,9 +32,7 @@ archive_file = tar_directory(artifact)
 print("TGZ:"+archive_file.path)
 
 
-organization = deployed.container.organization
-myapi = TFE(api_token=organization.token, url=organization.url)
-myapi.set_organization(organization.name)
+myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
