@@ -131,7 +131,7 @@ class TFERuns(TFEEndpoint):
         not return any object in the response body.
         """
         url = "{0}/{1}/actions/apply".format(self._runs_base_url,run_id)
-        req = requests.post(url, headers=self._headers)
+        req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
             self._logger.debug("Run successfully applied.")
@@ -154,7 +154,7 @@ class TFERuns(TFEEndpoint):
         return any object in the response body.
         """
         url = "{0}/{1}/actions/discard".format(self._runs_base_url,run_id)
-        req = requests.post(url, headers=self._headers)
+        req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
             self._logger.debug("Run successfully discarded.")
@@ -178,7 +178,7 @@ class TFERuns(TFEEndpoint):
         return any object in the response body.
         """
         url = "{0}/{1}/actions/cancel".format(self._runs_base_url,run_id)
-        req = requests.post(url, headers=self._headers)
+        req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
             self._logger.debug("Run successfully canceled.")
@@ -206,7 +206,7 @@ class TFERuns(TFEEndpoint):
         object in the response body.
         """
         url = "{0}/{1}/actions/force-cancel".format(self._runs_base_url,run_id)
-        req = requests.post(url, headers=self._headers)
+        req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
             self._logger.debug("Run successfully force canceled.")
@@ -231,7 +231,7 @@ class TFERuns(TFEEndpoint):
         object in the response body.
         """
         url = "{0}/{1}/actions/force-execute".format(self._runs_base_url,run_id)
-        req = requests.post(url, headers=self._headers)
+        req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
             self._logger.debug("Run successfully force executed.")

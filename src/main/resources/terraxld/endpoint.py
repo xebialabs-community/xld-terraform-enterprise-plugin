@@ -29,7 +29,13 @@ class TFEEndpoint(object):
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.INFO)
         self._verify = False
-        self._proxy_server = proxy_server
+        if proxy_server:
+            proxy_url = "{}://{}:{}".format(str(proxy_server.protocol).lower(), proxy_server.hostname, proxy_server.port)
+            self._proxies = {'http': proxy_url,'https': proxy_url}
+            self._logger.debug("setup proxies {0}".format(proxy_url))
+        else:
+            self._proxies = None
+ 
         if self._verify == False:
             import urllib3
             urllib3.disable_warnings()
@@ -41,7 +47,7 @@ class TFEEndpoint(object):
         """
         results = None
         self._logger.debug(json.dumps(payload))
-        req = requests.post(url, json.dumps(payload), headers=self._headers, verify=self._verify)
+        req = requests.post(url, json.dumps(payload), headers=self._headers, verify=self._verify,  proxies=self._proxies)
 
         if req.status_code == 201:
             results = json.loads(req.content)
@@ -55,7 +61,7 @@ class TFEEndpoint(object):
         """
         Implementation of the common destroy resource pattern for the TFE API.
         """
-        req = requests.delete(url, headers=self._headers, verify=self._verify)
+        req = requests.delete(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         valid_status_codes = [200, 204]
         if req.status_code in valid_status_codes:
@@ -69,7 +75,7 @@ class TFEEndpoint(object):
         Implementation of the common list resources pattern for the TFE API.
         """
         results = None
-        req = requests.get(url, headers=self._headers, verify=self._verify)
+        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
             results = json.loads(req.content)
@@ -85,7 +91,7 @@ class TFEEndpoint(object):
         Implementation of the common show resource pattern for the TFE API.
         """
         results = None
-        req = requests.get(url, headers=self._headers, verify=self._verify)
+        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
             results = json.loads(req.content)
@@ -99,7 +105,7 @@ class TFEEndpoint(object):
         """
         Implementation of the common update resource pattern for the TFE API.
         """
-        req = requests.patch(url, data=json.dumps(payload), headers=self._headers, verify=self._verify)
+        req = requests.patch(url, data=json.dumps(payload), headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
             results = json.loads(req.content)

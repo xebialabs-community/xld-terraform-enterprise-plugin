@@ -35,9 +35,9 @@ class TFEWorkspaces(TFEEndpoint):
         workspace by its ID, and the other by its name and organization.
         """
         if workspace_name is not None:
-            url = f"{self._org_base_url}/{workspace_name}"
+            url = "{0}/{1}".formar(self._org_base_url},{workspace_name})
         elif workspace_id is not None:
-            url = f"{self._ws_base_url}/{workspace_id}"
+            url = "{0}/{1}".formar(self._org_base_url},{workspace_id})           
         else:
             self._logger.error("Arguments workspace_name or workspace_id must be defined")
 

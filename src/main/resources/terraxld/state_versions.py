@@ -36,7 +36,7 @@ class TFEStateVersions(TFEEndpoint):
         """
         results = None
         url = "{0}/{1}/current-state-version".format(self._workspace_base_url,workspace_id)
-        req = requests.get(url, headers=self._headers, verify=self._verify)
+        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
             results = json.loads(req.content)
@@ -50,7 +50,7 @@ class TFEStateVersions(TFEEndpoint):
 
     def get_current_state_content(self, url):
         results = None
-        req = requests.get(url, headers=self._headers, verify=self._verify)
+        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
             results = json.loads(req.content)
