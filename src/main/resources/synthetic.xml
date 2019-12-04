@@ -11,6 +11,13 @@
 
 -->
 <synthetic xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd" xmlns="http://www.xebialabs.com/deployit/synthetic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <type type="terraformEnterprise.Mappers" extends="udm.BaseConfigurationItem" virtual="true">
+    <property name="aws_s3_mapper" default="xldtfe.mapper.aws_s3_mapper.AWSS3Mapper" hidden="true" />
+    <property name="gke_cluster_mapper" default="terraform.mapper.gke_cluster_mapper.GKEClusterMapper" hidden="true" />
+    <property name="aks_cluster_mapper" default="terraform.mapper.aks_cluster_mapper.AKSClusterMapper" hidden="true" />
+  </type>
+
   <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">
     <property name="url" />
     <property name="token" password="true" />

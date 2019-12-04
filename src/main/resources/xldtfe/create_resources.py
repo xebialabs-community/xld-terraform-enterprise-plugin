@@ -14,31 +14,30 @@ import com.xebialabs.overthere.CmdLine as CmdLine
 import json
 
 from com.xebialabs.deployit.provision import ProvisionHelper
+from com.xebialabs.deployit.plugin.api.reflect import DescriptorRegistry
+import importlib
 
-
-from terraform.mapper.gke_cluster_mapper import GKEClusterMapper
-from terraform.mapper.aks_cluster_mapper import AKSClusterMapper
-from xldtfe.mapper.aws_s3_mapper import AWSS3Mapper
 
 class MapperFactory(object):
     @staticmethod
     def mappers():
-        resource_mappers = {
-            'google_container_cluster': GKEClusterMapper(),
-            'azurerm_kubernetes_cluster': AKSClusterMapper()
-        }
-
-        for mapper in MapperFactory.mappers_dynlist():
-            print mapper
-            print type(mapper)
-            resource_mappers[mapper.accepted_type()]=mapper
-
+        descriptor = DescriptorRegistry.getDescriptor('terraformEnterprise', 'Mappers')
+        mapper_fqns = [p.getDefaultValue() for p in descriptor.getPropertyDescriptors() if p.name.endswith('_mapper')]
+        mappers = [MapperFactory.new_mapper_instance(m)() for m in mapper_fqns]
+        resource_mappers = {}
+        for mapper in mappers:
+            resource_mappers[mapper.accepted_type()] = mapper
         return resource_mappers
 
     @staticmethod
-    def mappers_dynlist():
-        return [AWSS3Mapper()]
-     
+    def new_mapper_instance(full_class_string):
+        class_data = full_class_string.split(".")
+        module_path = ".".join(class_data[:-1])
+        class_str = class_data[-1]
+        module = importlib.import_module(module_path)
+        clazz = getattr(module, class_str)
+        instance = clazz()
+        return instance
 
 
 class CreateResources(object):
