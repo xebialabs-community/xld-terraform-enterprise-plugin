@@ -23,7 +23,7 @@ class AWSS3Mapper(ResourceMapper):
             self.attributes = tf_resource['attributes']            
             print("Creating CI of type 'aws.Cloud") 
             aws_id = "{0}/{1}".format(folder,"MyAWS")
-            print aws_id
+            print(aws_id)
             aws_properties = {
                 'accesskey':deployed.container.credentials['AWS_ACCESS_KEY_ID'],
                 'accessSecret': deployed.container.credentials['AWS_SECRET_ACCESS_KEY']

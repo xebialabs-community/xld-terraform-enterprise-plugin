@@ -14,6 +14,7 @@ import os
 myapi = TFE(deployed.container.organization)
 
 run_id = context.getAttribute(deployed.name+"_run_id")
+print("run_id {0}".format(run_id))
 run=myapi.runs.show(run_id)['data']
 run_id = run['id']
 run_status = run['attributes']['status']

@@ -23,20 +23,24 @@ class MapperFactory(object):
     def mappers():
         descriptor = DescriptorRegistry.getDescriptor('terraformEnterprise', 'Mappers')
         mapper_fqns = [p.getDefaultValue() for p in descriptor.getPropertyDescriptors() if p.name.endswith('_mapper')]
-        mappers = [MapperFactory.new_mapper_instance(m)() for m in mapper_fqns]
+        mappers = [MapperFactory.new_mapper_instance(m) for m in mapper_fqns]
         resource_mappers = {}
         for mapper in mappers:
-            resource_mappers[mapper.accepted_type()] = mapper
+            try:
+                resource_mappers[mapper.accepted_type()] = mapper
+            except:
+                print ("!! skip {0} mapper registration".format(mapper))
         return resource_mappers
 
     @staticmethod
     def new_mapper_instance(full_class_string):
-        class_data = full_class_string.split(".")
-        module_path = ".".join(class_data[:-1])
-        class_str = class_data[-1]
-        module = importlib.import_module(module_path)
+        
+        class_data = full_class_string.split(".")        
+        module_path = ".".join(class_data[:-1])        
+        class_str = class_data[-1]    
+        module = importlib.import_module(module_path) 
         clazz = getattr(module, class_str)
-        instance = clazz()
+        instance = clazz()        
         return instance
 
 
@@ -172,5 +176,15 @@ workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
+
+if deployed.container.organization.debug:
+    print ("---- output" )    
+    outfile = open('/tmp/output.json', 'w')
+    json.dump(output, outfile,indent=4)
+    print(50*'-')
+    json.dump(output, sys.stdout, indent=4)
+    print(50*'-')
+    outfile.close()
+    print ("---- /output")
 
 CreateResources(locals()).process(output)
