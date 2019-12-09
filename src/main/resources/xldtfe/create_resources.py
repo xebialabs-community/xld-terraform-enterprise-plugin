@@ -20,7 +20,7 @@ import importlib
 
 class MapperFactory(object):
     @staticmethod
-    def mappers():
+    def default_mappers():
         descriptor = DescriptorRegistry.getDescriptor('terraformEnterprise', 'Mappers')
         mapper_fqns = [p.getDefaultValue() for p in descriptor.getPropertyDescriptors() if p.name.endswith('_mapper')]
         mappers = [MapperFactory.new_mapper_instance(m) for m in mapper_fqns]
@@ -33,8 +33,18 @@ class MapperFactory(object):
         return resource_mappers
 
     @staticmethod
-    def new_mapper_instance(full_class_string):
-        
+    def mappers(dict_of_mappers):        
+        mappers = [MapperFactory.new_mapper_instance(m) for m in dict_of_mappers.values()]
+        resource_mappers = {}
+        for mapper in mappers:
+            try:
+                resource_mappers[mapper.accepted_type()] = mapper
+            except:
+                print ("!! skip {0} mapper registration".format(mapper))        
+        return resource_mappers
+
+    @staticmethod
+    def new_mapper_instance(full_class_string):        
         class_data = full_class_string.split(".")        
         module_path = ".".join(class_data[:-1])        
         class_str = class_data[-1]    
@@ -60,7 +70,9 @@ class CreateResources(object):
         self.generated_ids = []
         self.generated_cis = []
         self.cis_to_delete = []
-        self.resource_mappers = MapperFactory.mappers()
+        self.resource_mappers = MapperFactory.default_mappers()
+        self.resource_mappers.update(MapperFactory.mappers(deployed.container.additionalMappers))        
+        #print(self.resource_mappers)        
 
     def process(self, output):
         self.process_resources(output)
