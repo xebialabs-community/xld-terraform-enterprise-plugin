@@ -15,7 +15,13 @@ myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
+for key in deployed.container.variables:
+    value = deployed.container.variables[key]
+    print("new env variable {0} -> {1}".format(key,value))
+    myapi.variables.create(ws_id,key,value,'env','false')
+
+
 for key in deployed.container.credentials:
     value = deployed.container.credentials[key]
-    print("new env variable {0} -> xxxxxxx".format(key))
+    print("new env sensitive variable {0} -> xxxxxxx".format(key))
     myapi.variables.create(ws_id,key,value,'env','true')
