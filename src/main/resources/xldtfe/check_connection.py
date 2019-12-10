@@ -14,6 +14,7 @@ import sys
 
 print thisCi
 myapi = TFE(thisCi.organization)
+print "Organization: {0}".format(myapi._current_organization)
 data = myapi.workspaces.lst()
 if data is None:
     print "ERROR !"

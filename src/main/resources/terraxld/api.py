@@ -47,7 +47,10 @@ class TFE():
         self.runs = None
         self.state_versions = None
         self.organizations = TFEOrganizations( self._instance_url, None, self._headers, self.organization.proxyServer)
-        self._set_organization(self.organization.name)
+        if self.organization.organizationName is not None:
+            self._set_organization(self.organization.organizationName)
+        else:
+            self._set_organization(self.organization.name)
 
     def _set_organization(self, organization_name):
         """
