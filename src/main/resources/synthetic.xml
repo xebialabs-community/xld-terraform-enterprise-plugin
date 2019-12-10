@@ -29,7 +29,7 @@
   <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
     <property name="organization" kind="ci" as-containment="true" referenced-type="terraformEnterprise.Organization"/>
     <property name="credentials" kind="map_string_string" password="true"/>
-    <property name="additionalMappers" kind="map_string_string" />
+    <property name="additionalMappers" kind="map_string_string" required="false" />
   </type>
 
   <type type="terraformEnterprise.ExecutedModule" extends="udm.BaseDeployedInfrastructureAsCode" 
