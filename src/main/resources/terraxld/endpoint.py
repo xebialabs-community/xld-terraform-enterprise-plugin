@@ -81,7 +81,7 @@ class TFEEndpoint(object):
             results = json.loads(req.content)
         else:
             err = json.loads(req.content.decode("utf-8"))
-            self._logger.error(err)
+            self._logger.error(err)            
 
         return results
 

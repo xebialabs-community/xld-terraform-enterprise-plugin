@@ -84,3 +84,11 @@ class TFEWorkspaces(TFEEndpoint):
         self._logger.info("workspace {0} -> id {1}".format(workspace_name,ws_id))
         return ws_id
 
+    def lst(self):
+        """
+        GET /organizations/:organization_name/workspaces
+
+        This endpoint lists workspaces in the organization.
+        """
+        return self._ls(self._org_base_url)
+
