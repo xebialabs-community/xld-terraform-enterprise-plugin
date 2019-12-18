@@ -59,7 +59,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
       <wait>
         <order>62</order>
         <description>Wait for the load of the configuration</description>
-        <seconds>10</seconds>
+        <seconds>5</seconds>
       </wait>
       <jython>
         <order>62</order>
@@ -126,7 +126,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
       <wait>
         <order>62</order>
         <description>Wait for the load of the configuration</description>
-        <seconds>15</seconds>
+        <seconds>5</seconds>
       </wait>
       <jython>
         <order>62</order>

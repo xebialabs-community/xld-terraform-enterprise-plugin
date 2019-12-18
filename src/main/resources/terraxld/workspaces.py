@@ -29,7 +29,7 @@ class TFEWorkspaces(TFEEndpoint):
         self._ws_base_url = "{base_url}/workspaces".format(base_url=base_url)
         self._org_base_url = "{base_url}/organizations/{organization_name}/workspaces".format(base_url=base_url, organization_name=organization_name)
 
-    def create(self, workspace_name):
+    def create(self, workspace_name, terraform_version = "0.12.9"):
         """
         POST /organizations/:organization_name/workspaces
         """
@@ -37,7 +37,8 @@ class TFEWorkspaces(TFEEndpoint):
                 "data": {
                     "attributes": {
                         "name": workspace_name,
-                        "auto-apply":"true"
+                        "auto-apply":"true",
+                        "terraform-version": terraform_version
                         },
                     "type": "workspaces"
                     }

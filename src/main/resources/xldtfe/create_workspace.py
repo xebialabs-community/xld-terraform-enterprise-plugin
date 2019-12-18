@@ -17,7 +17,7 @@ myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 
 print("create a new workspace {0}".format(workspace_name))
-workspace=myapi.workspaces.create(workspace_name)
+workspace=myapi.workspaces.create(workspace_name, deployed.terraformVersion)
 print workspace
 raise_error = False
 if 'errors' in workspace:
