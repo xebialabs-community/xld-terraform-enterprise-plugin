@@ -15,6 +15,8 @@ myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
+# Inject -no-color options to get no formating in  the logs.
+myapi.variables.create(ws_id,'TF_CLI_ARGS','-no-color','env','false')
 for key in deployed.container.variables:
     value = deployed.container.variables[key]
     print("new env variable {0} -> {1}".format(key,value))
