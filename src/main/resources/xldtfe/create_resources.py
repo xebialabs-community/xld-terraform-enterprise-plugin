@@ -33,24 +33,26 @@ class MapperFactory(object):
         return resource_mappers
 
     @staticmethod
-    def mappers(dict_of_mappers):        
+    def mappers(dict_of_mappers):
         mappers = [MapperFactory.new_mapper_instance(m) for m in dict_of_mappers.values()]
         resource_mappers = {}
         for mapper in mappers:
             try:
                 resource_mappers[mapper.accepted_type()] = mapper
             except:
-                print ("!! skip {0} mapper registration".format(mapper))        
+                print ("!! skip {0} mapper registration".format(mapper))
         return resource_mappers
 
     @staticmethod
-    def new_mapper_instance(full_class_string):        
-        class_data = full_class_string.split(".")        
-        module_path = ".".join(class_data[:-1])        
-        class_str = class_data[-1]    
+    def new_mapper_instance(full_class_string):
+        print("new_mapper_instance: {0}".format(full_class_string))
+        class_data = full_class_string.split(".")
+        module_path = ".".join(class_data[:-1])
+        class_str = class_data[-1]
+        print(".import_module {0}".format(module_path))
         module = importlib.import_module(module_path) 
         clazz = getattr(module, class_str)
-        instance = clazz()        
+        instance = clazz()
         return instance
 
 
@@ -71,8 +73,7 @@ class CreateResources(object):
         self.generated_cis = []
         self.cis_to_delete = []
         self.resource_mappers = MapperFactory.default_mappers()
-        self.resource_mappers.update(MapperFactory.mappers(deployed.container.additionalMappers))        
-        #print(self.resource_mappers)        
+        self.resource_mappers.update(MapperFactory.mappers(deployed.container.additionalMappers))
 
     def process(self, output):
         self.process_resources(output)
@@ -81,7 +82,7 @@ class CreateResources(object):
         self.update_generated_cis()
         self.delete_removed_resources()
 
-    def process_resources(self, output):       
+    def process_resources(self, output):
         if output:
             output_json = output
             if 'modules' in output_json:
@@ -128,7 +129,6 @@ class CreateResources(object):
 
     def update_environment_members(self):
         print ("update_environment_members {0}".format(self.environment_id))
-        
         environment = ProvisionHelper.getOrCreateEnvironment(
             self.environment_id, self.context)
         members = environment.members
@@ -190,8 +190,10 @@ ws_id = myapi.workspaces.get_id(workspace_name)
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
 
 if deployed.container.organization.debug:
-    print ("---- output" )    
-    outfile = open('/tmp/output.json', 'w')
+    print ("---- output" )
+    import tempfile
+    outfile = tempfile.NamedTemporaryFile(delete=False,prefix="xld-tfe-",suffix="-output.json")
+    print("dump output to {0}".format(outfile.name))
     json.dump(output, outfile,indent=4)
     print(50*'-')
     json.dump(output, sys.stdout, indent=4)

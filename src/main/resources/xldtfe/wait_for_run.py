@@ -10,6 +10,8 @@
 
 from terraxld.api import TFE
 import os
+import sys
+import json
 
 myapi = TFE(deployed.container.organization)
 
@@ -17,6 +19,11 @@ run_id = context.getAttribute(deployed.name+"_run_id")
 print("run_id {0}".format(run_id))
 run=myapi.runs.show(run_id)['data']
 run_id = run['id']
+#if deployed.container.organization.debug:
+#    print(50*'-')
+#    json.dump(run, sys.stdout, indent=4)
+#    print(50*'-')
+
 run_status = run['attributes']['status']
 print("{0}     {1}".format(run_id, run_status))
 if run_status == 'applied' or run_status == 'planned_and_finished':
