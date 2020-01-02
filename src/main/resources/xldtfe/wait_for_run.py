@@ -7,7 +7,7 @@
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-
+from java.lang import System
 from terraxld.api import TFE
 import os
 import sys
@@ -15,7 +15,7 @@ import json
 import time
 
 def dump_json(data, message):
-    if deployed.container.organization.debug:
+    if True:
         print(50*'=')
         print(message)
         print(50*'=')
@@ -30,13 +30,18 @@ def stream_plan_output(myapi,run_id, message):
     s_plan = myapi.runs.show_plan(run_id)
     status = s_plan['data']['attributes']['status']
     archivist_url = s_plan['data']['attributes']['log-read-url']
-    while not status == 'finished':
+    while status == 'running':
         print "--> status {0}".format(status)
         time.sleep(5)
         s_plan = myapi.runs.show_plan(run_id)
         status = s_plan['data']['attributes']['status']
+
     print(50*'=')
-    print myapi.runs.show_plan_log(run_id)
+    if status  == 'errored':
+        [sys.stderr.write(line+"\n") for line in myapi.runs.show_plan_log(run_id).split('\n')]
+        raise Exception("Error during the plan phase")
+    if status  == 'finished':
+        print myapi.runs.show_plan_log(run_id)
     print(50*'=')
 
 
@@ -48,14 +53,20 @@ def stream_apply_output(myapi,run_id, message):
     s_apply = myapi.runs.show_apply(run_id)
     status = s_apply['data']['attributes']['status']
     archivist_url = s_apply['data']['attributes']['log-read-url']
-    while not status == 'finished':
+    while status == 'running':
         print "--> status {0}".format(status)
         time.sleep(5)
         s_apply = myapi.runs.show_apply(run_id)
         status = s_apply['data']['attributes']['status']
+
     print(50*'=')
-    print myapi.runs.show_apply_log(run_id)
+    if status  == 'errored':
+        [sys.stderr.write(line+"\n") for line in myapi.runs.show_apply_log(run_id).split('\n')]
+        raise Exception("Error during the Apply phase")
+    if status  == 'finished':
+        print myapi.runs.show_apply_log(run_id)
     print(50*'=')
+
 
 
 
@@ -79,7 +90,8 @@ while True:
         print("done")
         break
     elif run_status == 'errored':
+        stream_plan_output(myapi,run_id, "Plan Log {0}/{1}".format(run_status,run_id))
         raise Exception("An error occured in  {0}".format(run_id))
 
-    time.sleep(5)
+    time.sleep(1)
 
