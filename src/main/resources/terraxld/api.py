@@ -29,11 +29,12 @@ class TFE():
     Super class for access to all TFE Endpoints.
     """
 
-    def __init__(self,organization):       
+    def __init__(self,organization):
         self.organization = organization
         if self.organization.token is None:
             raise InvalidTFETokenException
-        TFE.configure_logger_stdout(self.organization)
+
+        TFE.configure_logger_stdout(self.organization.debug)
 
         self._instance_url = "{url}/api/v2".format(url=self.organization.url)
         self._token = self.organization.token
@@ -69,20 +70,27 @@ class TFE():
         self.state_versions = TFEStateVersions(
             self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
 
-    initializedLogger = 0
+    log_handler = None
 
     @staticmethod
-    def configure_logger_stdout():
-        if TFE.initializedLogger == 0:
-            import logging
-            import sys
-            root = logging.getLogger()
-            root.setLevel(logging.DEBUG)
-
+    def configure_logger_stdout(debug):
+        import logging
+        import sys
+        root = logging.getLogger()
+        if TFE.log_handler == None:
             handler = logging.StreamHandler(sys.stdout)
-            handler.setLevel(logging.DEBUG)
+            TFE.log_handler = handler
             formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             handler.setFormatter(formatter)
             root.addHandler(handler)
-            TFE.initializedLogger = 1
+        else:
+            handler = TFE.log_handler
+
+        if debug:
+            root.setLevel(logging.DEBUG)
+            handler.setLevel(logging.DEBUG)
+        else:
+            root.setLevel(logging.INFO)
+            handler.setLevel(logging.INFO)
+
 

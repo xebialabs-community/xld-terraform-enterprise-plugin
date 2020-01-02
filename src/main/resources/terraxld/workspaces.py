@@ -82,7 +82,7 @@ class TFEWorkspaces(TFEEndpoint):
     def get_id(self, workspace_name):
         workspace = self.show(workspace_name=workspace_name)
         ws_id = workspace["data"]["id"]
-        self._logger.info("workspace {0} -> id {1}".format(workspace_name,ws_id))
+        self._logger.debug("workspace {0} -> id {1}".format(workspace_name,ws_id))
         return ws_id
 
     def lst(self):
