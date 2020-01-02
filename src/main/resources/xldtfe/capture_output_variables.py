@@ -13,20 +13,38 @@ import os
 import sys
 import json
 
+def dump_json(data, message):
+    if True:
+        print(50*'=')
+        print(message)
+        print(50*'=')
+        json.dump(data, sys.stdout, indent=4)
+        print(50*'=')
+
+
 myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
+dump_json(output,"OUTPUT")
 
 if output:
     output_variables = {}
     output_json = output['outputs']
 
     for key in output_json:
-        output_variables[key] = output_json[key]['value']
-        print("new output variable found {0}:{1}".format(key,output_variables[key]))
+        var_type = output_json[key]['type']
+        print var_type
+        print type(var_type)
+        if isinstance(var_type, list):
+            print "SKIP '{0}' BECAUSE IT IS A LIST WE CANNOT HANDLE NOW".format(key)
+            print output_json[key]['value']
+        else:
+            output_variables[key] = output_json[key]['value']
+            print("new output variable found {0}:{1}".format(key,output_variables[key]))
     deployed.outputVariables = output_variables
     context.logOutput("Output variables from Terraform captured.")
 else:
     context.logOutput("No output variables found.")
+
