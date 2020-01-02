@@ -76,6 +76,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
         <description expression="true">"Trigger the run of plan for {0} on {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
         <script-path>xldtfe/trigger_run.py</script-path>
       </jython>
+      <checkpoint/>
       <jython>
         <order>67</order>
         <description expression="true">"Wait for the end of the execution of the plan {0} on {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
