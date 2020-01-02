@@ -46,7 +46,6 @@ class TFEStateVersions(TFEEndpoint):
             self._logger.error(err)
             return err
 
-        
 
     def get_current_state_content(self, url):
         results = None
@@ -71,7 +70,6 @@ class TFEStateVersions(TFEEndpoint):
         sv_current=self.get_current(ws_id)
         if 'errors' in sv_current:
             raise Exception("error when getting the state of the workspace {0}".format(sv_current))
-                
         self._logger.info(sv_current)
         sv_id=sv_current["data"]["id"]
         self._logger.debug("..current state version {0}".format(sv_id))

@@ -42,6 +42,44 @@ class TFERuns(TFEEndpoint):
         url = "{0}/{1}".format(self._runs_base_url,run_id)
         return self._show(url)
 
+    def show_plan(self,run_id):
+        """
+        GET /runs/:run_id/plan
+
+        This endpoint is used for showing details of the plan of a specific run.
+        """
+        url = "{0}/{1}/plan".format(self._runs_base_url,run_id)
+        return self._show(url)
+
+    def show_plan_log(self,run_id):
+        s_plan = self.show_plan(run_id)
+        archivist_url = s_plan['data']['attributes']['log-read-url']
+        return self._download(archivist_url)
+
+    def stream_plan_log(self,run_id):
+        s_plan = self.show_plan(run_id)
+        archivist_url = s_plan['data']['attributes']['log-read-url']
+        return self._stream(archivist_url)
+
+    def show_apply(self,run_id):
+        """
+        GET /runs/:run_id/apply
+
+        This endpoint is used for showing details of the apply of a specific run.
+        """
+        url = "{0}/{1}/apply".format(self._runs_base_url,run_id)
+        return self._show(url)
+
+    def show_apply_log(self,run_id):
+        s_apply = self.show_apply(run_id)
+        archivist_url = s_apply['data']['attributes']['log-read-url']
+        return self._download(archivist_url)
+
+    def stream_apply_log(self,run_id):
+        s_apply = self.show_apply(run_id)
+        archivist_url = s_apply['data']['attributes']['log-read-url']
+        return self._stream(archivist_url)
+
     def create(self, ws_id, config_id, message):
         """
         POST /runs

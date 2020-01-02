@@ -33,7 +33,7 @@ class TFE():
         self.organization = organization
         if self.organization.token is None:
             raise InvalidTFETokenException
-        TFE.configure_logger_stdout()
+        TFE.configure_logger_stdout(self.organization)
 
         self._instance_url = "{url}/api/v2".format(url=self.organization.url)
         self._token = self.organization.token

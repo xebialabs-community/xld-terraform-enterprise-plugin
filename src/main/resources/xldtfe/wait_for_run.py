@@ -12,23 +12,75 @@ from terraxld.api import TFE
 import os
 import sys
 import json
+import time
+
+def dump_json(data, message):
+    if deployed.container.organization.debug:
+        print(50*'=')
+        print(message)
+        print(50*'=')
+        json.dump(data, sys.stdout, indent=4)
+        print(50*'=')
+
+def stream_plan_output(myapi,run_id, message):
+    #TODO: use the stream api to dump the archivist logs continuously
+    print(50*'=')
+    print(message)
+    print(50*'=')
+    s_plan = myapi.runs.show_plan(run_id)
+    status = s_plan['data']['attributes']['status']
+    archivist_url = s_plan['data']['attributes']['log-read-url']
+    while not status == 'finished':
+        print "--> status {0}".format(status)
+        time.sleep(5)
+        s_plan = myapi.runs.show_plan(run_id)
+        status = s_plan['data']['attributes']['status']
+    print(50*'=')
+    print myapi.runs.show_plan_log(run_id)
+    print(50*'=')
+
+
+def stream_apply_output(myapi,run_id, message):
+    #TODO: use the stream api to dump the archivist logs continuously
+    print(50*'=')
+    print(message)
+    print(50*'=')
+    s_apply = myapi.runs.show_apply(run_id)
+    status = s_apply['data']['attributes']['status']
+    archivist_url = s_apply['data']['attributes']['log-read-url']
+    while not status == 'finished':
+        print "--> status {0}".format(status)
+        time.sleep(5)
+        s_apply = myapi.runs.show_apply(run_id)
+        status = s_apply['data']['attributes']['status']
+    print(50*'=')
+    print myapi.runs.show_apply_log(run_id)
+    print(50*'=')
+
+
 
 myapi = TFE(deployed.container.organization)
 
-run_id = context.getAttribute(deployed.name+"_run_id")
-print("run_id {0}".format(run_id))
-run=myapi.runs.show(run_id)['data']
-run_id = run['id']
-if deployed.container.organization.debug:
-    print(50*'-')
-    json.dump(run, sys.stdout, indent=4)
-    print(50*'-')
 
-run_status = run['attributes']['status']
-print("{0}     {1}".format(run_id, run_status))
-if run_status == 'applied' or run_status == 'planned_and_finished':
-    print("done")
-elif run_status == 'errored':
-    raise Exception("An error occured in  {0}".format(run_id))
-else:
-    result = "RETRY"
+while True:
+    run_id = context.getAttribute(deployed.name+"_run_id")
+    print("1-run_id {0}".format(run_id))
+    run=myapi.runs.show(run_id)['data']
+    #dump_json(run,"run")
+    run_status = run['attributes']['status']
+    print("run_status: {0}     {1}".format(run_id, run_status))
+
+    if run_status == 'planning':
+        stream_plan_output(myapi,run_id, "Plan Log {0}/{1}".format(run_status,run_id))
+
+    if run_status == 'applying':
+        stream_apply_output(myapi,run_id, "Apply Log {0}/{1}".format(run_status,run_id))
+
+    if run_status == 'applied' or run_status == 'planned_and_finished':
+        print("done")
+        break
+    elif run_status == 'errored':
+        raise Exception("An error occured in  {0}".format(run_id))
+
+    time.sleep(5)
+

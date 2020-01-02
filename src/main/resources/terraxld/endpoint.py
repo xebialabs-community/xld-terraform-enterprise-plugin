@@ -81,7 +81,7 @@ class TFEEndpoint(object):
             results = json.loads(req.content)
         else:
             err = json.loads(req.content.decode("utf-8"))
-            self._logger.error(err)            
+            self._logger.error(err)
 
         return results
 
@@ -114,3 +114,29 @@ class TFEEndpoint(object):
             self._logger.error(err)
 
         return results
+
+    def _download(self, url):
+        """
+        Implementation of the common show resource pattern for the TFE API.
+        """
+        results = None
+        self._logger.debug("_download {0}".format(url))
+        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
+
+        if req.status_code == 200:
+            results = req.content
+        else:
+            err = req.content.decode("utf-8")
+            self._logger.error(err)
+
+        return results
+
+    def _stream(self, url):
+        """
+        Stream the resource
+        """
+        results = None
+        self._logger.debug("_stream {0}".format(url))
+        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies,stream=True)
+        return req
+
