@@ -36,8 +36,9 @@ myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
-config_version=myapi.config_versions.create(ws_id)['data']
-cv_id = config_version["id"]
+config_version=myapi.config_versions.create(ws_id)
+
+cv_id = config_version['data']['id']
 print("New configuration version {0}".format(cv_id))
 
 print("upload the tgz")

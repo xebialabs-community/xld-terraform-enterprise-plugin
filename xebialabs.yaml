@@ -2,8 +2,10 @@ apiVersion: xl/v1
 kind: Import
 metadata:
  imports:
-   - xebialabs/infrastructure.yaml
+   - xebialabs/infrastructure.yaml   
    - xebialabs/environment.yaml
    - xebialabs/applications.yaml
    - xebialabs/applications-bucket.yaml
    - xebialabs/applications-content.yaml
+   - xebialabs/azure-vm.yaml
+   - xebialabs/microvm.yaml
