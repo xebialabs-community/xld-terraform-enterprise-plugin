@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
 
-    Copyright 2019 XEBIALABS
+Copyright 2019 XEBIALABS
 
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -->
 <synthetic xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd" xmlns="http://www.xebialabs.com/deployit/synthetic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -21,10 +21,10 @@
   <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">
     <property name="url" />
     <property name="token" password="true" />
-    <property name="organizationName" required="false" description="organization's name in terraform enterprise"/>     
+    <property name="organizationName" required="false" description="organization's name in terraform enterprise"/>
     <property name="proxyServer" required="false" kind="ci" referenced-type="credentials.ProxyServer" />
-    <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>    
-    <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>     
+    <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
+    <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>
   </type>
 
   <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
@@ -32,7 +32,23 @@
     <property name="variables" kind="map_string_string" required="false"/>
     <property name="credentials" kind="map_string_string" password="true" required="false"/>
     <property name="additionalMappers" kind="map_string_string" required="false" />
-    <method name="checkConnection"  label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>          
+    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="true" default="empty:empty"/>
+    <method name="checkConnection"  label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
+  </type>
+
+  <type type="terraformEnterprise.AwsProvider" extends="terraformEnterprise.Provider">
+    <property name="accesskey" kind="string"  label="Access Key ID"  description="The access key to use when connecting to AWS(AWS_ACCESS_KEY_ID)."/>
+    <property name="accessSecret" kind="string"   label="Secret Access Key" password="true"  description="The access secret key to use when connecting to AWS (AWS_SECRET_ACCESS_KEY)." />
+    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="true" default="accesskey:AWS_ACCESS_KEY_ID, accessSecret:AWS_SECRET_ACCESS_KEY"/>
+  </type>
+
+  <type type="terraformEnterprise.AzureProvider" extends="terraformEnterprise.Provider">
+    <property name="subscriptionId" kind="string" required="true" password="false" description="Subscription ID (ARM_SUBSCRIPTION_ID)" />
+    <property name="tenantId" kind="string" required="true" password="false" description="Tenant ID to use for the account (ARM_TENANT_ID)" />
+    <property name="clientId" kind="string" required="true" password="false" description="Client ID to use for the account (ARM_CLIENT_ID)," />
+    <property name="clientKey" kind="string" required="true" password="true" description="Client Key to use for the account (ARM_CLIENT_SECRET)" />
+
+    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="true" default="subscriptionId:ARM_SUBSCRIPTION_ID, tenantId:ARM_TENANT_ID, clientId:ARM_CLIENT_ID, clientKey:ARM_CLIENT_SECRET"/>
   </type>
 
   <type type="terraformEnterprise.ExecutedModule" extends="udm.BaseDeployedInfrastructureAsCode" 
