@@ -25,6 +25,15 @@ This document describes the functionality provided by the XL Deploy Terraform En
 ## Sample Configuration
 A sample configuration is available in the project.
 
+store you azure credentials into ~/.xebialabs/azure.secrets.xlvals (you can use dummy values)
+````
+cat ~/.xebialabs/azure.secrets.xlvals
+subscriptionId: azerty-a628-43e2-456f-1f9ea1b3ece3
+tenantId: qwerty-5162-f14d-ab57-a0235a2385e0
+clientId: benoit-820a-404b-efed-4cf7c0a99796
+clientKey: p/v-Mmoussauda0yry3W7L3OB
+````
+
 ```
 $cp  ~/.aws/credentials ~/.xebialabs/aws.secrets.xlvals
 $XL_VALUES_tfe_token="6SPlj2J5LMuw.atlasv1.Lm.........GWrnkSUZy1oCg"

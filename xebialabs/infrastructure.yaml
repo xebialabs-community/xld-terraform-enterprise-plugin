@@ -25,7 +25,7 @@ kind: Infrastructure
 spec:
 - name: Infrastructure/myOrganization/azure-xl
   type: terraformEnterprise.AzureProvider
-  subscriptionId: xxxx-xxx-yyy2-zzz-zzrrzrz
-  tenantId: xxxx-xxx-yyy2-zzz-zzrrzrz
-  clientId: xxxx-xxx-yyy2-zzz-zzrrzrz
-  clientKey: aaaaaaa
+  subscriptionId: !value "subscriptionId"
+  tenantId: !value "tenantId"
+  clientId: !value "clientId"
+  clientKey: !value "clientKey"
