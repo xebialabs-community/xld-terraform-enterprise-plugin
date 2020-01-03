@@ -35,10 +35,9 @@ if output:
 
     for key in output_json:
         var_type = output_json[key]['type']
-        print var_type
-        print type(var_type)
+        print "{0}:{1}/{2}".format(key,var_type,type(var_type))
         if isinstance(var_type, list):
-            print "SKIP '{0}' BECAUSE IT IS A LIST WE CANNOT HANDLE NOW".format(key)
+            print "'{0}' output variable found but not managed because its a list.Skip!".format(key)
             print output_json[key]['value']
         else:
             output_variables[key] = output_json[key]['value']

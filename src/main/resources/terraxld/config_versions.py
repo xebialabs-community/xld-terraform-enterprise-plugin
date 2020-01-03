@@ -88,6 +88,7 @@ class TFEConfigVersions(TFEEndpoint):
         results = None
         # TODO: Validate the path to tarball a bit
         upload_url = self.show(config_version_id)["data"]["attributes"]["upload-url"]
+        self._logger.debug("upload {0} to {1}".format(path_to_tarball, upload_url))
 
         # TODO: Exception and error handling
         req = None
