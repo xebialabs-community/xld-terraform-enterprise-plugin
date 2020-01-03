@@ -2,11 +2,11 @@
 apiVersion: xl-deploy/v1
 kind: Environments
 spec:
-- name: Environments/dev
+- name: Environments/dev.aws
   type: udm.Environment
   members:
   - Infrastructure/xebialabs-france
-  - Infrastructure/xebialabs-france/AWSProvider
+  - Infrastructure/xebialabs-france/aws
   dictionaries:
   - Environments/dev.conf
   - Environments/ec2-dictionary
@@ -18,3 +18,11 @@ spec:
     ami_id: ami-087855b6c8b59a9e4
 - name: Environments/ec2-dictionary
   type: udm.Dictionary
+- name: Environments/dev.az
+  type: udm.Environment
+  members:
+  - Infrastructure/xebialabs-france
+  - Infrastructure/xebialabs-france/azure-xl
+  dictionaries:
+  - Environments/dev.conf
+ 

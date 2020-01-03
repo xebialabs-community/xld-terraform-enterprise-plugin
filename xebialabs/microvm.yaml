@@ -1,0 +1,31 @@
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: Applications/micro-vm
+  type: udm.Application
+  children:
+  - name: 1.0.3
+    type: udm.DeploymentPackage
+    deployables:
+    - name: ec2
+      type: terraform.Module
+      inputVariables:
+        aws_region: '{{aws_region}}'
+        instance_type: '{{instance_type}}'
+        ami_id: '{{ami_id}}'
+      workspaceName: ec2-{{aws_region}}
+      applyDestroyOperation: "true"
+      file: !file "artifacts/Applications/micro-vm/1.0.3/ec2/ec2.zip"  
+  - name: 1.0.0
+    type: udm.DeploymentPackage
+    deployables:
+    - name: ec2
+      type: terraform.Module
+      inputVariables:
+        aws_region: '{{aws_region}}'
+        instance_type: '{{instance_type}}'
+        ami_id: '{{ami_id}}'
+      workspaceName: ec2-{{aws_region}}
+      applyDestroyOperation: "true"
+      file: !file "artifacts/Applications/micro-vm/1.0.0/ec2/ec2.zip"
