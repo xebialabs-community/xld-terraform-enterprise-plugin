@@ -30,17 +30,17 @@
 
   <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
     <property name="organization" kind="ci" as-containment="true" referenced-type="terraformEnterprise.Organization"/>
-    <property name="variables" kind="map_string_string" required="false"/>
-    <property name="credentials" kind="map_string_string" password="true" required="false"/>
-    <property name="additionalMappers" kind="map_string_string" required="false" />
-    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="empty:empty"/>
+    <property name="variables" kind="map_string_string" required="false" category="Advanced"/>
+    <property name="credentials" kind="map_string_string" password="true" required="false" category="Advanced" />
+    <property name="additionalMappers" kind="map_string_string" required="false"  category="Parameters"/>
+    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="empty:empty" category="Parameters"/>
     <method name="checkConnection"  label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
   </type>
 
   <type type="terraformEnterprise.AwsProvider" extends="terraformEnterprise.Provider">
     <property name="accesskey" kind="string"  label="Access Key ID"  description="The access key to use when connecting to AWS(AWS_ACCESS_KEY_ID)."/>
     <property name="accessSecret" kind="string"   label="Secret Access Key" password="true"  description="The access secret key to use when connecting to AWS (AWS_SECRET_ACCESS_KEY)." />
-    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="accesskey:AWS_ACCESS_KEY_ID, accessSecret:AWS_SECRET_ACCESS_KEY"/>
+    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="accesskey:AWS_ACCESS_KEY_ID, accessSecret:AWS_SECRET_ACCESS_KEY" category="Parameters"/>
   </type>
 
   <type type="terraformEnterprise.AzureProvider" extends="terraformEnterprise.Provider">
@@ -49,7 +49,7 @@
     <property name="clientId" kind="string" required="true" password="false" description="Client ID to use for the account (ARM_CLIENT_ID)," />
     <property name="clientKey" kind="string" required="true" password="true" description="Client Key to use for the account (ARM_CLIENT_SECRET)" />
 
-    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="subscriptionId:ARM_SUBSCRIPTION_ID, tenantId:ARM_TENANT_ID, clientId:ARM_CLIENT_ID, clientKey:ARM_CLIENT_SECRET"/>
+    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="subscriptionId:ARM_SUBSCRIPTION_ID, tenantId:ARM_TENANT_ID, clientId:ARM_CLIENT_ID, clientKey:ARM_CLIENT_SECRET" category="Parameters"/>
   </type>
 
   <type type="terraformEnterprise.ExecutedModule" extends="udm.BaseDeployedInfrastructureAsCode" 
