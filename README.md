@@ -75,5 +75,22 @@ Done
 ```
 ## Features
 
+### How to define a new provider
+
+A provider gathers the properties used to configure and to authenticate the actions on a cloud provider as environment variables injected at deployment time.
+Workflow:
+1. create a new CI extending `terraformEnterprise.Provider``
+2. add properties. Using the `password` attribut to control if it's a sensitive value or not.
+3. fill the `credentialsPropertyMapping` default value that map each property name wth the environment variable name.
+
+Sample: for AWS.
+```
+ <type type="terraformEnterprise.AwsProvider" extends="terraformEnterprise.Provider">
+    <property name="accesskey" kind="string"  label="Access Key ID"  description="The access key to use when connecting to AWS(AWS_ACCESS_KEY_ID)."/>
+    <property name="accessSecret" kind="string"   label="Secret Access Key" password="true"  description="The access secret key to use when connecting to AWS (AWS_SECRET_ACCESS_KEY)." />
+    <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="accesskey:AWS_ACCESS_KEY_ID, accessSecret:AWS_SECRET_ACCESS_KEY" category="Parameters"/>
+  </type>
+```
+
 ## References
 
