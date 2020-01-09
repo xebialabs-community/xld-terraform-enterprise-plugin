@@ -97,8 +97,10 @@ class TFEConfigVersions(TFEEndpoint):
 
         if req.status_code == 200:
             self._logger.debug("Config version successfully uploaded.")
-        else:
-            err = json.loads(req.content.decode("utf-8"))
-            self._logger.error(err)
+        else:                  
+            err =  "upload configuration failed {0}:{1}".format(req.status_code,req.content)       
+            self._logger.error(err)            
+            raise Exception(err)
+            
 
         return results
