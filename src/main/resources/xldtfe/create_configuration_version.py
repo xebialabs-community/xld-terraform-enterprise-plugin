@@ -37,6 +37,8 @@ workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
 
 config_version=myapi.config_versions.create(ws_id)
+if 'data' not in config_version:
+    raise Exception("Cannot create a new config_version. Have you used an Organization API tokens instead of a User or Team token ? Organization API tokens are designed for creating and configuring workspaces and teams. {0}".format(config_version))
 
 cv_id = config_version['data']['id']
 print("New configuration version {0}".format(cv_id))
