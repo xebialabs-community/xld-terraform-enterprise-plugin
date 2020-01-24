@@ -94,3 +94,13 @@ Sample: for AWS.
 
 ## References
 
+## How to release a new version
+
+```
+$./gradlew final
+```
+
+This command automaticaly tags the version, pushes it remotely and
+trigger a release build. The script: `./buildViaTravis.sh` manages to
+run the right command.
+
