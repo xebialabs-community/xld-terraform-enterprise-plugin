@@ -9,9 +9,6 @@
 #
 
 from terraxld.api import TFE
-import os
-import sys
-
 
 myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName

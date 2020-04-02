@@ -75,6 +75,10 @@ Done
 ```
 ## Features
 
+### Control task : Process Module
+On the `terraform.Module` deployable, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
+it fills only with the variables that has no default value or null value or empty value ({} or []).
+
 ### How to define a new provider
 
 A provider gathers the properties used to configure and to authenticate the actions on a cloud provider as environment variables injected at deployment time.

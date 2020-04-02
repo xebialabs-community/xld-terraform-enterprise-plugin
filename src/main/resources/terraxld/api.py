@@ -13,12 +13,16 @@ Module for container class of all TFE endpoints and high level exceptions around
 API access.
 """
 
+import terraxld.variables
+reload(terraxld.variables)
+
 from .workspaces import TFEWorkspaces
 from .organizations import TFEOrganizations
 from .config_versions import TFEConfigVersions
 from .variables import TFEVariables
 from .runs import TFERuns
 from .state_versions import TFEStateVersions
+from .hclparser import  HclParser
 
 class InvalidTFETokenException(Exception):
     """Cannot instantiate TFE Api class without a valid TFE_TOKEN."""
@@ -52,6 +56,8 @@ class TFE():
             self._set_organization(self.organization.organizationName)
         else:
             self._set_organization(self.organization.name)
+
+        self.hcl_parser = HclParser()
 
     def _set_organization(self, organization_name):
         """
@@ -94,3 +100,29 @@ class TFE():
             handler.setLevel(logging.INFO)
 
 
+    def load_variables_in_workspace(self,input,ws_name, secret, scope):
+        ws_id = self.workspaces.get_id(ws_name)
+        data = self.variables.lst(workspace_name=ws_name)
+        existing_variables = {}
+        for variable_info in data['data']:
+            existing_variables[variable_info['attributes']['key']] = variable_info['id']
+
+        for key in input:
+            value = input[key]
+            is_hcl = self.hcl_parser.is_hcl_variable(key)
+            if key in existing_variables:
+                print("update terraform variable {0} -> {1} ({2})".format(key, self.display_value(value,secret), is_hcl))
+                if secret:
+                    self.variables.destroy(existing_variables[key])
+                    self.variables.create(ws_id, key, value, scope, secret, is_hcl)
+                else:
+                    self.variables.update(existing_variables[key], key, value, scope, secret, is_hcl)
+            else:
+                print("new terraform variable {0} -> {1} ({2})".format(key, self.display_value(value,secret), is_hcl))
+                self.variables.create(ws_id, key, value, scope, secret, is_hcl)
+
+    def display_value(self, value, secret):
+        if secret:
+            return 'xxxxxxxxxxxxxx'
+        else:
+            return value

@@ -11,6 +11,12 @@
 from terraxld.api import TFE
 import os
 
+def format_error_message(run):
+    if 'errors'in run:
+        return ",".join(['{title}:{detail}({status})'.format(**error) for error in run['errors']])
+    else:
+        return run
+
 myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
@@ -18,8 +24,12 @@ ws_id = myapi.workspaces.get_id(workspace_name)
 cv_id = context.getAttribute(deployed.name+"_cv_id")
 print("cv_id {0}".format(cv_id))
 task_id = context.getTask().getId()
-run = myapi.runs.create(ws_id,cv_id,"Trigger by XLDeploy {0}".format(task_id))['data']
-run_id = run['id']
-context.setAttribute(deployed.name+"_run_id", run_id)
-print("run id is {0}".format(run_id))
+run = myapi.runs.create(ws_id,cv_id,"Trigger by XLDeploy {0}".format(task_id))
+if 'data' in run:
+    run_id = run['data']['id']
+    context.setAttribute(deployed.name+"_run_id", run_id)
+    print("run id is {0}".format(run_id))
+else:
+    print(format_error_message(run))
+    raise Exception("ERROR {0}".format(format_error_message(run)))
 

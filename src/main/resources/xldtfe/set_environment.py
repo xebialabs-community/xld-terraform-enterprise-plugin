@@ -8,16 +8,25 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import terraxld.api
+reload(terraxld.api)
 from terraxld.api import TFE
-import os
 
 myapi = TFE(deployed.container.organization)
 workspace_name = deployed.workspaceName
 ws_id = myapi.workspaces.get_id(workspace_name)
+myapi.hcl_parser.parse_folder(deployed)
 
-# Inject -no-color options to get no formating in  the logs.
-myapi.variables.create(ws_id,'TF_CLI_ARGS','-no-color','env','false')
-myapi.variables.create(ws_id,'CONFIRM_DESTROY','1','env','false')
+basics=dict()
+basics['TF_CLI_ARGS']='-no-color'
+basics['CONFIRM_DESTROY']='1'
+
+non_secured_items = {}
+non_secured_items.update(basics)
+non_secured_items.update(deployed.container.variables)
+
+secured_items = {}
+secured_items.update(deployed.container.credentials)
 
 for cpm_key in deployed.container.credentialsPropertyMapping:
     if cpm_key == "empty":
@@ -26,19 +35,11 @@ for cpm_key in deployed.container.credentialsPropertyMapping:
     value = deployed.container.getProperty(cpm_key)
     pd_key = deployed.container.type.getDescriptor().getPropertyDescriptor(cpm_key)
     if pd_key.isPassword():
-        print("new env sensitive variable {0} -> xxxxxxx".format(key))
-        myapi.variables.create(ws_id,key,value,'env','true')
+        secured_items[key]=value
     else:
-        print("new env variable {0} -> {1}".format(key,value))
-        myapi.variables.create(ws_id,key,value,'env','false')
-
-for key in deployed.container.variables:
-    value = deployed.container.variables[key]
-    print("new env variable {0} -> {1}".format(key,value))
-    myapi.variables.create(ws_id,key,value,'env','false')
+        non_secured_items[key]=value
 
 
-for key in deployed.container.credentials:
-    value = deployed.container.credentials[key]
-    print("new env sensitive variable {0} -> xxxxxxx".format(key))
-    myapi.variables.create(ws_id,key,value,'env','true')
+myapi.load_variables_in_workspace(non_secured_items, workspace_name, False, scope='env')
+myapi.load_variables_in_workspace(secured_items, workspace_name, True, scope='env')
+

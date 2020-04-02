@@ -8,14 +8,28 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from terraxld.api import TFE
-
-myapi = TFE(deployed.container.organization)
-workspace_name = deployed.workspaceName
-ws_id = myapi.workspaces.get_id(workspace_name)
-myapi.hcl_parser.parse_folder(deployed)
-
-myapi.load_variables_in_workspace(deployed.inputVariables, workspace_name, False, scope='terraform')
-myapi.load_variables_in_workspace(deployed.secretInputVariables, workspace_name, True,scope='terraform')
+import terraxld.hclparser
+reload(terraxld.hclparser)
 
 
+from terraxld.hclparser import HclParser
+ci = repositoryService.read(thisCi.id)
+parser = HclParser()
+parser.parse_folder(ci)
+
+inputVariables=dict()
+for variable in parser.variable:
+    if 'default' in parser.variable[variable]:
+        default=parser.variable[variable]['default']
+        #print variable, parser.variable[variable]['default']
+        if default == "null" :
+            inputVariables[variable]='{{'+variable+'}}'
+        if isinstance(default,dict) or isinstance(default,list):
+            if len(default) == 0:
+                inputVariables[variable]='{{'+variable+'}}'
+    else:
+        inputVariables[variable]='{{'+variable+'}}'
+
+print (inputVariables)
+ci.inputVariables = inputVariables
+repositoryService.update([ci])

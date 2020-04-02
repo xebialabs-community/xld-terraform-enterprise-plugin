@@ -9,19 +9,18 @@
 #
 
 from terraxld.api import TFE
-import os
 import sys
 
-print thisCi
+print(thisCi)
 myapi = TFE(thisCi.organization)
-print "Organization: {0}".format(myapi._current_organization)
+print("Organization: {0}".format(myapi._current_organization))
 data = myapi.workspaces.lst()
 if data is None:
-    print "ERROR !"
+    print ("ERROR !")
     sys.exit(1)
 
 for w in data["data"]:
-    print "{0} => {1}".format(w['id'],w['attributes']['name'])
+    print("{0} => {1}".format(w['id'],w['attributes']['name']))
 
 print('done')
 

@@ -9,7 +9,6 @@
 #
 
 from terraxld.api import TFE
-import os
 import sys
 import json
 

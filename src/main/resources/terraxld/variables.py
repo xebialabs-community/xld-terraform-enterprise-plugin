@@ -14,38 +14,45 @@ Module for Terraform Enterprise API Endpoint: Variables.
 
 from .endpoint import TFEEndpoint
 
+
 class TFEVariables(TFEEndpoint):
     """
     This set of APIs covers create, update, list and delete operations on variables.
 
     https://www.terraform.io/docs/enterprise/api/variables.html
     """
+
     def __init__(self, base_url, organization_name, headers, proxy_server):
-        super(TFEVariables,self).__init__(base_url, organization_name, headers, proxy_server)
+        super(TFEVariables, self).__init__(base_url, organization_name, headers, proxy_server)
         self._base_url = "{base_url}/vars".format(base_url=base_url)
 
-    def create(self, workspace_id,key,value, category, sensitive):
+    def create(self, workspace_id, key, value, category, sensitive, hcl=False):
         """
         POST /vars
         """
-        payload={ "data": { "type":"vars",
-            "attributes": {
-                "key":key,
-                "value":value,
-                "category":category,
-                "hcl":"false",
-                "sensitive":sensitive
-                },
-            "relationships": {
-                "workspace": {
-                    "data": {
-                        "id":workspace_id,
-                        "type":"workspaces"
-                        }
-                    }
-                }
-            }
-            }
+        if hcl:
+            hcl_value = 'true'
+        else:
+            hcl_value = 'false'
+
+        payload = {"data": {"type": "vars",
+                            "attributes": {
+                                "key": key,
+                                "value": value,
+                                "category": category,
+                                "hcl": hcl_value,
+                                "sensitive": sensitive
+                            },
+                            "relationships": {
+                                "workspace": {
+                                    "data": {
+                                        "id": workspace_id,
+                                        "type": "workspaces"
+                                    }
+                                }
+                            }
+                            }
+                   }
         return self._create(self._base_url, payload)
 
     def lst(self, workspace_name=None):
@@ -59,16 +66,34 @@ class TFEVariables(TFEEndpoint):
 
         return self._ls(url)
 
-    def update(self, variable_id, payload):
+    def update(self, variable_id, key, value, category, sensitive, hcl=False):
         """
         PATCH /vars/:variable_id
         """
-        url = "{0}/{1}".format(self._base_url,variable_id)
+        url = "{0}/{1}".format(self._base_url, variable_id)
+        if hcl:
+            hcl_value = 'true'
+        else:
+            hcl_value = 'false'
+
+        payload = {"data":
+                       {
+                        "type": "vars",
+                        "id": variable_id,
+                        "attributes": {
+                            "key": key,
+                            "value": value,
+                            "category": category,
+                            "hcl": hcl_value,
+                            "sensitive": sensitive
+                        }
+                        }
+                   }
         return self._update(url, payload)
 
     def destroy(self, variable_id):
         """
         DELETE /vars/:variable_id
         """
-        url = "{0}/{1}".format(self._base_url,variable_id)
+        url = "{0}/{1}".format(self._base_url, variable_id)
         return self._destroy(url)

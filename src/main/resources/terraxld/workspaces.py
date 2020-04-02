@@ -38,7 +38,9 @@ class TFEWorkspaces(TFEEndpoint):
                     "attributes": {
                         "name": workspace_name,
                         "auto-apply":"true",
-                        "terraform-version": terraform_version
+                        "terraform-version": terraform_version,
+                        "source-name": "XLDeploy",
+                        "source-url": "http://localhost:4516"
                         },
                     "type": "workspaces"
                     }

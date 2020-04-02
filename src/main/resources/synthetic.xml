@@ -60,6 +60,7 @@
     <property name="inputVariables" kind="map_string_string" required="false" description="Input variables to be used in the Terraform configuration."/>
     <property name="secretInputVariables" kind="map_string_string" password="true" required="false" description="Secret input variables to be used in the Terraform configuration."/>
     <property name="outputVariables" kind="map_string_string" required="false" category="Output" description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+    <property name="tfvarsFile" default="variables.tf" required="false" category="Advanced"/>
     <property name="applyDestroyOperation" kind="boolean" default="false" required="false" category="Advanced"/>
   </type>
 
@@ -67,6 +68,7 @@
     <property name="workspaceName" />
     <property name="terraformVersion" default="0.12.7"/>
     <property name="applyDestroyOperation" kind="string" default="false" required="false" category="Advanced"/>
+    <method name="process"  label="Process Module" delegate="jythonScript" script="xldtfe/process.py"/>
   </type-modification>
 
 </synthetic>
