@@ -80,12 +80,13 @@ def stream_apply_output(myapi,run_id, message):
 
 
 
-myapi = TFE(deployed.container.organization)
-
-
+myapi = TFE(organization)
+run_id = context.getAttribute(workspace_name+"_run_id")
+print(run_id)
 while True:
-    run_id = context.getAttribute(deployed.name+"_run_id")
-    run=myapi.runs.show(run_id)['data']
+    show_result=myapi.runs.show(run_id)
+    #dump_json(show_result,"show_result")
+    run = show_result['data']
     #dump_json(run,"run")
     run_status = run['attributes']['status']
     print("run_status: {0}     {1}".format(run_id, run_status))
@@ -104,4 +105,3 @@ while True:
         raise Exception("An error occured in  {0}".format(run_id))
 
     time.sleep(1)
-

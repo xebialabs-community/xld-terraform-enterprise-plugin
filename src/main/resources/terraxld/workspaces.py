@@ -83,9 +83,15 @@ class TFEWorkspaces(TFEEndpoint):
     
     def get_id(self, workspace_name):
         workspace = self.show(workspace_name=workspace_name)
-        ws_id = workspace["data"]["id"]
-        self._logger.debug("workspace {0} -> id {1}".format(workspace_name,ws_id))
-        return ws_id
+        if 'data' in workspace:
+            ws_id = workspace["data"]["id"]
+            self._logger.debug("workspace {0} -> id {1}".format(workspace_name,ws_id))
+            return ws_id
+        else:
+            error_msg = "Cannot get workspace id of '{0}':{1}'".format(workspace_name,self.format_error_message(workspace))
+            self._logger.error (error_msg)
+            raise Exception(error_msg)
+
 
     def lst(self):
         """

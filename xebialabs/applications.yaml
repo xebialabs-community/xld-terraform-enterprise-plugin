@@ -2,31 +2,76 @@
 apiVersion: xl-deploy/v1
 kind: Applications
 spec:
-- name: Applications/micro-vm
-  type: udm.Application
-  lastVersion: 1.0.1
-  children:
-  - name: 1.0.1
-    type: udm.DeploymentPackage
-    deployables:
-    - name: ec2
-      type: terraform.Module
-      inputVariables:
-        aws_region: '{{aws_region}}'
-        instance_type: '{{instance_type}}'
-        ami_id: '{{ami_id}}'
-      workspaceName: demo-{{aws_region}}
-      applyDestroyOperation: "true"
-      file: !file "artifacts/1.0.1/ec2"
-  - name: 1.0.0
-    type: udm.DeploymentPackage
-    deployables:
-    - name: ec2
-      type: terraform.Module
-      inputVariables:
-        aws_region: '{{aws_region}}'
-        instance_type: '{{instance_type}}'      
-        ami_id: '{{ami_id}}'      
-      workspaceName: demo-{{aws_region}}
-      applyDestroyOperation: "true"
-      file: !file "artifacts/1.0.0/ec2"
+  - name: Applications/multi
+    type: udm.Application
+    lastVersion: 3.0.4
+    children:
+      - name: 2.0.1
+        type: udm.DeploymentPackage
+        deployables:
+          - name: s3-bucket
+            type: terraform.Module
+            inputVariables:
+              bucket_name: '{{bucket_name}}'
+              aws_region: '{{aws_region}}'
+            workspaceName: multi-{{aws_region}}
+            applyDestroyOperation: "true"
+            file: !file "artifacts/2.0.1/bucket-1"
+          - name: s3-bucket-backup
+            type: terraform.Module
+            inputVariables:
+              bucket_name: '{{bucket_name}}'
+              aws_region: '{{aws_region}}'
+            workspaceName: multi-{{aws_region}}
+            applyDestroyOperation: "true"
+            file: !file "artifacts/2.0.1/bucket-2"
+      - name: 3.0.4
+        type: udm.DeploymentPackage
+        deployables:
+          - name: stack
+            type: terraform.ConfigurationSpec
+            workspaceName: multi-{{aws_region}}
+            applyDestroyOperation: "true"
+            embeddedModules:
+              - name: s3
+                type: terraform.EmbeddedModuleArtifact
+                file: !file "artifacts/3.0.4/s3"
+            modules:
+              - name: s3-bucket
+                type: terraform.InstantiatedModuleSpec
+                inputVariables:
+                  name: '{{bucket_name}}'
+                  region: '{{aws_region}}'
+                outputVariables:
+                  my_main_domain_name: 'bucket_domain_name'
+                  my_main_id: 'bucket_id'
+                source: s3
+              - name: s3-bucket-backup
+                type: terraform.InstantiatedModuleSpec
+                source: s3
+                inputVariables:
+                  name: '{{bucket_name}}-backup'
+                  region: '{{aws_region}}'
+                outputVariables:
+                  bucket_name_backup_id: 'bucket_id'
+      - name: 3.0.3
+        type: udm.DeploymentPackage
+        deployables:
+          - name: stack
+            type: terraform.ConfigurationSpec
+            workspaceName: multi-{{aws_region}}
+            applyDestroyOperation: "true"
+            embeddedModules:
+              - name: s3
+                type: terraform.EmbeddedModuleArtifact
+                file: !file "artifacts/3.0.3/s3"
+            modules:
+              - name: s3-bucket
+                type: terraform.InstantiatedModuleSpec
+                inputVariables:
+                  name: '{{bucket_name}}'
+                  region: '{{aws_region}}'
+                outputVariables:
+                  my_main_domain_name: 'bucket_domain_name'
+                  my_main_id: 'bucket_id'
+                source: s3

@@ -23,7 +23,7 @@ class HclParser:
 
     def _load_dat_file(self):
         hcl.parser.pickle_file = self._load_classpath_resource('parsetab.dat')
-        print("_load_dat_file: {0}".format(hcl.parser.pickle_file))
+        #print("_load_dat_file: {0}".format(hcl.parser.pickle_file))
 
     def parse_file(self, file):
         fp = open(file, 'rb')

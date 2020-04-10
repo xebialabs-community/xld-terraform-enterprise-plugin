@@ -12,10 +12,8 @@ import terraxld.api
 reload(terraxld.api)
 from terraxld.api import TFE
 
-myapi = TFE(deployed.container.organization)
-workspace_name = deployed.workspaceName
+myapi = TFE(organization)
 ws_id = myapi.workspaces.get_id(workspace_name)
-myapi.hcl_parser.parse_folder(deployed)
 
 basics=dict()
 basics['TF_CLI_ARGS']='-no-color'
@@ -23,17 +21,17 @@ basics['CONFIRM_DESTROY']='1'
 
 non_secured_items = {}
 non_secured_items.update(basics)
-non_secured_items.update(deployed.container.variables)
+non_secured_items.update(provider.variables)
 
 secured_items = {}
-secured_items.update(deployed.container.credentials)
+secured_items.update(provider.credentials)
 
-for cpm_key in deployed.container.credentialsPropertyMapping:
+for cpm_key in provider.credentialsPropertyMapping:
     if cpm_key == "empty":
         continue
-    key = deployed.container.credentialsPropertyMapping[cpm_key]
-    value = deployed.container.getProperty(cpm_key)
-    pd_key = deployed.container.type.getDescriptor().getPropertyDescriptor(cpm_key)
+    key = provider.credentialsPropertyMapping[cpm_key]
+    value = provider.getProperty(cpm_key)
+    pd_key = provider.type.getDescriptor().getPropertyDescriptor(cpm_key)
     if pd_key.isPassword():
         secured_items[key]=value
     else:

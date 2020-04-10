@@ -10,8 +10,7 @@
 
 from terraxld.api import TFE
 
-myapi = TFE(deployed.container.organization)
-workspace_name = deployed.workspaceName
+myapi = TFE(organization)
 ws_id = myapi.workspaces.get_id(workspace_name)
 myapi.hcl_parser.parse_folder(deployed)
 

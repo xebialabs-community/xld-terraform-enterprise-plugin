@@ -10,11 +10,9 @@
 
 from terraxld.api import TFE
 
-myapi = TFE(deployed.container.organization)
-workspace_name = deployed.workspaceName
-
+myapi = TFE(organization)
 print("create a new workspace {0}".format(workspace_name))
-workspace=myapi.workspaces.create(workspace_name, deployed.terraformVersion)
+workspace=myapi.workspaces.create(workspace_name,terraform_version)
 print workspace
 raise_error = False
 if 'errors' in workspace:

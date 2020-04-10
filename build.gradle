@@ -25,6 +25,7 @@ repositories {
 def apiVersion = "2018.6.5"
 
 dependencies {
+    compile "com.xebialabs.deployit:udm-plugin-api:$apiVersion"
     jython ":requests:2.19.1"
     jython ":certifi:2019.9.11"
     // hcl python parser https://github.com/virtuald/pyhcl/
@@ -33,7 +34,7 @@ dependencies {
             from "src/hcl" // Will copy the contents of the directory into the module directory
         }
     }
-    //compile group: 'com.xebialabs.overthere', name: 'overtherepy', version: '0.0.4'
+    compile group: 'com.xebialabs.overthere', name: 'overtherepy', version: '0.0.4'
 }
 
 

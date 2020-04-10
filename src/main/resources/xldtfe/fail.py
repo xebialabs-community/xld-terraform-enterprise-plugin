@@ -8,26 +8,5 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from terraxld.api import TFE
-import os
-
-def format_error_message(run):
-    if 'errors'in run:
-        return ",".join(['{title}:{detail}({status})'.format(**error) for error in run['errors']])
-    else:
-        return run
-
-myapi = TFE(organization)
-ws_id = myapi.workspaces.get_id(workspace_name)
-cv_id = context.getAttribute(workspace_name+"_cv_id")
-print("cv_id {0}".format(cv_id))
-task_id = context.getTask().getId()
-run = myapi.runs.create(ws_id,cv_id,"Trigger by XLDeploy {0}".format(task_id))
-if 'data' in run:
-    run_id = run['data']['id']
-    context.setAttribute(workspace_name+"_run_id", run_id)
-    print("run id is {0}".format(run_id))
-else:
-    print(format_error_message(run))
-    raise Exception("ERROR {0}".format(format_error_message(run)))
-
+import sys
+sys.exit(1)

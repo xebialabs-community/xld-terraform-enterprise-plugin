@@ -140,3 +140,12 @@ class TFEEndpoint(object):
         req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies,stream=True)
         return req
 
+    def format_error_message(self,run):
+        if 'errors'in run:
+            return ",".join(['{title} ({status})'.format(**error) for error in run['errors']])
+        else:
+            if run is "None":
+                "Empty Error Message"
+            else:
+                return run
+

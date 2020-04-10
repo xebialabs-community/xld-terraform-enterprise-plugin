@@ -15,84 +15,52 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
 -->
 <rules xmlns="http://www.xebialabs.com/xl-deploy/xl-rules">
 
-  <rule name="tfe.create.workspace" scope="deployed">
-    <conditions>
-      <type>terraformEnterprise.ExecutedModule</type>
-      <operation>CREATE</operation>
-    </conditions>
-    <steps>
-      <jython>
-        <order>60</order>
-        <description expression="true">"Create a new Workspace {0}/{1}".format(deployed.container.organization.name,deployed.workspaceName)</description>
-        <script-path>xldtfe/create_workspace.py</script-path>
-      </jython>
-    </steps>
-  </rule>
 
-  <rule name="tfe.destroy.workspace" scope="deployed">
-    <conditions>
-      <type>terraformEnterprise.ExecutedModule</type>
-      <operation>DESTROY</operation>
-      <expression>previousDeployed.container.organization.deleteWorkspace</expression>
-    </conditions>
-    <steps>
-      <jython>
-        <order>90</order>
-        <description expression="true">"Delete a Workspace {0}/{1}".format(previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
-        <script-path>xldtfe/destroy_workspace.py</script-path>
-      </jython>
-    </steps>
-  </rule>
-
-  <rule name="tfe.create.configuration_version" scope="deployed">
-    <conditions>
-      <type>terraformEnterprise.ExecutedModule</type>
-      <operation>CREATE</operation>
-      <operation>MODIFY</operation>
-    </conditions>
-    <steps>
-      <jython>
-        <order>62</order>
-        <description expression="true">"Generate a new configuration version for {0} in {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
-        <script-path>xldtfe/create_configuration_version.py</script-path>
-      </jython>
-      <wait>
-        <order>62</order>
-        <description>Wait for the load of the configuration</description>
-        <seconds>5</seconds>
-      </wait>
-      <jython>
-        <order>62</order>
-        <description expression="true">"Set the variables for {0} in {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
-        <script-path>xldtfe/set_variables.py</script-path>
-      </jython>
-      <jython>
-        <order>62</order>
-        <description expression="true">"Set the environment for {0} in {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
-        <script-path>xldtfe/set_environment.py</script-path>
-      </jython>
-      <jython>
-        <order>65</order>
-        <description expression="true">"Trigger the run of plan for {0} on {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
-        <script-path>xldtfe/trigger_run.py</script-path>
-      </jython>
-      <jython>
-        <order>67</order>
-        <description expression="true">"Wait for the end of the execution of the plan {0} on {1}/{2}".format(deployed.name,deployed.container.organization.name,deployed.workspaceName)</description>
-        <script-path>xldtfe/wait_for_run.py</script-path>
-      </jython>
-      <checkpoint/>
-      <jython>
-        <description expression="true">"Capture terraform output variables"</description>
-        <script>xldtfe/capture_output_variables.py</script>
-        <order>68</order>
-      </jython>
-    </steps>
-  </rule>
-
-  <rule name="tfe.ExecutedModule.CREATE_resources" scope="deployed">
+    <rule name="tfe.terraformEnterprise.configuration.deploy" scope="deployed">
         <conditions>
-             <type>terraformEnterprise.ExecutedModule</type>
+            <type>terraform.Configuration</type>
+            <operation>CREATE</operation>
+            <operation>MODIFY</operation>
+            <operation>DESTROY</operation>
+            <operation>NOOP</operation>
+        </conditions>
+        <planning-script-path>xldtfe/planning/terraform.configuration.deploy.py</planning-script-path>
+    </rule>
+
+    <rule name="tfe.terraformEnterprise.module.deploy" scope="deployed">
+        <conditions>
+            <type>terraformEnterprise.ExecutedModule</type>
+            <operation>CREATE</operation>
+            <operation>MODIFY</operation>
+            <operation>DESTROY</operation>
+            <operation>NOOP</operation>
+        </conditions>
+        <planning-script-path>xldtfe/planning/terraform.module.deploy.py</planning-script-path>
+    </rule>
+
+
+    <rule name="tfe.destroy.workspace" scope="deployed">
+        <conditions>
+            <type>terraformEnterprise.ExecutedModule</type>
+            <type>terraform.Configuration</type>
+            <operation>DESTROY</operation>
+            <expression>previousDeployed.container.organization.deleteWorkspace</expression>
+        </conditions>
+        <steps>
+            <jython>
+                <order>90</order>
+                <description expression="true">"Delete a Workspace
+                    {0}/{1}".format(previousDeployed.container.organization.name,previousDeployed.workspaceName)
+                </description>
+                <script-path>xldtfe/destroy_workspace.py</script-path>
+            </jython>
+        </steps>
+    </rule>
+
+
+    <rule name="tfe.ExecutedModule.CREATE_resources" scope="deployed">
+        <conditions>
+            <type>terraformEnterprise.ExecutedModule</type>
             <operation>CREATE</operation>
             <operation>MODIFY</operation>
             <expression>deployed.generateCIsFromResources</expression>
@@ -108,60 +76,6 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
             </jython>
         </steps>
     </rule>
-
-  <rule name="tfe.destroy.configuration_version" scope="deployed">
-    <conditions>
-      <type>terraformEnterprise.ExecutedModule</type>
-      <operation>DESTROY</operation>
-      <expression>previousDeployed.applyDestroyOperation</expression>
-    </conditions>
-    <steps>
-      <jython>
-        <order>62</order>
-        <description expression="true">"Generate a new configuration version for {0} in {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
-        <script-path>xldtfe/create_configuration_version.py</script-path>
-        <jython-context>
-          <deployed expression="true">previousDeployed</deployed>
-        </jython-context>
-      </jython>
-      <wait>
-        <order>62</order>
-        <description>Wait for the load of the configuration</description>
-        <seconds>5</seconds>
-      </wait>
-      <jython>
-        <order>62</order>
-        <description expression="true">"Set the variables for {0} in {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
-        <script-path>xldtfe/set_variables.py</script-path>
-        <jython-context>
-          <deployed expression="true">previousDeployed</deployed>
-        </jython-context>
-      </jython>
-      <jython>
-        <order>62</order>
-        <description expression="true">"Set the environment for {0} in {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
-        <script-path>xldtfe/set_environment.py</script-path>
-        <jython-context>
-          <deployed expression="true">previousDeployed</deployed>
-        </jython-context>
-      </jython>
-      <jython>
-        <order>65</order>
-        <description expression="true">"Trigger the run of a DESTROY plan for {0} on {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
-        <script-path>xldtfe/trigger_destroy.py</script-path>
-      </jython>
-      <jython>
-        <order>67</order>
-        <description expression="true">"Wait for the end of the execution of the plan {0} on {1}/{2}".format(previousDeployed.name,previousDeployed.container.organization.name,previousDeployed.workspaceName)</description>
-        <script-path>xldtfe/wait_for_run.py</script-path>
-        <jython-context>
-          <deployed expression="true">previousDeployed</deployed>
-        </jython-context>
-      </jython>
-    </steps>
-  </rule>
-
-
 
 
 </rules>
