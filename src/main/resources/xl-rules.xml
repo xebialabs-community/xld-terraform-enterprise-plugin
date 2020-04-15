@@ -49,9 +49,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
         <steps>
             <jython>
                 <order>90</order>
-                <description expression="true">"Delete a Workspace
-                    {0}/{1}".format(previousDeployed.container.organization.name,previousDeployed.workspaceName)
-                </description>
+                <description expression="true">"Delete a Workspace {0}/{1}".format(previousDeployed.container.organization.name, previousDeployed.workspaceName)</description>
                 <script-path>xldtfe/destroy_workspace.py</script-path>
             </jython>
         </steps>
