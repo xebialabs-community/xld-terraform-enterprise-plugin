@@ -98,6 +98,9 @@
         <generate-deployable type="terraform.ConfigurationSpec" extends="udm.BaseDeployable"/>
         <property name="workspaceName"/>
         <property name="terraformVersion" default="0.12.24"/>
+        <property name="outputVariables" kind="map_string_string" required="false" category="Output"
+                  description="Output variables captured in deployed"/>
+
         <property name="applyDestroyOperation" kind="boolean" default="false" required="false" category="Advanced"/>
         <property name="modules" kind="set_of_ci" referenced-type="terraform.InstantiatedModule" as-containment="true"
                   required="false"/>

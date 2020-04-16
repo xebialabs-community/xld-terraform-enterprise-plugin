@@ -43,7 +43,8 @@ class PlanGenerator:
                           'terraform_version': deployed.terraformVersion,
                           'organization': container.organization,
                           'provider': container,
-                          'work_dir': work_dir}
+                          'work_dir': work_dir,
+                          'deployed_application': deployedApplication}
 
         for module in deployed.embeddedModules:
             self.context.addStep(self.steps.upload(
@@ -57,7 +58,7 @@ class PlanGenerator:
 
         for module in deployed.modules:
             jython_context['deployed'] = module
-            is_embedded_module = len([ em.name for em in deployed.embeddedModules if module.source == em.name]) > 0
+            is_embedded_module = len([em.name for em in deployed.embeddedModules if module.source == em.name]) > 0
 
             self.context.addStep(self.steps.template(
                 description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name,
@@ -69,19 +70,8 @@ class PlanGenerator:
                 target_host=deployed.container.organization.host,
                 freemarker_context={"deployed": module,
                                     "generate_output_variables": self._is_create(),
-                                    "is_embedded_module": is_embedded_module }
+                                    "is_embedded_module": is_embedded_module}
             ))
-
-            if self._is_create():
-                self.context.addStep(self.steps.jython(
-                    description="Capture output variables for {0} for {1}/{2}".format(deployed.name, organization.name,
-                                                                                      workspace),
-                    order=66,
-                    script="xldtfe/capture_output_variables.py",
-                    jython_context=jython_context
-                ))
-
-
 
         self.context.addStep(self.steps.jython(
             description="Create or Get the Workspace {0}/{1}".format(
@@ -148,6 +138,40 @@ class PlanGenerator:
             script="xldtfe/wait_for_run.py",
             jython_context=jython_context
         ))
+
+        if self._is_create():
+            jython_context['deployed'] = deployed
+            self.context.addStep(self.steps.jython(
+                description="Capture output variables for {0} for {1}/{2}".format(deployed.name, organization.name,
+                                                                                  workspace),
+                order=66,
+                script="xldtfe/capture_output_variables.py",
+                jython_context=jython_context
+            ))
+
+        if self._is_create() and deployed.automaticDictionary:
+            jython_context['deployed'] = deployed
+            jython_context['operation'] = 'fill'
+            self.context.addStep(self.steps.jython(
+                description="Fill Dictionary with captured output variables for '{0}' for {1}/{2}".format(deployed.name,
+                                                                                                          organization.name,
+                                                                                                          workspace),
+                order=90,
+                script="xldtfe/manage_dictionary.py",
+                jython_context=jython_context
+            ))
+        else:
+            jython_context['deployed'] = deployed
+            jython_context['operation'] = 'delete'
+            jython_context['deployed_application'] = previousDeployedApplication
+            self.context.addStep(self.steps.jython(
+                description="Delete Dictionary associated for '{0}' for {1}/{2}".format(deployed.name,
+                                                                                        organization.name,
+                                                                                        workspace),
+                order=90,
+                script="xldtfe/manage_dictionary.py",
+                jython_context=jython_context
+            ))
 
 
 PlanGenerator(context, steps, delta).generate()

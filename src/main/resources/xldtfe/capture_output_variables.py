@@ -38,11 +38,8 @@ if output:
             print "'{0}' output variable found but not managed because its a list.Skip!".format(key)
             print output_json[key]['value']
         else:
-            if len(deployed.outputVariables) == 0 or key in deployed.outputVariables:
-                output_variables[key] = output_json[key]['value']
-                print("new output variable found {0}:{1}".format(key,output_variables[key]))
-            else:
-                print("new output variable found {0} but not assigned by this item ".format(key))
+            output_variables[key] = output_json[key]['value']
+            print("new output variable found {0}:{1}".format(key,output_variables[key]))
 
     deployed.outputVariables = output_variables
     context.logOutput("Output variables from Terraform captured.")
