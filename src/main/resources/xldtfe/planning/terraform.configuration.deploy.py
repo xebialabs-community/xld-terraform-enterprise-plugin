@@ -11,6 +11,7 @@
 from com.xebialabs.deployit.plugin.api.deployment.specification import Operation
 import tempfile
 
+
 class PlanGenerator:
 
     def __init__(self, context, steps, delta):
@@ -56,6 +57,8 @@ class PlanGenerator:
 
         for module in deployed.modules:
             jython_context['deployed'] = module
+            is_embedded_module = len([ em.name for em in deployed.embeddedModules if module.source == em.name]) > 0
+
             self.context.addStep(self.steps.template(
                 description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name,
                                                                                 workspace),
@@ -64,7 +67,9 @@ class PlanGenerator:
                 template_path="xldtfe/templates/module.tf.ftl",
                 create_target_path=True,
                 target_host=deployed.container.organization.host,
-                freemarker_context={"deployed": module, "generate_output_variables": self._is_create()}
+                freemarker_context={"deployed": module,
+                                    "generate_output_variables": self._is_create(),
+                                    "is_embedded_module": is_embedded_module }
             ))
 
             if self._is_create():
@@ -75,6 +80,8 @@ class PlanGenerator:
                     script="xldtfe/capture_output_variables.py",
                     jython_context=jython_context
                 ))
+
+
 
         self.context.addStep(self.steps.jython(
             description="Create or Get the Workspace {0}/{1}".format(

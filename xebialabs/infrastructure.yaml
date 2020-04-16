@@ -19,6 +19,7 @@ spec:
     credentials:     
     accessSecret: !value "aws_secret_access_key"
     accesskey: !value "aws_access_key_id"
+    defaultRegion: "eu-west-3"
 ---
 apiVersion: xl-deploy/v1
 kind: Infrastructure

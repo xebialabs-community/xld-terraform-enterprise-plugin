@@ -10,7 +10,14 @@
 
 -->
 module "${deployed.name}" {
+<#if is_embedded_module>
     source = "./${deployed.source}"
+<#else>
+    source = "${deployed.source}"
+</#if>
+<#if deployed.version??>
+    version= "${deployed.version}"
+</#if>
 
 <#if deployed.inputVariables??>
 <#assign inputVariables=deployed.inputVariables />

@@ -1,0 +1,54 @@
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: Applications/infrastructure-calculator
+  type: udm.Application
+  lastVersion: 2.0.0
+  children:
+  - name: 2.0.0
+    type: udm.DeploymentPackage
+    deployables:
+    - name: stack
+      type: terraform.ConfigurationSpec
+      workspaceName: calculator-stack-{{env}}
+      embeddedModules:
+      - name: keypairs
+        type: terraform.EmbeddedModuleArtifact
+        file: !file "artifacts/keypairs"
+      modules:
+      - name: java-bdd-project
+        type: terraform.InstantiatedModuleSpec
+        source: jclopeza/java-bdd-project/module
+        version: 4.0.0
+        inputVariables:
+          aws_region: '{{aws_region}}'
+          instance_type: '{{instance_type}}'
+          public_key_path: keypairs/id_rsa.pub
+          environment: '{{env}}'
+          private_key_path: /dev/null
+          project_name: calculator
+        outputVariables:
+          environment: environment
+          public_ip_front: public_ip_front
+          public_ip_bdd: public_ip_bdd
+          private_key_path: private_key_path
+
+---
+apiVersion: xl-deploy/v1
+kind: Environments
+spec:
+  - directory: Environments/calculator
+    children:
+      - name: calculator.dev
+        type: udm.Environment
+        members:
+          - Infrastructure/myOrganization/aws
+        dictionaries:
+          - Environments/calculator/config.dev
+      - name: config.dev
+        type: udm.Dictionary
+        entries:
+          aws_region: eu-west-3
+          env: dev
+          instance_type: t2.micro
