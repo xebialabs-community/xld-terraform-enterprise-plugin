@@ -107,6 +107,7 @@
         <property name="embeddedModules" kind="set_of_ci" referenced-type="terraform.EmbeddedModule"
                   as-containment="true"
                   required="false"/>
+        <property name="mapperContext"  kind="map_string_string" required="false" category="Provision"/>
 
         <property name="outputVariables" kind="map_string_string" required="false"/>
         <property name="environmentPath" label="Environment path and name" required="false" category = "Generated Configuration Items"/>
@@ -143,6 +144,8 @@
                   as-containment="true" required="false"/>
         <property name="embeddedModules" kind="set_of_ci" referenced-type="terraform.EmbeddedModuleArtifact"
                   as-containment="true" required="false"/>
+        <property name="boundTemplates" hidden="false"  required="false" candidate-values-filter="filterByProvisioningPackage" description = "The set of CI templates." as-containment = "false"
+                  kind="set_of_ci" referenced-type="udm.Template"/>
     </type-modification>
 
     <type type="cloud.azure.Database" extends="terraformEnterprise.ExecutedModule"

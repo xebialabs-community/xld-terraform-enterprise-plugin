@@ -12,10 +12,13 @@ spec:
     - name: stack
       type: terraform.ConfigurationSpec
       workspaceName: calculator-stack-{{env}}
+      generateCIsFromResources: True
       embeddedModules:
       - name: keypairs
         type: terraform.EmbeddedModuleArtifact
         file: !file "artifacts/keypairs"
+      mapperContext:
+        privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
       modules:
       - name: java-bdd-project
         type: terraform.InstantiatedModuleSpec
@@ -33,6 +36,60 @@ spec:
           public_ip_front: public_ip_front
           public_ip_bdd: public_ip_bdd
           private_key_path: private_key_path
+  - name: 2.0.1
+    type: udm.DeploymentPackage
+    deployables:
+      - name: stack
+        type: terraform.ConfigurationSpec
+        workspaceName: calculator-stack-{{env}}
+        generateCIsFromResources: False
+        boundTemplates:
+          - ../template-host-bdd
+          - ../template-host-front
+        embeddedModules:
+          - name: keypairs
+            type: terraform.EmbeddedModuleArtifact
+            file: !file "artifacts/keypairs_2.0.1"
+        mapperContext:
+          privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
+        modules:
+          - name: java-bdd-project
+            type: terraform.InstantiatedModuleSpec
+            source: jclopeza/java-bdd-project/module
+            version: 4.0.0
+            inputVariables:
+              aws_region: '{{aws_region}}'
+              instance_type: '{{instance_type}}'
+              public_key_path: keypairs/id_rsa.pub
+              environment: '{{env}}'
+              private_key_path: /dev/null
+              project_name: calculator
+            outputVariables:
+              environment: environment
+              public_ip_front: public_ip_front
+              public_ip_bdd: public_ip_bdd
+              private_key_path: private_key_path
+    templates:
+      - name: template-host-bdd
+        type: template.overthere.SshHost
+        instanceName: !format 'Calculator-{{env}}-bdd'
+        os: UNIX
+        connectionType: SCP
+        address: '{{%outputVariables.public_ip_bdd%}}'
+        username: ubuntu
+        tags:
+          - backend
+        privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
+      - name: template-host-front
+        type: template.overthere.SshHost
+        instanceName: !format 'Calculator-{{env}}-front'
+        os: UNIX
+        connectionType: SCP
+        address: '{{%outputVariables.public_ip_front%}}'
+        username: tomcat
+        tags:
+          - frontend
+        privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
 
 ---
 apiVersion: xl-deploy/v1

@@ -10,6 +10,7 @@
 
 from terraform.mapper.resource_mapper import ResourceMapper
 
+
 class AWSEC2Mapper(ResourceMapper):
     def __init__(self):
         super(AWSEC2Mapper, self).__init__(["overthere.SshHost"])
@@ -18,24 +19,21 @@ class AWSEC2Mapper(ResourceMapper):
     def accepted_type(self):
         return 'aws_instance'
 
-    def create_ci(self, tf_resource, folder, deployed):  
-        print("-- tf_resource['type'] {0}".format(tf_resource['type']))      
-        if not self.types_supported(tf_resource['type']):           
+    def create_ci(self, tf_resource, folder, deployed):
+        print("-- tf_resource['type'] {0}".format(tf_resource['type']))
+        if not self.types_supported(tf_resource['type']):
             return None
-        
-        self.attributes = tf_resource['attributes']            
-        print("Creating CI of type 'overthere.SshHost") 
-        host_id = "{0}/{1}".format(folder,self.attributes['tags']['Name'])
+
+        self.attributes = tf_resource['attributes']
+        print("Creating CI of type 'overthere.SshHost")
+        host_id = "{0}/{1}".format(folder, self.attributes['tags']['Name'])
         print(host_id)
         host_properties = {
-            'os':'UNIX',
-            'address':self.attributes['public_ip'],
-            'username':'ubuntu',
-            'privateKeyFile': '/Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa'
-            }       
+            'os': 'UNIX',
+            'address': self.attributes['public_ip'],
+            'username': 'ubuntu',
+            'privateKeyFile': deployed.mapperContext['privateKeyFile']
+        }
         return [
-            super(AWSEC2Mapper, self)._create_ci("overthere.SshHost", host_id, host_properties),            
+            super(AWSEC2Mapper, self)._create_ci("overthere.SshHost", host_id, host_properties),
         ]
-        
-    
-    
