@@ -49,33 +49,57 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
         <steps>
             <jython>
                 <order>90</order>
-                <description expression="true">"Delete a Workspace {0}/{1}".format(previousDeployed.container.organization.name, previousDeployed.workspaceName)</description>
+                <description expression="true">"Delete a Workspace {0}/{1}".format(previousDeployed.container.organization.name, previousDeployed.workspaceName)
+                </description>
                 <script-path>xldtfe/destroy_workspace.py</script-path>
             </jython>
         </steps>
     </rule>
 
 
-
-
     <rule name="tfe.ExecutedModule.CREATE_resources" scope="deployed">
         <conditions>
             <type>terraformEnterprise.ExecutedModule</type>
+            <type>terraform.Configuration</type>
             <operation>CREATE</operation>
             <operation>MODIFY</operation>
+            <operation>NOOP</operation>
             <expression>deployed.generateCIsFromResources</expression>
         </conditions>
         <steps>
             <jython>
                 <order>85</order>
                 <description expression="true">"Create infrastructure items from resources deployed"</description>
-                <script>xldtfe/create_resources.py</script>
+                <script>xldtfe/manage_resources.py</script>
                 <jython-context>
+                    <organization expression="true">deployed.container.organization</organization>
+                    <workspace_name expression="true">deployed.workspaceName</workspace_name>
+                    <debug expression="true">deployed.container.organization.debug</debug>
                     <deployedApplication expression="true">deployedApplication</deployedApplication>
                 </jython-context>
             </jython>
         </steps>
     </rule>
 
+    <rule name="tfe.ExecutedModule.DESTROY_resource" scope="deployed">
+        <conditions>
+            <type>terraform.Configuration</type>
+            <operation>DESTROY</operation>
+            <expression>previousDeployed.generateCIsFromResources</expression>
+        </conditions>
+        <steps>
+            <jython>
+                <order>85</order>
+                <description expression="true">"Delete infrastructure items from resources deployed"</description>
+                <script>xldtfe/manage_resources.py</script>
+                <jython-context>
+                    <organization expression="true">previousDeployed.container.organization</organization>
+                    <workspace_name expression="true">previousDeployed.workspaceName</workspace_name>
+                    <debug expression="true">previousDeployed.container.organization.debug</debug>
+                    <deployedApplication expression="true">previousDeployedApplication</deployedApplication>
+                </jython-context>
+            </jython>
+        </steps>
+    </rule>
 
 </rules>

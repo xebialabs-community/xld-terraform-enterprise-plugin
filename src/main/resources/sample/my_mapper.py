@@ -25,13 +25,13 @@ class AWSEC2Mapper(ResourceMapper):
         
         self.attributes = tf_resource['attributes']            
         print("Creating CI of type 'overthere.SshHost") 
-        host_id = "{0}/{1}".format(folder,self.attributes['id'])
+        host_id = "{0}/{1}".format(folder,self.attributes['tags']['Name'])
         print(host_id)
         host_properties = {
             'os':'UNIX',
-            'address':self.attributes['public_dns'],
+            'address':self.attributes['public_ip'],
             'username':'ubuntu',
-            'password': 'ubuntu'
+            'privateKeyFile': '/Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa'
             }       
         return [
             super(AWSEC2Mapper, self)._create_ci("overthere.SshHost", host_id, host_properties),            

@@ -29,7 +29,7 @@ class MapperFactory(object):
             try:
                 resource_mappers[mapper.accepted_type()] = mapper
             except:
-                print ("!! skip {0} mapper registration".format(mapper))
+                print("!! skip {0} mapper registration".format(mapper))
         return resource_mappers
 
     @staticmethod
@@ -40,7 +40,7 @@ class MapperFactory(object):
             try:
                 resource_mappers[mapper.accepted_type()] = mapper
             except:
-                print ("!! skip {0} mapper registration".format(mapper))
+                print("!! skip {0} mapper registration".format(mapper))
         return resource_mappers
 
     @staticmethod
@@ -50,30 +50,35 @@ class MapperFactory(object):
         module_path = ".".join(class_data[:-1])
         class_str = class_data[-1]
         print(".import_module {0}".format(module_path))
-        module = importlib.import_module(module_path) 
+        module = importlib.import_module(module_path)
         clazz = getattr(module, class_str)
         instance = clazz()
         return instance
 
 
-class CreateResources(object):
+class ManageResources(object):
     def __init__(self, task_context):
         self.repository = task_context['repositoryService']
         self.context = task_context['context']
         self.previousDeployed = task_context['previousDeployed']
         self.deployed = task_context['deployed']
+        if self.deployed is None:
+            self.current_deployed = self.previousDeployed
+        else:
+            self.current_deployed = self.deployed
         self.deployedApplication = task_context['deployedApplication']
+
         self.environment_id = ProvisionHelper.getProvisionEnvironmentId(
-            self.deployed.environmentPath, self.deployedApplication.environment.id)
+            self.current_deployed.environmentPath, self.deployedApplication.environment.id)
         self.environment = ProvisionHelper.getOrCreateEnvironment(
-            self.environment_id, context)
+            self.environment_id, self.context)
 
         self.folder = "Infrastructure"
         self.generated_ids = []
         self.generated_cis = []
         self.cis_to_delete = []
         self.resource_mappers = MapperFactory.default_mappers()
-        self.resource_mappers.update(MapperFactory.mappers(deployed.container.additionalMappers))
+        self.resource_mappers.update(MapperFactory.mappers(self.current_deployed.container.additionalMappers))
 
     def process(self, output):
         self.process_resources(output)
@@ -98,12 +103,12 @@ class CreateResources(object):
                         self.process_resource(instance)
         else:
             context.logOutput(
-                "No resources found for '%s', skipping Infrastructure creation." % deployed.name)
+                "No resources found for '%s', skipping Infrastructure creation." % self.current_deployed.name)
 
     def process_resource(self, resource):
         if resource['type'] in self.resource_mappers:
             cis = self.resource_mappers[resource['type']].create_ci(
-                resource, self.folder,self.deployed)
+                resource, self.folder, self.deployed)
             for ci in cis:
                 if ci is not None:
                     if self.repository.exists(ci.id):
@@ -121,21 +126,21 @@ class CreateResources(object):
                 "Skipping '%s' as it is not a candidate for infrastructure creation." % resource['type'])
 
     def process_cis_to_delete(self):
-        if (self.previousDeployed):
+        if self.previousDeployed:
             for ci in self.previousDeployed.generatedConfigurationItems:
                 if ci.type != "udm.Environment" and ci.type != "udm.Dictionary":
                     if ci.id not in self.generated_ids:
                         self.cis_to_delete.append(ci.id)
 
     def update_environment_members(self):
-        print ("update_environment_members {0}".format(self.environment_id))
+        print("update_environment_members {0}".format(self.environment_id))
         environment = ProvisionHelper.getOrCreateEnvironment(
             self.environment_id, self.context)
         members = environment.members
         for ci in self.generated_cis:
             print("...generated ci {0}".format(ci.id))
             if 'Environments/' not in ci.id:
-                print("...{0} added to 'members' property of environment '{1}'".format(ci.id,self.environment_id))
+                print("...{0} added to 'members' property of environment '{1}'".format(ci.id, self.environment_id))
                 members.add(ci)
 
         members_to_remove = []
@@ -151,7 +156,7 @@ class CreateResources(object):
         self.repository.update(self.environment_id, environment)
 
     def update_generated_cis(self):
-        generatedConfigurationItems = self.deployed.generatedConfigurationItems
+        generatedConfigurationItems = self.current_deployed.generatedConfigurationItems
         for ci in self.generated_cis:
             generatedConfigurationItems.add(ci)
         if self.environment_id != self.deployedApplication.environment.id:
@@ -162,14 +167,14 @@ class CreateResources(object):
         for ci in generatedConfigurationItems:
             if ci.id in self.cis_to_delete:
                 print("'%s' removed from 'generatedConfigurationItems' property of '%s'" % (
-                    ci.id, self.deployed.id))
+                    ci.id, self.current_deployed.id))
                 generated_to_remove.append(ci)
         for ci in generated_to_remove:
             generatedConfigurationItems.remove(ci)
-        self.deployed.setGeneratedConfigurationItems(
-            generatedConfigurationItems)
-        if self.repository.exists(self.deployed.id):
-            self.repository.update(self.deployed.id, self.deployed)
+
+        self.current_deployed.generatedConfigurationItems = generatedConfigurationItems
+        if self.repository.exists(self.current_deployed.id):
+            self.repository.update(self.current_deployed.id, self.current_deployed)
 
     def delete_removed_resources(self):
         for ci_id in self.cis_to_delete:
@@ -177,28 +182,30 @@ class CreateResources(object):
             print("'%s' deleted" % ci_id)
 
 
-
 from terraxld.api import TFE
-import os
+
 import sys
 import json
+import tempfile
 
-myapi = TFE(deployed.container.organization)
-workspace_name = deployed.workspaceName
+myapi = TFE(organization)
 ws_id = myapi.workspaces.get_id(workspace_name)
-
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
 
-if deployed.container.organization.debug:
-    print ("---- output" )
-    import tempfile
-    outfile = tempfile.NamedTemporaryFile(delete=False,prefix="xld-tfe-",suffix="-output.json")
+if debug:
+    print("---- output")
+    outfile = tempfile.NamedTemporaryFile(delete=False, prefix="xld-tfe-", suffix="-output.json")
     print("dump output to {0}".format(outfile.name))
-    json.dump(output, outfile,indent=4)
-    print(50*'-')
+    json.dump(output, outfile, indent=4)
+    print(50 * '-')
     json.dump(output, sys.stdout, indent=4)
-    print(50*'-')
+    print(50 * '-')
     outfile.close()
-    print ("---- /output")
+    print("---- /output")
 
-CreateResources(locals()).process(output)
+
+
+
+
+ManageResources(locals()).process(output)
+
