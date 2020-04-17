@@ -41,7 +41,7 @@ class ManageDictionaryStep:
             self.repository_service.update([environment])
             self.context.logOutput("Dictionary added to Environment '{0}'".format(environment.id))
             current_bound_configuration_items = self.deployed.boundConfigurationItems
-            current_bound_configuration_items.append(dictionary)
+            current_bound_configuration_items.add(dictionary)
             deployed.boundConfigurationItems = current_bound_configuration_items
 
     def delete(self):
