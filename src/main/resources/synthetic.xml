@@ -131,6 +131,7 @@
                   description="Secret input variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="boundConfigurationItems" hidden="false" kind="set_of_ci" as-containment="false" required="false" referenced-type="udm.BaseConfigurationItem"/>
     </type>
 
     <type type="terraform.EmbeddedModule" deployable-type="terraform.EmbeddedModuleArtifact"
