@@ -1,0 +1,14 @@
+---
+apiVersion: xl-deploy/v1
+kind: Infrastructure
+spec:
+- name: Infrastructure/Calculator-dev-bdd
+  type: overthere.SshHost
+  tags:
+  - backend
+  ansibleControler: Infrastructure/localhost/localAnsibleControler
+  os: UNIX
+  connectionType: SCP
+  address: 35.181.60.70
+  username: ubuntu
+  privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa

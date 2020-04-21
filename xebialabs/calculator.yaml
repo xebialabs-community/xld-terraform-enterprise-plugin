@@ -86,7 +86,7 @@ spec:
         os: UNIX
         connectionType: SCP
         address: '{{%outputVariables.public_ip_front%}}'
-        username: tomcat
+        username: ubuntu
         tags:
           - frontend
         privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
