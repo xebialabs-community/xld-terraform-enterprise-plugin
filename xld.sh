@@ -13,6 +13,5 @@ spec:
 " > /tmp/deploy.yaml
 
 cat /tmp/deploy.yaml
-xl preview --xl-deploy-url http://localhost:4516 -f /tmp/deploy.yaml
-
-xl apply --xl-deploy-url http://localhost:4516 -f /tmp/deploy.yaml
+./xlw --config ./config.yaml preview  -f /tmp/deploy.yaml
+./xlw --config ./config.yaml  apply  -f /tmp/deploy.yaml
