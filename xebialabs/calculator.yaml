@@ -18,7 +18,7 @@ spec:
         type: terraform.EmbeddedModuleArtifact
         file: !file "artifacts/keypairs"
       mapperContext:
-        privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
+        privateKeyFile: keypairs/id_rsa
       modules:
       - name: java-bdd-project
         type: terraform.InstantiatedModuleSpec
@@ -51,7 +51,7 @@ spec:
             type: terraform.EmbeddedModuleArtifact
             file: !file "artifacts/keypairs_2.0.1"
         mapperContext:
-          privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
+          privateKeyFile: keypairs/id_rsa
         modules:
           - name: java-bdd-project
             type: terraform.InstantiatedModuleSpec
@@ -79,7 +79,7 @@ spec:
         username: ubuntu
         tags:
           - backend
-        privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
+        privateKeyFile: keypairs/id_rsa
       - name: template-host-front
         type: template.overthere.SshHost
         instanceName: !format 'Calculator-{{env}}-front'
@@ -89,7 +89,7 @@ spec:
         username: ubuntu
         tags:
           - frontend
-        privateKeyFile: /Users/bmoussaud/Workspace/xebialabs-community/xld-terraform-enterprise-plugin/xebialabs/artifacts/keypairs/id_rsa
+        privateKeyFile: keypairs/id_rsa
 
 ---
 apiVersion: xl-deploy/v1
