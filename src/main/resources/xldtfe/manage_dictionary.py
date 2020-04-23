@@ -38,6 +38,7 @@ class ManageDictionaryStep:
             list_of_dict = environment.dictionaries
             list_of_dict.append(dictionary)
             environment.dictionaries = list_of_dict
+            self.context.logOutput("dictionary list of {0} is now {1}".format(environment.id, environment.dictionaries))
             self.repository_service.update([environment])
             self.context.logOutput("Dictionary added to Environment '{0}'".format(environment.id))
             current_bound_configuration_items = self.deployed.boundConfigurationItems
@@ -49,6 +50,7 @@ class ManageDictionaryStep:
         environment = self.repository_service.read(self.environment_id)
         list_of_dict = [d for d in environment.dictionaries if not d.id == dictionary_id]
         environment.dictionaries = list_of_dict
+        self.context.logOutput("Dictionary list of {0} is now {1}".format(environment.id, environment.dictionaries))
         self.repository_service.update([environment])
         self.context.logOutput("Dictionary removed from Environment '{0}'".format(environment.id))
         self.repository_service.delete(dictionary_id)
@@ -83,7 +85,7 @@ class ManageDictionaryStep:
         for ci in ci_id.split('/')[:-1]:
             full_path_id.append(ci)
             current_id = "/".join(full_path_id)
-            self.context.logOutput("test {0}".format(current_id))
+            self.context.logOutput("new Directory ? {0}".format(current_id))
             if self.repository_service.exists(current_id):
                 read_ci = self.repository_service.read(current_id)
                 if read_ci.type not in ['internal.Root', 'core.Directory']:
@@ -101,5 +103,4 @@ step = ManageDictionaryStep(deployed=deployed,
                             repository_service=repositoryService,
                             context=context)
 getattr(step, operation)()
-
 
