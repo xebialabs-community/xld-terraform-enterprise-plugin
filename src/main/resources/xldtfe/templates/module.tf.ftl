@@ -15,23 +15,26 @@ module "${deployed.name}" {
 <#else>
     source = "${deployed.source}"
 </#if>
+
 <#if deployed.version??>
     version= "${deployed.version}"
 </#if>
 
-<#if deployed.inputVariables??>
 <#assign inputVariables=deployed.inputVariables />
 <#list inputVariables?keys as key>
     ${key}="${inputVariables[key]}"
 </#list>
-</#if>
 
-<#if deployed.secretInputVariables??>
+<#assign inputVariables=deployed.inputHCLVariables />
+<#list inputVariables?keys as key>
+    ${key}=${inputVariables[key]}
+</#list>
+
 <#assign secretInputVariables=deployed.secretInputVariables />
 <#list secretInputVariables?keys as key>
     ${key}="${secretInputVariables[key]}"
 </#list>
-</#if>
+
 }
 
 <#if generate_output_variables>

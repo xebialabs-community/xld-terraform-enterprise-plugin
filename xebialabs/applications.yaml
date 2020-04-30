@@ -75,3 +75,26 @@ spec:
                   my_main_domain_name: 'bucket_domain_name'
                   my_main_id: 'bucket_id'
                 source: s3
+      - name: 3.0.5
+        type: udm.DeploymentPackage
+        deployables:
+          - name: stack
+            type: terraform.ConfigurationSpec
+            workspaceName: multi-{{aws_region}}
+            applyDestroyOperation: "true"
+            embeddedModules:
+              - name: s3
+                type: terraform.EmbeddedModuleArtifact
+                file: !file "artifacts/3.0.5/s3"
+            modules:
+              - name: s3-bucket
+                type: terraform.InstantiatedModuleSpec
+                inputVariables:
+                  name: '{{bucket_name}}'
+                  region: '{{aws_region}}'
+                inputHCLVariables:
+                  tags: '{{tags}}'
+                outputVariables:
+                  my_main_domain_name: 'bucket_domain_name'
+                  my_main_id: 'bucket_id'
+                source: s3

@@ -107,14 +107,14 @@
         <property name="embeddedModules" kind="set_of_ci" referenced-type="terraform.EmbeddedModule"
                   as-containment="true"
                   required="false"/>
-        <property name="mapperContext"  kind="map_string_string" required="false" category="Provision"/>
+        <property name="mapperContext" kind="map_string_string" required="false" category="Provision"/>
 
         <property name="outputVariables" kind="map_string_string" required="false"/>
-        <property name="environmentPath" label="Environment path and name" required="false" category = "Generated Configuration Items"/>
-        <property name="automaticDictionary" label="Create dictionary from output variables" kind="boolean"  default="true" required="false" category = "Generated Configuration Items"/>
-        <property name="dictionaryPath" label="Dictionary path and name" required="false" category = "Generated Configuration Items"/>
-        <property name="generateCIsFromResources" label="Generate CIs from resources" kind="boolean"  default="true" required="false" category = "Generated Configuration Items"/>
-        <property name="generatedConfigurationItems" label="Generate CIs from resources" kind="set_of_ci"  referenced-type="udm.ConfigurationItem"  required="false" category = "Generated Configuration Items"/>
+        <property name="environmentPath" label="Environment path and name" required="false" category="Generated Configuration Items"/>
+        <property name="automaticDictionary" label="Create dictionary from output variables" kind="boolean" default="true" required="false" category="Generated Configuration Items"/>
+        <property name="dictionaryPath" label="Dictionary path and name" required="false" category="Generated Configuration Items"/>
+        <property name="generateCIsFromResources" label="Generate CIs from resources" kind="boolean" default="true" required="false" category="Generated Configuration Items"/>
+        <property name="generatedConfigurationItems" label="Generate CIs from resources" kind="set_of_ci" referenced-type="udm.ConfigurationItem" required="false" category="Generated Configuration Items"/>
 
         <property name="boundConfigurationItems" hidden="false" kind="set_of_ci" as-containment="false" required="false" referenced-type="udm.BaseConfigurationItem" category="Provisioning"/>
     </type>
@@ -128,8 +128,10 @@
         <property name="version" required="false"/>
         <property name="inputVariables" kind="map_string_string" required="false"
                   description="Input variables to be used in the Terraform configuration."/>
+        <property name="inputHCLVariables" label="input HCL Variables" kind="map_string_string" required="false"
+                  description="Input HCL variables(map, list, ...) to be used in the Terraform configuration."/>
         <property name="secretInputVariables" kind="map_string_string" password="true" required="false"
-                  description="Secret input variables to be used in the Terraform configuration."/>
+                  description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
     </type>
@@ -145,7 +147,7 @@
                   as-containment="true" required="false"/>
         <property name="embeddedModules" kind="set_of_ci" referenced-type="terraform.EmbeddedModuleArtifact"
                   as-containment="true" required="false"/>
-        <property name="boundTemplates" hidden="false"  required="false" candidate-values-filter="filterByProvisioningPackage" description = "The set of CI templates." as-containment = "false"
+        <property name="boundTemplates" hidden="false" required="false" candidate-values-filter="filterByProvisioningPackage" description="The set of CI templates." as-containment="false"
                   kind="set_of_ci" referenced-type="udm.Template"/>
     </type-modification>
 

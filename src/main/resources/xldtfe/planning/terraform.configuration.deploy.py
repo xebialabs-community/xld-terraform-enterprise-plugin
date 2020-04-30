@@ -63,7 +63,7 @@ class PlanGenerator:
             self.context.addStep(self.steps.template(
                 description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name,
                                                                                 workspace),
-                order=60,
+                order=60,   
                 target_path="{0}/{1}.tf".format(work_dir, module.name),
                 template_path="xldtfe/templates/module.tf.ftl",
                 create_target_path=True,
