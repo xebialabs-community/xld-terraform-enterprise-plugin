@@ -12,9 +12,8 @@ from terraxld.api import TFE
 
 myapi = TFE(organization)
 ws_id = myapi.workspaces.get_id(workspace_name)
-myapi.hcl_parser.parse_folder(deployed)
+myapi.hcl_parser.parse_deployed(deployed)
 
 myapi.load_variables_in_workspace(deployed.inputVariables, workspace_name, False, scope='terraform')
-myapi.load_variables_in_workspace(deployed.secretInputVariables, workspace_name, True,scope='terraform')
-
+myapi.load_variables_in_workspace(deployed.secretInputVariables, workspace_name, True, scope='terraform')
 
