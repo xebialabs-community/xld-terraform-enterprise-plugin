@@ -83,7 +83,7 @@ it fills only with the variables that has no default value or null value or empt
 
 A provider gathers the properties used to configure and to authenticate the actions on a cloud provider as environment variables injected at deployment time.
 Workflow:
-1. create a new CI extending `terraformEnterprise.Provider``
+1. create a new CI extending `terraformEnterprise.Provider`
 2. add properties. Using the `password` attribut to control if it's a sensitive value or not.
 3. fill the `credentialsPropertyMapping` default value that map each property name wth the environment variable name.
 
