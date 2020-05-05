@@ -12,20 +12,21 @@ from terraxld.api import TFE
 import sys
 import json
 
+
 def dump_json(data, message):
     if True:
-        print(50*'=')
+        print(50 * '=')
         print(message)
-        print(50*'=')
+        print(50 * '=')
         json.dump(data, sys.stdout, indent=4)
-        print(50*'=')
+        print(50 * '=')
 
 
 myapi = TFE(organization)
 ws_id = myapi.workspaces.get_id(workspace_name)
 
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
-#dump_json(output,"OUTPUT")
+# dump_json(output,"OUTPUT")
 
 if output:
     output_variables = {}
@@ -33,16 +34,15 @@ if output:
 
     for key in output_json:
         var_type = output_json[key]['type']
-        print "{0}:{1}/{2}".format(key,var_type,type(var_type))
+        print("{0}:{1}/{2}".format(key, var_type, type(var_type)))
         if isinstance(var_type, list):
-            print "'{0}' output variable found but not managed because its a list.Skip!".format(key)
-            print output_json[key]['value']
+            print("'{0}' output variable found but not managed because its a list.Skip!".format(key))
+            print(output_json[key]['value'])
         else:
             output_variables[key] = output_json[key]['value']
-            print("new output variable found {0}:{1}".format(key,output_variables[key]))
+            print("new output variable found {0}:{1}".format(key, output_variables[key]))
 
     deployed.outputVariables = output_variables
     context.logOutput("Output variables from Terraform captured.")
 else:
     context.logOutput("No output variables found.")
-
