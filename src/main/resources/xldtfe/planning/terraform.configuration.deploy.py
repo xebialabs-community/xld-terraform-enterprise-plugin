@@ -10,6 +10,7 @@
 
 from com.xebialabs.deployit.plugin.api.deployment.specification import Operation
 import tempfile
+import json
 
 
 class PlanGenerator:
@@ -59,18 +60,22 @@ class PlanGenerator:
         for module in deployed.modules:
             jython_context['deployed'] = module
             is_embedded_module = len([em.name for em in deployed.embeddedModules if module.source == em.name]) > 0
+            hcl_variables = dict()
+            for map_variable in module.mapInputVariables:
+                hcl_variables[map_variable.name] = json.dumps(map_variable.variables)
 
             self.context.addStep(self.steps.template(
                 description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name,
                                                                                 workspace),
-                order=60,   
+                order=60,
                 target_path="{0}/{1}.tf".format(work_dir, module.name),
                 template_path="xldtfe/templates/module.tf.ftl",
                 create_target_path=True,
                 target_host=deployed.container.organization.host,
                 freemarker_context={"deployed": module,
                                     "generate_output_variables": self._is_create(),
-                                    "is_embedded_module": is_embedded_module}
+                                    "is_embedded_module": is_embedded_module,
+                                    "hcl_variables": hcl_variables}
             ))
 
         self.context.addStep(self.steps.jython(

@@ -30,6 +30,10 @@ module "${deployed.name}" {
     ${key}=${inputVariables[key]}
 </#list>
 
+<#list hcl_variables?keys as key>
+    ${key}=${hcl_variables[key]}
+</#list>
+
 <#assign secretInputVariables=deployed.secretInputVariables />
 <#list secretInputVariables?keys as key>
     ${key}="${secretInputVariables[key]}"

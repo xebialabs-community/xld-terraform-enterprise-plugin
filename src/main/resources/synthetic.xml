@@ -130,16 +130,27 @@
                   description="Input variables to be used in the Terraform configuration."/>
         <property name="inputHCLVariables" label="input HCL Variables" kind="map_string_string" required="false"
                   description="Input HCL variables(map, list, ...) to be used in the Terraform configuration."/>
+        <property name="mapInputVariables" kind="set_of_ci" as-containment="true" required="false" referenced-type="terraform.MapInputVariable"/>
         <property name="secretInputVariables" kind="map_string_string" password="true" required="false"
                   description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
     </type>
 
+    <type-modification type="terraform.InstantiatedModuleSpec">
+        <property name="mapInputVariables" kind="set_of_ci" as-containment="true" required="false" referenced-type="terraform.MapInputVariableSpec"/>
+    </type-modification>
+
     <type type="terraform.EmbeddedModule" deployable-type="terraform.EmbeddedModuleArtifact"
           container-type="terraform.Configuration" extends="udm.EmbeddedDeployedArtifact"
           description="Terraform Module">
         <generate-deployable type="terraform.EmbeddedModuleArtifact" extends="udm.LocalEmbeddedDeployableFolder"/>
+    </type>
+
+    <type type="terraform.MapInputVariable" extends="udm.BaseEmbeddedDeployed"
+          container-type="terraform.InstantiatedModule" deployable-type="terraform.MapInputVariableSpec">
+        <generate-deployable type="terraform.MapInputVariableSpec" extends="udm.BaseEmbeddedDeployable"/>
+        <property name="variables" kind="map_string_string"/>
     </type>
 
     <type-modification type="terraform.ConfigurationSpec">
