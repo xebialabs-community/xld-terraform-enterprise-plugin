@@ -15,3 +15,4 @@ xl-deploy-8.5.4-server
 deploy_key
 .idea/
 src/main/resources/hcl
+.idea/
