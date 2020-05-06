@@ -135,6 +135,7 @@
                   description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="mapArrayRegexp" default="([a-zA-Z]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
     </type>
 
     <type-modification type="terraform.InstantiatedModuleSpec">

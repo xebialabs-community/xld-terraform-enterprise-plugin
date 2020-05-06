@@ -33,38 +33,27 @@ class PlanGenerator:
                 return map_var
         raise Exception("{0} not found in {1}".format(k, map_variables))
 
-    def _process_map_variables(self, map_variables):
+    def _process_map_variables(self, map_variables, regexp):
         # return a map map_variable.name => map_variables.variables
         # merge the entries that follows this patern
         # [xxxx__0,xxxx__1,xxx__2] =>'xxxx'=>[(...),(...),(...)]
-        print("BENOIT")
-        print(map_variables)
-
         temporary_map = {}
-        expression_reg_exp = re.compile("([a-zA-Z]*)__(\d+)")
+        expression_reg_exp = re.compile(regexp)
 
         all_keys = [var.name for var in map_variables]
-        print(all_keys)
         all_keys.sort()
 
         for k in all_keys:
-            print(k)
             mo = expression_reg_exp.findall(k)
             if len(mo) == 0:
                 temporary_map[k] = self._extract_entry(map_variables, k).variables
             else:
                 key = mo[0][0]
                 number = int(mo[0][1]) - 1
-                print(key, number)
                 if key not in temporary_map:
                     temporary_map[key] = []
                 temporary_map[key].insert(number, self._extract_entry(map_variables, k).variables)
 
-        print("temporary")
-        print(temporary_map)
-        print(temporary_map)
-        print
-        "DONE!"
         return temporary_map
 
     def _map_to_json(self, data):
@@ -107,11 +96,8 @@ class PlanGenerator:
         for module in deployed.modules:
             jython_context['deployed'] = module
             is_embedded_module = len([em.name for em in deployed.embeddedModules if module.source == em.name]) > 0
-            hcl_variables = self._process_map_variables(module.mapInputVariables)
-            print(hcl_variables)
+            hcl_variables = self._process_map_variables(module.mapInputVariables, module.mapArrayRegexp)
             hcl_variables = self._map_to_json(hcl_variables)
-            print(hcl_variables)
-            print("BEU")
 
             self.context.addStep(self.steps.template(
                 description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name,
