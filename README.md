@@ -82,9 +82,38 @@ Often it's necessary to provide complex values as input variables. Either it's p
     * if an item has `name` that ends with '__' and a number, it will be merged the others to turn the value into a array of map "[{...},{....}]"
     * the number should start with 0 (zero) 
 
-__TODO: PASTE SAMPLE__
-__TODO: PASTE SAMPLE__
-__TODO: PASTE SAMPLE__
+#### Example
+if you package this
+```
+mapInputVariables:
+  - name: block__2
+    type: terraform.MapInputVariableSpec
+    variables:
+      size: 500Mo
+      fs: FAT32
+  - name: block__1
+    type: terraform.MapInputVariableSpec
+    variables:
+      size: 2G
+      fs: NTFS
+  - name: tags
+    type: terraform.MapInputVariableSpec
+    variables:
+      app: petportal
+      version: 12.1.2
+```
+the plugin generates the following content:
+```
+module "s3-bucket" {
+    source = "./s3"
+    name="benoit.moussaud.bucket"
+    region="eu-west-3"
+
+    block=[{"fs": "NTFS", "size": "2G"}, {"fs": "FAT32", "size": "500Mo"}]
+    tags={"app": "petportal", "version": "12.1.2"}
+}
+```
+
 
 ### Control task : Process Module
 On the `terraform.Module` deployable, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
