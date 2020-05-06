@@ -22,12 +22,20 @@ module "${deployed.name}" {
 
 <#assign inputVariables=deployed.inputVariables />
 <#list inputVariables?keys as key>
-    ${key}="${inputVariables[key]}"
+<#assign value=inputVariables[key]/>
+<#if value?starts_with(deployed.dependencyAnnotation)>
+    <#assign value="module.${inputVariables[key][2..]}.${key}"/>
+</#if>
+    ${key}=${value}
 </#list>
 
 <#assign inputVariables=deployed.inputHCLVariables />
 <#list inputVariables?keys as key>
-    ${key}=${inputVariables[key]}
+<#assign value=inputVariables[key]/>
+<#if value?starts_with(deployed.dependencyAnnotation)>
+    <#assign value="module.${inputVariables[key][2..]}.${key}"/>
+</#if>
+    ${key}=${value}
 </#list>
 
 <#list hcl_variables?keys as key>

@@ -139,3 +139,34 @@ spec:
           - name: s3
             type: terraform.EmbeddedModuleArtifact
             file: !file "artifacts/3.0.6/s3"
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+  - name: Applications/multi/3.0.7
+    type: udm.DeploymentPackage
+    deployables:
+      - name: stack
+        type: terraform.ConfigurationSpec
+        workspaceName: multi-{{aws_region}}
+        applyDestroyOperation: "true"
+        modules:
+          - name: module2
+            type: terraform.InstantiatedModuleSpec
+            source: s3
+            inputVariables:
+              region: '##module1'
+            inputHCLVariables:
+              connect_string: '##module1'
+            outputVariables:
+              my_main_domain_name: bucket_domain_name
+              my_main_id: bucket_id
+          - name: module1
+            type: terraform.InstantiatedModuleSpec
+            source: s3
+            inputVariables:
+              name: '{{bucket_name}}'
+              region: '{{aws_region}}'
+            outputVariables:
+              connect_string: connect_string
+              region: region

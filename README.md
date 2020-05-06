@@ -74,6 +74,35 @@ Done
 ```
 ## Features
 
+### annotation to link 2 module instances
+
+Typically, using input variables (module2) whose values is the output of the other one (module1).
+```
+ modules:
+    - name: module2
+      type: terraform.InstantiatedModuleSpec
+      source: s3
+      inputVariables:
+        anothervar1: module.module1.anothervar1
+      inputHCLVariables:        
+        region: module.module1.region
+```
+
+the plugin offers an annotation if the 2 variables (input/output) have the same name: "##module"
+this annotation can be used with the `inputVariables` and `inputHCLVariables` properties.
+
+```
+ modules:
+    - name: module2
+      type: terraform.InstantiatedModuleSpec
+      source: s3
+      inputVariables:
+        anothervar1: ##module1
+      inputHCLVariables:        
+        region: ##module1
+```
+
+
 ### MapInputVariable
 
 Often it's necessary to provide complex values as input variables. Either it's possible to use 
