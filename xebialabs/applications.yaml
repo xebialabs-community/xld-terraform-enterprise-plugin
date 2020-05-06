@@ -98,3 +98,44 @@ spec:
                   my_main_domain_name: 'bucket_domain_name'
                   my_main_id: 'bucket_id'
                 source: s3
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+  - name: Applications/multi/3.0.6
+    type: udm.DeploymentPackage
+    deployables:
+      - name: stack
+        type: terraform.ConfigurationSpec
+        workspaceName: multi-{{aws_region}}
+        applyDestroyOperation: "true"
+        modules:
+          - name: s3-bucket
+            type: terraform.InstantiatedModuleSpec
+            source: s3
+            inputVariables:
+              name: '{{bucket_name}}'
+              region: '{{aws_region}}'
+            outputVariables:
+              my_main_domain_name: bucket_domain_name
+              my_main_id: bucket_id
+            mapInputVariables:
+              - name: block__2
+                type: terraform.MapInputVariableSpec
+                variables:
+                  size: 500Mo
+                  fs: FAT32
+              - name: block__1
+                type: terraform.MapInputVariableSpec
+                variables:
+                  size: 2G
+                  fs: NTFS
+              - name: tags
+                type: terraform.MapInputVariableSpec
+                variables:
+                  app: petportal
+                  version: 12.1.2
+        embeddedModules:
+          - name: s3
+            type: terraform.EmbeddedModuleArtifact
+            file: !file "artifacts/3.0.6/s3"
