@@ -71,9 +71,20 @@ $xl apply --xl-deploy-url http://localhost:4516 -f xebialabs.yaml
 
 [6/6] Applying xebialabs.yaml
 Done
-
 ```
 ## Features
+
+### MapInputVariable
+
+Often it's necessary to provide complex values as input variables. Either it's possible to use 
+* `InstantiatedModule.inputHCLVariables` to provide the value as text.
+* `terraform.MapInputVariableSpec` to provide values as ,easier to display and to manage values using dictionaries.
+    * if an item has `name` that ends with '__' and a number, it will be merged the others to turn the value into a array of map "[{...},{....}]"
+    * the number should start with 0 (zero) 
+
+__TODO: PASTE SAMPLE__
+__TODO: PASTE SAMPLE__
+__TODO: PASTE SAMPLE__
 
 ### Control task : Process Module
 On the `terraform.Module` deployable, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
