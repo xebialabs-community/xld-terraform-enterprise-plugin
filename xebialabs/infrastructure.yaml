@@ -8,6 +8,7 @@ spec:
   url: https://app.terraform.io
   token: !value "tfe_token"   
   deleteWorkspace: true
+  host: ~Infrastructure/localhost
   children:
   - name: AWSProvider
     type: terraformEnterprise.Provider
@@ -18,7 +19,7 @@ spec:
     type: terraformEnterprise.AwsProvider
     credentials:     
     accessSecret: !value "aws_secret_access_key"
-    accesskey: !value "aws_access_key_id"
+    accessKey: !value "aws_access_key_id"
     defaultRegion: "eu-west-3"
 ---
 apiVersion: xl-deploy/v1
@@ -30,3 +31,11 @@ spec:
   tenantId: !value "tenantId"
   clientId: !value "clientId"
   clientKey: !value "clientKey"
+---
+apiVersion: xl-deploy/v1
+kind: Infrastructure
+spec:
+  - name: Infrastructure/localhost
+    type: overthere.LocalHost
+    os: WINDOWS
+

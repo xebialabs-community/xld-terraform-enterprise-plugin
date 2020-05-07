@@ -1,0 +1,5 @@
+xl-deploy:
+  authmethod: http
+  password: admin
+  url: http://ec2-35-181-65-203.eu-west-3.compute.amazonaws.com:4516
+  username: admin

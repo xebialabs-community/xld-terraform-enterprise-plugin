@@ -16,3 +16,4 @@ deploy_key
 .idea/
 src/main/resources/hcl
 .idea/
+config-win.yaml

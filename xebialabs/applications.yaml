@@ -138,7 +138,7 @@ spec:
         embeddedModules:
           - name: s3
             type: terraform.EmbeddedModuleArtifact
-            file: !file "artifacts/3.0.6/s3"
+            file: !file "artifacts/3.0.6/s3/s3.zip"
 ---
 apiVersion: xl-deploy/v1
 kind: Applications
