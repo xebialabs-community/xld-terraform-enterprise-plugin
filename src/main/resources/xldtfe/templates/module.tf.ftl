@@ -25,8 +25,12 @@ module "${deployed.name}" {
 <#assign value=inputVariables[key]/>
 <#if value?starts_with(deployed.dependencyAnnotation)>
     <#assign value="module.${inputVariables[key][2..]}.${key}"/>
-</#if>
     ${key}=${value}
+<#else>
+    <#assign value=inputVariables[key]/>
+    ${key}="${value}"
+</#if>
+
 </#list>
 
 <#assign inputVariables=deployed.inputHCLVariables />

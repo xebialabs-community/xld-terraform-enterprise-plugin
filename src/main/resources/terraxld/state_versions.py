@@ -16,6 +16,10 @@ import json
 import requests
 
 from .endpoint import TFEEndpoint
+from org.apache.commons.io import IOUtils
+from java.nio.charset import Charset
+from java.net import URI
+
 
 class TFEStateVersions(TFEEndpoint):
     """
@@ -23,7 +27,7 @@ class TFEStateVersions(TFEEndpoint):
     """
 
     def __init__(self, base_url, organization_name, headers, proxy_server):
-        super(TFEStateVersions,self).__init__(base_url, organization_name, headers, proxy_server)
+        super(TFEStateVersions, self).__init__(base_url, organization_name, headers, proxy_server)
         self._state_version_base_url = "{base_url}/state-versions".format(base_url=base_url)
         self._workspace_base_url = "{base_url}/workspaces".format(base_url=base_url)
 
@@ -35,7 +39,7 @@ class TFEStateVersions(TFEEndpoint):
         the input state when running terraform operations.
         """
         results = None
-        url = "{0}/{1}/current-state-version".format(self._workspace_base_url,workspace_id)
+        url = "{0}/{1}/current-state-version".format(self._workspace_base_url, workspace_id)
         req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
@@ -46,37 +50,48 @@ class TFEStateVersions(TFEEndpoint):
             self._logger.error(err)
             return err
 
+    def get_current_state_content(self, url, dowload_method):
+        # if XLD runs on Windows the (j)ython implementation raises an exception "java.util.zip.DataFormatException: invalid code lengths"
+        # the bug seems coming from an error in the Local.
+        # the "JAVA"  alternative implementation solves this and becomes the default implementation.
+        # To control the download_method value modify the value in type system,
+        # terraformEnterprise.Organization.downloadMethod set as hidden="true"
 
-    def get_current_state_content(self, url):
         results = None
-        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
+        if dowload_method == "PYTHON":
+            req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
+            if req.status_code == 200:
+                results = json.loads(req.content)
+            else:
+                err = json.loads(req.content.decode("utf-8"))
+                self._logger.error(err)
+            return results
 
-        if req.status_code == 200:
-            results = json.loads(req.content)
-        else:
-            err = json.loads(req.content.decode("utf-8"))
-            self._logger.error(err)
+        if dowload_method == "JAVA":
+            uri = URI.create(url)
+            content = IOUtils.toString(uri, Charset.forName("UTF-8"))
+            return json.loads(content)
 
-        return results
+        raise Exception("{0} unknown ".format(dowload_method))
 
     def show(self, state_version_id):
         """
         GET /state-versions/:state_version_id
         """
-        url = "{0}/{1}".format(self._state_version_base_url,state_version_id)
+        url = "{0}/{1}".format(self._state_version_base_url, state_version_id)
         return self._show(url)
 
-    def get_current_state_content_workspace(self, ws_id):
-        sv_current=self.get_current(ws_id)
+    def get_current_state_content_workspace(self, ws_id, dowload_method):
+        sv_current = self.get_current(ws_id)
         if 'errors' in sv_current:
             raise Exception("error when getting the state of the workspace {0}".format(sv_current))
         self._logger.info(sv_current)
-        sv_id=sv_current["data"]["id"]
-        self._logger.debug("..current state version {0}".format(sv_id))
+        sv_id = sv_current["data"]["id"]
+        print("..current state version {0}".format(sv_id))
 
-        state_file_url=sv_current["data"]["attributes"]["hosted-state-download-url"]
+        state_file_url = sv_current["data"]["attributes"]["hosted-state-download-url"]
 
-        self._logger.debug("..current state file {0}".format(state_file_url))
+        print("..current state file {0}".format(state_file_url))
 
-        output = self.get_current_state_content(state_file_url)
+        output = self.get_current_state_content(state_file_url, dowload_method)
         return output

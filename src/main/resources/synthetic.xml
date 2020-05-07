@@ -30,6 +30,12 @@
         <property name="host" required="false" kind="ci" referenced-type="overthere.Host"/>
         <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
         <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>
+        <property name="downloadMethod" kind="enum" required="false" default="JAVA"  category="Advanced" hidden="true">
+            <enum-values>
+                <value>PYTHON</value>
+                <value>JAVA</value>
+            </enum-values>
+        </property>
     </type>
 
     <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
