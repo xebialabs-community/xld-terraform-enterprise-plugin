@@ -15,6 +15,7 @@ Module containing class for common endpoint implementations across all TFE Endpo
 import json
 import logging
 import requests
+from org.apache.http import HttpHost
 
 
 class TFEEndpoint(object):
@@ -29,17 +30,17 @@ class TFEEndpoint(object):
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.INFO)
         self._verify = False
-        if proxy_server:
+        if proxy_server is not None:
             proxy_url = "{}://{}:{}".format(str(proxy_server.protocol).lower(), proxy_server.hostname, proxy_server.port)
-            self._proxies = {'http': proxy_url,'https': proxy_url}
-            self._logger.debug("setup proxies {0}".format(proxy_url))
+            self._proxies = {'http': proxy_url, 'https': proxy_url}
+            self._java_proxy = HttpHost(proxy_server.hostname, proxy_server.port, str(proxy_server.protocol).lower())
         else:
             self._proxies = None
- 
+            self._java_proxy = None
+
         if self._verify == False:
             import urllib3
             urllib3.disable_warnings()
-
 
     def _create(self, url, payload):
         """
@@ -47,7 +48,7 @@ class TFEEndpoint(object):
         """
         results = None
         self._logger.debug(json.dumps(payload))
-        req = requests.post(url, json.dumps(payload), headers=self._headers, verify=self._verify,  proxies=self._proxies)
+        req = requests.post(url, json.dumps(payload), headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 201:
             results = json.loads(req.content)
@@ -84,7 +85,6 @@ class TFEEndpoint(object):
             self._logger.error(err)
 
         return results
-
 
     def _show(self, url):
         """
@@ -137,15 +137,14 @@ class TFEEndpoint(object):
         """
         results = None
         self._logger.debug("_stream {0}".format(url))
-        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies,stream=True)
+        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies, stream=True)
         return req
 
-    def format_error_message(self,run):
-        if 'errors'in run:
+    def format_error_message(self, run):
+        if 'errors' in run:
             return ",".join(['{title} ({status})'.format(**error) for error in run['errors']])
         else:
             if run is "None":
                 "Empty Error Message"
             else:
                 return run
-

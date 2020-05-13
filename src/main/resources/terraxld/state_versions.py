@@ -18,7 +18,12 @@ import requests
 from .endpoint import TFEEndpoint
 from org.apache.commons.io import IOUtils
 from java.nio.charset import Charset
-from java.net import URI
+
+from org.apache.http.impl.client import HttpClientBuilder
+from org.apache.http.client.methods import HttpGet
+from org.apache.http.ssl import SSLContextBuilder
+from org.apache.http.conn.ssl import TrustSelfSignedStrategy
+from org.apache.http.conn.ssl import NoopHostnameVerifier
 
 
 class TFEStateVersions(TFEEndpoint):
@@ -56,8 +61,7 @@ class TFEStateVersions(TFEEndpoint):
         # the "JAVA"  alternative implementation solves this and becomes the default implementation.
         # To control the download_method value modify the value in type system,
         # terraformEnterprise.Organization.downloadMethod set as hidden="true"
-
-        results = None
+        self._logger.error("get_current_state_content {0}".format(url))
         if dowload_method == "PYTHON":
             req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
             if req.status_code == 200:
@@ -68,8 +72,15 @@ class TFEStateVersions(TFEEndpoint):
             return results
 
         if dowload_method == "JAVA":
-            uri = URI.create(url)
-            content = IOUtils.toString(uri, Charset.forName("UTF-8"))
+            http_client_builder = HttpClientBuilder.create()
+            http_client_builder.setProxy(self._java_proxy)
+
+            ssl_context = SSLContextBuilder().loadTrustMaterial(None, TrustSelfSignedStrategy()).build()
+            http_client_builder.setSSLContext(ssl_context).setSSLHostnameVerifier(NoopHostnameVerifier())
+
+            client = http_client_builder.build()
+            http_response = client.execute(HttpGet(url))
+            content = IOUtils.toString(http_response.getEntity().getContent(), Charset.forName("UTF-8"))
             return json.loads(content)
 
         raise Exception("{0} unknown ".format(dowload_method))
