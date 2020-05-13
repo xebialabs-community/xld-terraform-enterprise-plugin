@@ -9,7 +9,6 @@
 #
 
 import tempfile
-import os
 
 import hcl
 

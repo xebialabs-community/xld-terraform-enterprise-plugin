@@ -17,6 +17,7 @@ import requests
 
 from .endpoint import TFEEndpoint
 
+
 class TFEOrganizations(TFEEndpoint):
     """
     The Organizations API is used to list, show, create, update, and destroy organizations.
@@ -24,9 +25,9 @@ class TFEOrganizations(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/organizations.html
     """
 
-    def __init__(self, base_url, organization_name, headers, proxy_server):
-        super(TFEOrganizations,self).__init__(base_url, organization_name, headers, proxy_server)
-        self._org_base_url = "{base_url}/organizations".format(base_url = base_url)
+    def __init__(self, base_url, organization, headers):
+        super(TFEOrganizations, self).__init__(base_url, organization, headers)
+        self._org_base_url = "{base_url}/organizations".format(base_url=base_url)
 
     def lst(self):
         """
@@ -38,6 +39,5 @@ class TFEOrganizations(TFEEndpoint):
         """
         GET /organizations/:organization_name
         """
-        url = "{0}/{1}".format(self._org_base_url,organization_name)
+        url = "{0}/{1}".format(self._org_base_url, organization_name)
         return self._show(url)
-

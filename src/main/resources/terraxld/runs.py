@@ -13,6 +13,7 @@ import requests
 
 from .endpoint import TFEEndpoint
 
+
 class TFERuns(TFEEndpoint):
     """
     Performing a run on a new configuration is a multi-step process.
@@ -28,8 +29,8 @@ class TFERuns(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/run.html
     """
 
-    def __init__(self, base_url, organization_name, headers, proxy_server):
-        super(TFERuns,self).__init__(base_url, organization_name, headers, proxy_server)
+    def __init__(self, base_url, organization, headers):
+        super(TFERuns, self).__init__(base_url, organization, headers)
         self._ws_base_url = "{base_url}/workspaces".format(base_url=base_url)
         self._runs_base_url = "{base_url}/runs".format(base_url=base_url)
 
@@ -39,43 +40,43 @@ class TFERuns(TFEEndpoint):
 
         This endpoint is used for showing details of a specific run.
         """
-        url = "{0}/{1}".format(self._runs_base_url,run_id)
+        url = "{0}/{1}".format(self._runs_base_url, run_id)
         return self._show(url)
 
-    def show_plan(self,run_id):
+    def show_plan(self, run_id):
         """
         GET /runs/:run_id/plan
 
         This endpoint is used for showing details of the plan of a specific run.
         """
-        url = "{0}/{1}/plan".format(self._runs_base_url,run_id)
+        url = "{0}/{1}/plan".format(self._runs_base_url, run_id)
         return self._show(url)
 
-    def show_plan_log(self,run_id):
+    def show_plan_log(self, run_id):
         s_plan = self.show_plan(run_id)
         archivist_url = s_plan['data']['attributes']['log-read-url']
         return self._download(archivist_url)
 
-    def stream_plan_log(self,run_id):
+    def stream_plan_log(self, run_id):
         s_plan = self.show_plan(run_id)
         archivist_url = s_plan['data']['attributes']['log-read-url']
         return self._stream(archivist_url)
 
-    def show_apply(self,run_id):
+    def show_apply(self, run_id):
         """
         GET /runs/:run_id/apply
 
         This endpoint is used for showing details of the apply of a specific run.
         """
-        url = "{0}/{1}/apply".format(self._runs_base_url,run_id)
+        url = "{0}/{1}/apply".format(self._runs_base_url, run_id)
         return self._show(url)
 
-    def show_apply_log(self,run_id):
+    def show_apply_log(self, run_id):
         s_apply = self.show_apply(run_id)
         archivist_url = s_apply['data']['attributes']['log-read-url']
         return self._download(archivist_url)
 
-    def stream_apply_log(self,run_id):
+    def stream_apply_log(self, run_id):
         s_apply = self.show_apply(run_id)
         archivist_url = s_apply['data']['attributes']['log-read-url']
         return self._stream(archivist_url)
@@ -90,28 +91,28 @@ class TFERuns(TFEEndpoint):
         """
 
         payload = {
-                "data": {
-                    "attributes": {
-                        "is-destroy":"false",
-                        "message": message
-                        },
-                    "type":"runs",
-                    "relationships": {
-                        "workspace": {
-                            "data": {
-                                "type": "workspaces",
-                                "id": ws_id
-                                }
-                            },
-                        "configuration-version": {
-                            "data": {
-                                "type": "configuration-versions",
-                                "id": config_id
-                                }
-                            }
+            "data": {
+                "attributes": {
+                    "is-destroy": "false",
+                    "message": message
+                },
+                "type": "runs",
+                "relationships": {
+                    "workspace": {
+                        "data": {
+                            "type": "workspaces",
+                            "id": ws_id
+                        }
+                    },
+                    "configuration-version": {
+                        "data": {
+                            "type": "configuration-versions",
+                            "id": config_id
                         }
                     }
                 }
+            }
+        }
 
         self._logger.info(json.dumps(payload))
         return self._create(self._runs_base_url, payload)
@@ -126,28 +127,28 @@ class TFERuns(TFEEndpoint):
         """
 
         payload = {
-                "data": {
-                    "attributes": {
-                        "is-destroy":"true",
-                        "message": message
-                        },
-                    "type":"runs",
-                    "relationships": {
-                        "workspace": {
-                            "data": {
-                                "type": "workspaces",
-                                "id": ws_id
-                                }
-                            },
-                        "configuration-version": {
-                            "data": {
-                                "type": "configuration-versions",
-                                "id": config_id
-                                }
-                            }
+            "data": {
+                "attributes": {
+                    "is-destroy": "true",
+                    "message": message
+                },
+                "type": "runs",
+                "relationships": {
+                    "workspace": {
+                        "data": {
+                            "type": "workspaces",
+                            "id": ws_id
+                        }
+                    },
+                    "configuration-version": {
+                        "data": {
+                            "type": "configuration-versions",
+                            "id": config_id
                         }
                     }
                 }
+            }
+        }
 
         self._logger.info(json.dumps(payload))
         return self._create(self._runs_base_url, payload)
@@ -168,7 +169,7 @@ class TFERuns(TFEEndpoint):
         This endpoint represents an action as opposed to a resource. As such, the endpoint does
         not return any object in the response body.
         """
-        url = "{0}/{1}/actions/apply".format(self._runs_base_url,run_id)
+        url = "{0}/{1}/actions/apply".format(self._runs_base_url, run_id)
         req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
@@ -191,7 +192,7 @@ class TFERuns(TFEEndpoint):
         This endpoint represents an action as opposed to a resource. As such, it does not
         return any object in the response body.
         """
-        url = "{0}/{1}/actions/discard".format(self._runs_base_url,run_id)
+        url = "{0}/{1}/actions/discard".format(self._runs_base_url, run_id)
         req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
@@ -215,7 +216,7 @@ class TFERuns(TFEEndpoint):
         This endpoint represents an action as opposed to a resource. As such, it does not
         return any object in the response body.
         """
-        url = "{0}/{1}/actions/cancel".format(self._runs_base_url,run_id)
+        url = "{0}/{1}/actions/cancel".format(self._runs_base_url, run_id)
         req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
@@ -243,7 +244,7 @@ class TFERuns(TFEEndpoint):
         This endpoint represents an action as opposed to a resource. As such, it does not return any
         object in the response body.
         """
-        url = "{0}/{1}/actions/force-cancel".format(self._runs_base_url,run_id)
+        url = "{0}/{1}/actions/force-cancel".format(self._runs_base_url, run_id)
         req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:
@@ -268,7 +269,7 @@ class TFERuns(TFEEndpoint):
         This endpoint represents an action as opposed to a resource. As such, it does not return any
         object in the response body.
         """
-        url = "{0}/{1}/actions/force-execute".format(self._runs_base_url,run_id)
+        url = "{0}/{1}/actions/force-execute".format(self._runs_base_url, run_id)
         req = requests.post(url, headers=self._headers, proxies=self._proxies)
 
         if req.status_code == 202:

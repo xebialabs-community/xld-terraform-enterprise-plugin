@@ -16,6 +16,14 @@ import json
 import logging
 import requests
 from org.apache.http import HttpHost
+from org.apache.commons.io import IOUtils
+from java.nio.charset import Charset
+
+from org.apache.http.impl.client import HttpClientBuilder
+from org.apache.http.client.methods import HttpGet
+from org.apache.http.ssl import SSLContextBuilder
+from org.apache.http.conn.ssl import TrustSelfSignedStrategy
+from org.apache.http.conn.ssl import NoopHostnameVerifier
 
 
 class TFEEndpoint(object):
@@ -23,20 +31,26 @@ class TFEEndpoint(object):
     Base class providing common CRUD operation implementations across all TFE Endpoints.
     """
 
-    def __init__(self, base_url, organization_name, headers, proxy_server):
+    def __init__(self, base_url, organization, headers):
         self._base_url = base_url
         self._headers = headers
-        self._organization_name = organization_name
+        self._organization = organization
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.INFO)
         self._verify = False
-        if proxy_server is not None:
+        if self._organization.proxyServer is not None:
+            proxy_server = self._organization.proxyServer
             proxy_url = "{}://{}:{}".format(str(proxy_server.protocol).lower(), proxy_server.hostname, proxy_server.port)
             self._proxies = {'http': proxy_url, 'https': proxy_url}
             self._java_proxy = HttpHost(proxy_server.hostname, proxy_server.port, str(proxy_server.protocol).lower())
         else:
             self._proxies = None
             self._java_proxy = None
+
+        if self._organization.organizationName is not None:
+            self._organization_name = self._organization.organizationName
+        else:
+            self._organization_name = self._organization.name
 
         if self._verify == False:
             import urllib3
@@ -116,20 +130,34 @@ class TFEEndpoint(object):
         return results
 
     def _download(self, url):
-        """
-        Implementation of the common show resource pattern for the TFE API.
-        """
-        results = None
         self._logger.debug("_download {0}".format(url))
-        req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
+        # if XLD runs on Windows the (j)ython implementation raises an exception "java.util.zip.DataFormatException: invalid code lengths"
+        # the bug seems coming from an error in the Local.
+        # the "JAVA"  alternative implementation solves this and becomes the default implementation.
+        # To control the download_method value modify the value in type system,
+        # terraformEnterprise.Organization.downloadMethod set as hidden="true"
+        if self._organization.downloadMethod == "PYTHON":
+            req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
+            if req.status_code == 200:
+                results = req.content
+            else:
+                err = req.content.decode("utf-8")
+                self._logger.error(err)
+            return results
 
-        if req.status_code == 200:
-            results = req.content
-        else:
-            err = req.content.decode("utf-8")
-            self._logger.error(err)
+        if self._organization.downloadMethod == "JAVA":
+            http_client_builder = HttpClientBuilder.create()
+            http_client_builder.setProxy(self._java_proxy)
 
-        return results
+            ssl_context = SSLContextBuilder().loadTrustMaterial(None, TrustSelfSignedStrategy()).build()
+            http_client_builder.setSSLContext(ssl_context).setSSLHostnameVerifier(NoopHostnameVerifier())
+
+            client = http_client_builder.build()
+            http_response = client.execute(HttpGet(url))
+            content = IOUtils.toString(http_response.getEntity().getContent(), Charset.forName("UTF-8"))
+            return content
+
+        raise Exception("{0} unknown ".format(dowload_method))
 
     def _stream(self, url):
         """

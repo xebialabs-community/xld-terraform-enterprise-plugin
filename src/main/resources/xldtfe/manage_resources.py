@@ -190,7 +190,7 @@ import tempfile
 
 myapi = TFE(organization)
 ws_id = myapi.workspaces.get_id(workspace_name)
-output = myapi.state_versions.get_current_state_content_workspace(ws_id, organization.downloadMethod)
+output = myapi.state_versions.get_current_state_content_workspace(ws_id)
 
 if debug:
     print("---- output")

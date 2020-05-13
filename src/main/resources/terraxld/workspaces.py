@@ -17,6 +17,7 @@ import requests
 
 from .endpoint import TFEEndpoint
 
+
 class TFEWorkspaces(TFEEndpoint):
     """
     Workspaces represent running infrastructure managed by Terraform.
@@ -24,27 +25,27 @@ class TFEWorkspaces(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/workspaces.html
     """
 
-    def __init__(self, base_url, organization_name, headers,proxy_server):
-        super(TFEWorkspaces,self).__init__(base_url, organization_name, headers, proxy_server)
+    def __init__(self, base_url, organization, headers):
+        super(TFEWorkspaces, self).__init__(base_url, organization, headers)
         self._ws_base_url = "{base_url}/workspaces".format(base_url=base_url)
-        self._org_base_url = "{base_url}/organizations/{organization_name}/workspaces".format(base_url=base_url, organization_name=organization_name)
+        self._org_base_url = "{base_url}/organizations/{organization_name}/workspaces".format(base_url=base_url, organization_name=self._organization_name)
 
-    def create(self, workspace_name, terraform_version = "0.12.9"):
+    def create(self, workspace_name, terraform_version="0.12.9"):
         """
         POST /organizations/:organization_name/workspaces
         """
         payload = {
-                "data": {
-                    "attributes": {
-                        "name": workspace_name,
-                        "auto-apply":"true",
-                        "terraform-version": terraform_version,
-                        "source-name": "XLDeploy",
-                        "source-url": "http://localhost:4516"
-                        },
-                    "type": "workspaces"
-                    }
-                }
+            "data": {
+                "attributes": {
+                    "name": workspace_name,
+                    "auto-apply": "true",
+                    "terraform-version": terraform_version,
+                    "source-name": "XLDeploy",
+                    "source-url": "http://localhost:4516"
+                },
+                "type": "workspaces"
+            }
+        }
         return self._create(self._org_base_url, payload)
 
     def destroy(self, workspace_id=None, workspace_name=None):
@@ -58,7 +59,7 @@ class TFEWorkspaces(TFEEndpoint):
         if workspace_name is not None:
             url = "{0}/{1}".format(self._org_base_url, workspace_name)
         elif workspace_id is not None:
-            url = "{0}/{1}".format(self._ws_base_url,workspace_id)
+            url = "{0}/{1}".format(self._ws_base_url, workspace_id)
         else:
             self._logger.error("Arguments workspace_name or workspace_id must be defined")
 
@@ -75,23 +76,22 @@ class TFEWorkspaces(TFEEndpoint):
         if workspace_name is not None:
             url = "{0}/{1}".format(self._org_base_url, workspace_name)
         elif workspace_id is not None:
-            url = "{0}/{1}".format(self._ws_base_url,workspace_id)
+            url = "{0}/{1}".format(self._ws_base_url, workspace_id)
         else:
             self._logger.error("Arguments workspace_name or workspace_id must be defined")
 
         return self._show(url)
-    
+
     def get_id(self, workspace_name):
         workspace = self.show(workspace_name=workspace_name)
         if 'data' in workspace:
             ws_id = workspace["data"]["id"]
-            self._logger.debug("workspace {0} -> id {1}".format(workspace_name,ws_id))
+            self._logger.debug("workspace {0} -> id {1}".format(workspace_name, ws_id))
             return ws_id
         else:
-            error_msg = "Cannot get workspace id of '{0}':{1}'".format(workspace_name,self.format_error_message(workspace))
-            self._logger.error (error_msg)
+            error_msg = "Cannot get workspace id of '{0}':{1}'".format(workspace_name, self.format_error_message(workspace))
+            self._logger.error(error_msg)
             raise Exception(error_msg)
-
 
     def lst(self):
         """
@@ -100,4 +100,3 @@ class TFEWorkspaces(TFEEndpoint):
         This endpoint lists workspaces in the organization.
         """
         return self._ls(self._org_base_url)
-

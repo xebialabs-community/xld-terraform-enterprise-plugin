@@ -22,8 +22,8 @@ class TFEVariables(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/variables.html
     """
 
-    def __init__(self, base_url, organization_name, headers, proxy_server):
-        super(TFEVariables, self).__init__(base_url, organization_name, headers, proxy_server)
+    def __init__(self, base_url, organization, headers):
+        super(TFEVariables, self).__init__(base_url, organization, headers)
         self._base_url = "{base_url}/vars".format(base_url=base_url)
 
     def create(self, workspace_id, key, value, category, sensitive, hcl=False):
@@ -77,18 +77,18 @@ class TFEVariables(TFEEndpoint):
             hcl_value = 'false'
 
         payload = {"data":
-                       {
-                        "type": "vars",
-                        "id": variable_id,
-                        "attributes": {
-                            "key": key,
-                            "value": value,
-                            "category": category,
-                            "hcl": hcl_value,
-                            "sensitive": sensitive
-                        }
-                        }
-                   }
+            {
+                "type": "vars",
+                "id": variable_id,
+                "attributes": {
+                    "key": key,
+                    "value": value,
+                    "category": category,
+                    "hcl": hcl_value,
+                    "sensitive": sensitive
+                }
+            }
+        }
         return self._update(url, payload)
 
     def destroy(self, variable_id):

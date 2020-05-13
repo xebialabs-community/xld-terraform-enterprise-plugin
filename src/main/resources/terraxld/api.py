@@ -14,6 +14,7 @@ API access.
 """
 
 import terraxld.variables
+
 reload(terraxld.variables)
 
 from .workspaces import TFEWorkspaces
@@ -22,7 +23,8 @@ from .config_versions import TFEConfigVersions
 from .variables import TFEVariables
 from .runs import TFERuns
 from .state_versions import TFEStateVersions
-from .hclparser import  HclParser
+from .hclparser import HclParser
+
 
 class InvalidTFETokenException(Exception):
     """Cannot instantiate TFE Api class without a valid TFE_TOKEN."""
@@ -33,7 +35,7 @@ class TFE():
     Super class for access to all TFE Endpoints.
     """
 
-    def __init__(self,organization):
+    def __init__(self, organization):
         self.organization = organization
         if self.organization.token is None:
             raise InvalidTFETokenException
@@ -44,14 +46,14 @@ class TFE():
         self._token = self.organization.token
         self._current_organization = None
         self._headers = {
-            "Authorization": "Bearer {0}".format(self.organization.token),
+            "Authorization": "Bearer {0}".format(self._token),
             "Content-Type": "application/vnd.api+json"
         }
         self.config_versions = None
         self.variables = None
         self.runs = None
         self.state_versions = None
-        self.organizations = TFEOrganizations( self._instance_url, None, self._headers, self.organization.proxyServer)
+
         if self.organization.organizationName is not None:
             self._set_organization(self.organization.organizationName)
         else:
@@ -65,16 +67,12 @@ class TFE():
         This method must be called for their respective endpoints to work.
         """
         self._current_organization = organization_name
-        self.workspaces = TFEWorkspaces(
-            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
-        self.config_versions = TFEConfigVersions(
-            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
-        self.variables = TFEVariables(
-            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
-        self.runs = TFERuns(
-            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
-        self.state_versions = TFEStateVersions(
-            self._instance_url, self._current_organization, self._headers, self.organization.proxyServer)
+        self.workspaces = TFEWorkspaces(self._instance_url, self.organization, self._headers)
+        self.config_versions = TFEConfigVersions(self._instance_url, self.organization, self._headers)
+        self.variables = TFEVariables(self._instance_url, self.organization, self._headers)
+        self.runs = TFERuns(self._instance_url, self.organization, self._headers)
+        self.state_versions = TFEStateVersions(self._instance_url, self.organization, self._headers)
+        self.organizations = TFEOrganizations(self._instance_url, self.organization, self._headers)
 
     log_handler = None
 
@@ -99,8 +97,7 @@ class TFE():
             root.setLevel(logging.INFO)
             handler.setLevel(logging.INFO)
 
-
-    def load_variables_in_workspace(self,input,ws_name, secret, scope):
+    def load_variables_in_workspace(self, input, ws_name, secret, scope):
         ws_id = self.workspaces.get_id(ws_name)
         data = self.variables.lst(workspace_name=ws_name)
         existing_variables = {}
@@ -111,14 +108,14 @@ class TFE():
             value = input[key]
             is_hcl = self.hcl_parser.is_hcl_variable(key)
             if key in existing_variables:
-                print("update terraform variable {0} -> {1} ({2})".format(key, self.display_value(value,secret), is_hcl))
+                print("update terraform variable {0} -> {1} ({2})".format(key, self.display_value(value, secret), is_hcl))
                 if secret:
                     self.variables.destroy(existing_variables[key])
                     self.variables.create(ws_id, key, value, scope, secret, is_hcl)
                 else:
                     self.variables.update(existing_variables[key], key, value, scope, secret, is_hcl)
             else:
-                print("new terraform variable {0} -> {1} ({2})".format(key, self.display_value(value,secret), is_hcl))
+                print("new terraform variable {0} -> {1} ({2})".format(key, self.display_value(value, secret), is_hcl))
                 self.variables.create(ws_id, key, value, scope, secret, is_hcl)
 
     def display_value(self, value, secret):

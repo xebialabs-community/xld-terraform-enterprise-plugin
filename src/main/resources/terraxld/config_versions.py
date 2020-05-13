@@ -26,8 +26,8 @@ class TFEConfigVersions(TFEEndpoint):
     https://www.terraform.io/docs/enterprise/api/configuration-versions.html
     """
 
-    def __init__(self, base_url, organization_name, headers, proxy_server):
-        super(TFEConfigVersions,self).__init__(base_url, organization_name, headers, proxy_server)
+    def __init__(self, base_url, organization, headers):
+        super(TFEConfigVersions,self).__init__(base_url, organization, headers)
         self._ws_base_url = "{0}/workspaces".format(base_url)
         self._config_version_base_url = "{0}/configuration-versions".format(base_url)
 
