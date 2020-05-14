@@ -13,12 +13,12 @@ from com.xebialabs.overthere.local import LocalConnection
 import tarfile
 import sys
 
+
 class TarHelper(object):
 
     def tar(self, target_tar_file, directory):
-        print("{0}->{1}".format(directory, target_tar_file))
         tar = tarfile.open(target_tar_file, "w:gz")
-        tar.add(directory,arcname='.')
+        tar.add(directory, arcname='.')
         tar.close()
 
     def dump(self, target_tar_file, stream=sys.stdout):
@@ -31,7 +31,7 @@ class TarHelper(object):
 archive_file = LocalConnection.getLocalConnection().getTempFile("tfe-xld.tgz")
 
 helper = TarHelper()
-helper.tar(archive_file.path,work_dir)
+helper.tar(archive_file.path, work_dir)
 
 print("TGZ:" + archive_file.path)
 helper.dump(archive_file.path)
@@ -48,7 +48,7 @@ if 'data' not in config_version:
 cv_id = config_version['data']['id']
 print("New configuration version {0}".format(cv_id))
 
-print("upload the tgz")
+print("Upload the tgz")
 myapi.config_versions.upload(archive_file.path, cv_id)
 context.setAttribute(workspace_name + "_cv_id", cv_id)
 

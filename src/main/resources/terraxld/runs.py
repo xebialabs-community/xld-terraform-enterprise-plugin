@@ -114,7 +114,7 @@ class TFERuns(TFEEndpoint):
             }
         }
 
-        self._logger.info(json.dumps(payload))
+        self._logger.debug(json.dumps(payload))
         return self._create(self._runs_base_url, payload)
 
     def destroy(self, ws_id, config_id, message):
@@ -150,7 +150,7 @@ class TFERuns(TFEEndpoint):
             }
         }
 
-        self._logger.info(json.dumps(payload))
+        self._logger.debug(json.dumps(payload))
         return self._create(self._runs_base_url, payload)
 
     def apply(self, run_id):
