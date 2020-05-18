@@ -115,12 +115,12 @@ Often it's necessary to provide complex values as input variables. Either it's p
 if you package this
 ```
 mapInputVariables:
-  - name: block__2
+  - name: ec2_block_device__2
     type: terraform.MapInputVariableSpec
     variables:
       size: 500Mo
       fs: FAT32
-  - name: block__1
+  - name: ec2_block_device__1
     type: terraform.MapInputVariableSpec
     variables:
       size: 2G
@@ -138,11 +138,13 @@ module "s3-bucket" {
     name="benoit.moussaud.bucket"
     region="eu-west-3"
 
-    block=[{"fs": "NTFS", "size": "2G"}, {"fs": "FAT32", "size": "500Mo"}]
+    ec2_block_device=[{"fs": "NTFS", "size": "2G"}, {"fs": "FAT32", "size": "500Mo"}]
     tags={"app": "petportal", "version": "12.1.2"}
 }
 ```
+You may control the regexp by modifying the `mapArrayRegexp` defined in `terraform.InstantiatedModule` as an hidden property.
 
+The default value is : `([a-zA-Z_1-9]*)__(\d+)`
 
 ### Control task : Process Module
 On the `terraform.Module` deployable, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
