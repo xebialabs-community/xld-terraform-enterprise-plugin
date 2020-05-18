@@ -30,7 +30,7 @@
         <property name="host" required="false" kind="ci" referenced-type="overthere.Host"/>
         <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
         <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>
-        <property name="downloadMethod" kind="enum" required="false" default="JAVA"  category="Advanced" hidden="true">
+        <property name="downloadMethod" kind="enum" required="false" default="JAVA" category="Advanced" hidden="true">
             <enum-values>
                 <value>PYTHON</value>
                 <value>JAVA</value>
@@ -169,33 +169,5 @@
         <property name="boundTemplates" hidden="false" required="false" candidate-values-filter="filterByProvisioningPackage" description="The set of CI templates." as-containment="false"
                   kind="set_of_ci" referenced-type="udm.Template"/>
     </type-modification>
-
-    <type type="cloud.azure.Database" extends="terraformEnterprise.ExecutedModule"
-          deployable-type="cloud.azure.DatabaseSpec">
-
-        <generate-deployable type="cloud.azure.DatabaseSpec" extends="terraform.Module"/>
-        <property name="engine" default="postgresql"/>
-        <property name="vcore" default="2" kind="integer"/>
-        <property name="memory" default="4" kind="integer"/>
-        <property name="adminUsername"/>
-        <property name="adminPassword" password="true"/>
-    </type>
-
-    <type type="cloud.azure.JavaWebSite" extends="terraformEnterprise.ExecutedModule"
-          deployable-type="cloud.azure.JavaWebSiteSpec">
-
-        <generate-deployable type="cloud.azure.JavaWebSiteSpec" extends="terraform.Module"/>
-        <property name="javaVersion" default="11" kind="integer"/>
-        <property name="javaContainer" default="jboss"/>
-        <property name="secured" default="true" required="false"/>
-    </type>
-
-    <type type="cloud.azure.StorageService" extends="terraformEnterprise.ExecutedModule"
-          deployable-type="cloud.azure.StorageServiceSpec">
-
-        <generate-deployable type="cloud.azure.StorageServiceSpec" extends="terraform.Module"/>
-        <property name="maxSize" default="1" kind="integer"/>
-    </type>
-
-
+    
 </synthetic>
