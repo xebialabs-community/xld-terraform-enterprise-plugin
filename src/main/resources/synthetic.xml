@@ -16,10 +16,8 @@
 
     <type type="terraformEnterprise.Mappers" extends="udm.BaseConfigurationItem" virtual="true">
         <property name="aws_s3_mapper" default="xldtfe.mapper.aws_s3_mapper.AWSS3Mapper" hidden="true"/>
-        <property name="gke_cluster_mapper" default="terraform.mapper.gke_cluster_mapper.GKEClusterMapper"
-                  hidden="true"/>
-        <property name="aks_cluster_mapper" default="terraform.mapper.aks_cluster_mapper.AKSClusterMapper"
-                  hidden="true"/>
+        <property name="gke_cluster_mapper" default="terraform.mapper.gke_cluster_mapper.GKEClusterMapper" hidden="true"/>
+        <property name="aks_cluster_mapper" default="terraform.mapper.aks_cluster_mapper.AKSClusterMapper" hidden="true"/>
     </type>
 
     <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">
@@ -39,15 +37,12 @@
     </type>
 
     <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
-        <property name="organization" kind="ci" as-containment="true"
-                  referenced-type="terraformEnterprise.Organization"/>
+        <property name="organization" kind="ci" as-containment="true" referenced-type="terraformEnterprise.Organization"/>
         <property name="variables" kind="map_string_string" required="false" category="Advanced"/>
         <property name="credentials" kind="map_string_string" password="true" required="false" category="Advanced"/>
         <property name="additionalMappers" kind="map_string_string" required="false" category="Parameters"/>
-        <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="empty:empty"
-                  category="Parameters"/>
-        <method name="checkConnection" label="Check Connection" delegate="jythonScript"
-                script="xldtfe/check_connection.py"/>
+        <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="empty:empty" category="Parameters"/>
+        <method name="checkConnection" label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
     </type>
 
     <type type="terraformEnterprise.AwsProvider" extends="terraformEnterprise.Provider">
@@ -132,6 +127,8 @@
         <generate-deployable type="terraform.InstantiatedModuleSpec" extends="udm.BaseEmbeddedDeployable"/>
         <property name="source"/>
         <property name="version" required="false"/>
+        <property name="injectCIProperties" default="false" required="false" hidden="true"
+                  description="if checked, the CI properties having the 'Input' category will be injected in the inputVariables and the 'Output' category managed as outputVariables"/>
         <property name="inputVariables" kind="map_string_string" required="false"
                   description="Input variables to be used in the Terraform configuration."/>
         <property name="inputHCLVariables" label="input HCL Variables" kind="map_string_string" required="false"
@@ -139,10 +136,12 @@
         <property name="mapInputVariables" kind="set_of_ci" as-containment="true" required="false" referenced-type="terraform.MapInputVariable"/>
         <property name="secretInputVariables" kind="map_string_string" password="true" required="false"
                   description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
-        <property name="outputVariables" kind="map_string_string" required="false" category="Output"
+        <property name="outputVariables" kind="map_string_string" required="false" category="Terraform Output"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
         <property name="mapArrayRegexp" default="([a-zA-Z_1-9]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
         <property name="dependencyAnnotation" default="##" hidden="true" description="the annotation used to define a variable dependency.It should be 2 characters"/>
+        <property name="inputCategory" default="Input" hidden="true"/>
+        <property name="outputCategory" default="Output" hidden="true"/>
     </type>
 
     <type-modification type="terraform.InstantiatedModuleSpec">
@@ -158,7 +157,7 @@
     <type type="terraform.MapInputVariable" extends="udm.BaseEmbeddedDeployed"
           container-type="terraform.InstantiatedModule" deployable-type="terraform.MapInputVariableSpec">
         <generate-deployable type="terraform.MapInputVariableSpec" extends="udm.BaseEmbeddedDeployable"/>
-        <property name="variables" kind="map_string_string"/>
+        <property name="variables" kind="map_string_string" category="Input" required="false"/>
     </type>
 
     <type-modification type="terraform.ConfigurationSpec">
@@ -169,5 +168,82 @@
         <property name="boundTemplates" hidden="false" required="false" candidate-values-filter="filterByProvisioningPackage" description="The set of CI templates." as-containment="false"
                   kind="set_of_ci" referenced-type="udm.Template"/>
     </type-modification>
-    
+
+
+    <type type="terraform.AbstractedInstantiatedModule" deployable-type="terraform.AbstractedInstantiatedModuleSpec"
+          container-type="terraform.Configuration" extends="terraform.InstantiatedModule" virtual="true"
+          description="Terraform Module">
+        <generate-deployable type="terraform.AbstractedInstantiatedModuleSpec" extends="terraform.InstantiatedModuleSpec"/>
+
+        <!-- hidden TRUE -->
+        <property name="inputVariables" kind="map_string_string" required="false" hidden="true"
+                  description="Input variables to be used in the Terraform configuration."/>
+        <property name="inputHCLVariables" label="input HCL Variables" kind="map_string_string" required="false" hidden="true"
+                  description="Input HCL variables(map, list, ...) to be used in the Terraform configuration."/>
+        <property name="mapInputVariables" kind="set_of_ci" as-containment="true" required="false" referenced-type="terraform.MapInputVariable"/>
+        <property name="secretInputVariables" kind="map_string_string" password="true" required="false" hidden="true"
+                  description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
+        <property name="outputVariables" kind="map_string_string" required="false" category="Terraform Output" hidden="true"
+                  description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="mapArrayRegexp" default="([a-zA-Z_1-9]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
+        <property name="dependencyAnnotation" default="##" hidden="true" description="the annotation used to define a variable dependency.It should be 2 characters"/>
+        <property name="inputCategory" default="Input" hidden="true"/>
+        <property name="outputCategory" default="Output" hidden="true"/>
+    </type>
+
+
+    <type type="myaws.ec2.VirtualMachine" extends="terraform.AbstractedInstantiatedModule"
+          deployable-type="myaws.ec2.VirtualMachineSpec" container-type="terraform.Configuration">
+        <generate-deployable type="myaws.ec2.VirtualMachineSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+
+        <!-- simple type -->
+        <property name="key_name" label="KeyName" category="Input"/>
+        <property name="subnet_id" label="SubNet Id" category="Input"/>
+        <property name="vpc_id" label="VPC Id" category="Input"/>
+        <property name="secretPassword" category="Input" password="true"/>
+        <property name="memory" category="Input" kind="integer"/>
+        <property name="highLoad" category="Input" kind="boolean" default="true"/>
+        <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
+
+        <!-- complex type -->
+        <property name="terraformTags" kind="map_string_string" category="Input" required="false"/>
+        <property name="loadBalancerZone" kind="list_of_string" category="Input" required="false"/>
+
+        <!-- output-->
+        <property name="arn" label="ARN" category="Output" required="false"/>
+        <property name="private_ip" label="Private IP" required="false" category="Output"/>
+        <property name="security_group_id" label="Security Group Id" required="false" category="Output"/>
+
+    </type>
+
+    <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"
+          container-type="terraform.InstantiatedModule" deployable-type="myaws.ec2.BlockDeviceSpec">
+        <generate-deployable type="myaws.ec2.BlockDeviceSpec" extends="terraform.MapInputVariableSpec"/>
+        <property name="device_name" label="Device Name" category="Input"/>
+        <property name="volume_size" label="Volume Size" category="Input"/>
+    </type>
+
+
+    <type type="jclopeza.JavaDBProject" extends="terraform.AbstractedInstantiatedModule"
+          deployable-type="jclopeza.JavaDBProjectSpec" container-type="terraform.Configuration">
+        <generate-deployable type="jclopeza.JavaDBProjectSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+
+        <property name="source" default="jclopeza/java-bdd-project/module" hidden="true"/>
+        <property name="version" required="true" default="4.0.0"/>
+
+        <!-- simple type -->
+        <property name="aws_region" default="us-east-1" category="Input"/>
+        <property name="environment" default="dev" category="Input"/>
+        <property name="instance_type" default="t2.micro" category="Input"/>
+        <property name="private_key_path" default="/dev/nul" category="Input" password="true"/>
+        <property name="project_name" category="Input"/>
+        <property name="public_key_path" category="Input"/>
+        <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
+
+        <!-- output-->
+        <property name="public_ip_bdd" category="Output" required="false"/>
+        <property name="public_ip_front" required="false" category="Output"/>
+
+    </type>
+
 </synthetic>

@@ -9,6 +9,7 @@
 #
 
 from com.xebialabs.deployit.plugin.api.deployment.specification import Operation
+from com.xebialabs.deployit.plugin.api.reflect import PropertyKind
 import tempfile
 import json
 import re
@@ -30,10 +31,17 @@ class PlanGenerator:
     def _extract_entry(self, map_variables, k):
         for map_var in map_variables:
             if k == map_var.name:
-                return map_var
+                map = dict(map_var.variables)
+                for pd in map_var.type.descriptor.propertyDescriptors:
+                    if pd.category in "Input" and pd.kind.isSimple():
+                        map[pd.name] = map_var.getProperty(pd.name)
+                return map
         raise Exception("{0} not found in {1}".format(k, map_variables))
 
-    def _process_map_variables(self, map_variables, regexp):
+    def _process_map_variables(self, module):
+        map_variables = module.mapInputVariables
+
+        regexp = module.mapArrayRegexp
         # return a map map_variable.name => map_variables.variables
         # merge the entries that follows this patern
         # [xxxx__0,xxxx__1,xxx__2] =>'xxxx'=>[(...),(...),(...)]
@@ -46,15 +54,60 @@ class PlanGenerator:
         for k in all_keys:
             mo = expression_reg_exp.findall(k)
             if len(mo) == 0:
-                temporary_map[k] = self._extract_entry(map_variables, k).variables
+                temporary_map[k] = self._extract_entry(map_variables, k)
             else:
                 key = mo[0][0]
                 number = int(mo[0][1]) - 1
                 if key not in temporary_map:
                     temporary_map[key] = []
-                temporary_map[key].insert(number, self._extract_entry(map_variables, k).variables)
+                temporary_map[key].insert(number, self._extract_entry(map_variables, k))
 
         return temporary_map
+
+    def _compute_properties(self, deployed):
+
+        properties = {'inputVariables': {},
+                      'secretInputVariables': deployed.secretInputVariables,
+                      'outputVariables': deployed.outputVariables,
+                      'inputHCLVariables': {}}
+
+        for key, value in deployed.inputVariables.items():
+            if value.startswith(deployed.dependencyAnnotation):
+                value = "module.{0}.{1}".format(value[2:], key)
+            else:
+                value = json.dumps(value)
+            properties['inputVariables'][key] = value
+
+        for key, value in deployed.inputHCLVariables.items():
+            if value.startswith(deployed.dependencyAnnotation):
+                value = "module.{0}.{1}".format(value[2:], key)
+            else:
+                value = value
+            properties['inputVariables'][key] = value
+
+        for pd in deployed.type.descriptor.propertyDescriptors:
+            if pd.category in deployed.inputCategory:
+                if pd.kind.isSimple():
+                    if pd.isPassword():
+                        properties['secretInputVariables'][pd.name] = json.dumps(deployed.getProperty(pd.name))
+                    else:
+                        value = deployed.getProperty(pd.name)
+                        if pd.kind == PropertyKind.STRING:
+                            if value.startswith(deployed.dependencyAnnotation):
+                                value = "module.{0}.{1}".format(value[2:], pd.name)
+                            else:
+                                value = json.dumps(value)
+                        else:
+                            value = json.dumps(value)
+                        properties['inputVariables'][pd.name] = value
+                elif pd.kind == PropertyKind.MAP_STRING_STRING:
+                    properties['inputVariables'][pd.name] = json.dumps(deployed.getProperty(pd.name))
+                elif pd.kind == PropertyKind.LIST_OF_STRING:
+                    properties['inputVariables'][pd.name] = json.dumps(deployed.getProperty(pd.name))
+
+            if pd.category in deployed.outputCategory:
+                properties['outputVariables'][pd.name] = pd.name
+        return properties
 
     def _map_to_json(self, data):
         new_data = {}
@@ -63,7 +116,6 @@ class PlanGenerator:
         return new_data
 
     def generate(self):
-        print(self.delta)
         if self._is_destroy():
             deployed = self.delta.previous
         else:
@@ -95,22 +147,26 @@ class PlanGenerator:
 
         for module in deployed.modules:
             jython_context['deployed'] = module
+
             is_embedded_module = len([em.name for em in deployed.embeddedModules if module.source == em.name]) > 0
-            hcl_variables = self._process_map_variables(module.mapInputVariables, module.mapArrayRegexp)
+            hcl_variables = self._process_map_variables(module)
             hcl_variables = self._map_to_json(hcl_variables)
 
+            freemarker_context = self._compute_properties(module)
+
+            freemarker_context.update({"deployed": module,
+                                       "generate_output_variables": self._is_create(),
+                                       "is_embedded_module": is_embedded_module,
+                                       "hcl_variables": hcl_variables})
+
             self.context.addStep(self.steps.template(
-                description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name,
-                                                                                workspace),
+                description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name, workspace),
                 order=60,
                 target_path="{0}/{1}.tf".format(work_dir, module.name),
                 template_path="xldtfe/templates/module.tf.ftl",
                 create_target_path=True,
                 target_host=deployed.container.organization.host,
-                freemarker_context={"deployed": module,
-                                    "generate_output_variables": self._is_create(),
-                                    "is_embedded_module": is_embedded_module,
-                                    "hcl_variables": hcl_variables}
+                freemarker_context=freemarker_context
             ))
 
         self.context.addStep(self.steps.jython(

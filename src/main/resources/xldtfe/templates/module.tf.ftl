@@ -17,50 +17,32 @@ module "${deployed.name}" {
 </#if>
 
 <#if deployed.version??>
-    version= "${deployed.version}"
+    version = "${deployed.version}"
 </#if>
 
-<#assign inputVariables=deployed.inputVariables />
 <#list inputVariables?keys as key>
 <#assign value=inputVariables[key]/>
-<#if value?starts_with(deployed.dependencyAnnotation)>
-    <#assign value="module.${inputVariables[key][2..]}.${key}"/>
-    ${key}=${value}
-<#else>
-    <#assign value=inputVariables[key]/>
-    ${key}="${value}"
-</#if>
+    ${key} = ${value}
 
-</#list>
-
-<#assign inputVariables=deployed.inputHCLVariables />
-<#list inputVariables?keys as key>
-<#assign value=inputVariables[key]/>
-<#if value?starts_with(deployed.dependencyAnnotation)>
-    <#assign value="module.${inputVariables[key][2..]}.${key}"/>
-</#if>
-    ${key}=${value}
 </#list>
 
 <#list hcl_variables?keys as key>
-    ${key}=${hcl_variables[key]}
+    ${key} = ${hcl_variables[key]}
 </#list>
 
-<#assign secretInputVariables=deployed.secretInputVariables />
+
 <#list secretInputVariables?keys as key>
-    ${key}="${secretInputVariables[key]}"
+    ${key} = ${secretInputVariables[key]}
 </#list>
 
 }
 
 <#if generate_output_variables>
-    <#if deployed.outputVariables??>
-    <#assign outputVariables=deployed.outputVariables />
-        <#list outputVariables?keys as key>
-output "${key}" {
+    <#list outputVariables?keys as key>
+output "${deployed.name}-${key}" {
   value = module.${deployed.name}.${outputVariables[key]}
 }
-        </#list>
-    </#if>
+
+    </#list>
 </#if>
 

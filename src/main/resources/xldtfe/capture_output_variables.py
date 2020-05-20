@@ -45,3 +45,4 @@ if output:
     context.logOutput("Output variables from Terraform captured.")
 else:
     context.logOutput("No output variables found.")
+
