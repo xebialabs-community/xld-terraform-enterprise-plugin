@@ -9,7 +9,7 @@
 #
 
 from terraxld.api import TFE
-import sys
+import re
 import json
 
 
@@ -27,6 +27,7 @@ ws_id = myapi.workspaces.get_id(workspace_name)
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
 # dump_json(output,"OUTPUT")
 
+
 if output:
     output_variables = {}
     output_json = output['outputs']
@@ -40,9 +41,19 @@ if output:
         else:
             output_variables[key] = output_json[key]['value']
             print("new output variable found {0}:{1}".format(key, output_variables[key]))
+            expression_reg_exp = re.compile("([a-zA-Z_1-9]*)-([a-zA-Z_1-9]*)")
+            mo = expression_reg_exp.findall(key)
+            if len(mo) == 1:
+                module = mo[0][0]
+                output_var = mo[0][1]
+                print("{0} => {1}".format(module, output_var))
+                instantiated_module = [ci for ci in deployed.modules if ci.id.endswith(module)][0]
+                print("instantiated module {0}".format(instantiated_module))
+                instantiated_module.setProperty(output_var, output_json[key]['value'])
 
     deployed.outputVariables = output_variables
     context.logOutput("Output variables from Terraform captured.")
 else:
     context.logOutput("No output variables found.")
+
 
