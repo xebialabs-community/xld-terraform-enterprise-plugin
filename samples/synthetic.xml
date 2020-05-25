@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    Copyright 2020 XEBIALABS
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+<synthetic xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd"
+           xmlns="http://www.xebialabs.com/deployit/synthetic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+    <type type="myaws.ec2.VirtualMachine" extends="terraform.AbstractedInstantiatedModule"
+          deployable-type="myaws.ec2.VirtualMachineSpec" container-type="terraform.Configuration">
+        <generate-deployable type="myaws.ec2.VirtualMachineSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+
+        <!-- simple type -->
+        <property name="key_name" label="KeyName" category="Input"/>
+        <property name="subnet_id" label="SubNet Id" category="Input"/>
+        <property name="vpc_id" label="VPC Id" category="Input"/>
+        <property name="secretPassword" category="Input" password="true"/>
+        <property name="memory" category="Input" kind="integer"/>
+        <property name="highLoad" category="Input" kind="boolean" default="true"/>
+        <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
+
+        <!-- complex type -->
+        <property name="terraformTags" kind="map_string_string" category="Input" required="false"/>
+        <property name="loadBalancerZone" kind="list_of_string" category="Input" required="false"/>
+
+        <!-- output-->
+        <property name="arn" label="ARN" category="Output" required="false"/>
+        <property name="private_ip" label="Private IP" required="false" category="Output"/>
+        <property name="security_group_id" label="Security Group Id" required="false" category="Output"/>
+
+    </type>
+
+    <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"
+          container-type="terraform.InstantiatedModule" deployable-type="myaws.ec2.BlockDeviceSpec">
+        <generate-deployable type="myaws.ec2.BlockDeviceSpec" extends="terraform.MapInputVariableSpec"/>
+        <property name="device_name" label="Device Name" category="Input"/>
+        <property name="volume_size" label="Volume Size" category="Input"/>
+    </type>
+
+
+    <type type="jclopeza.JavaDBProject" extends="terraform.AbstractedInstantiatedModule"
+          deployable-type="jclopeza.JavaDBProjectSpec" container-type="terraform.Configuration">
+        <generate-deployable type="jclopeza.JavaDBProjectSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+
+        <property name="source" default="jclopeza/java-bdd-project/module" hidden="true"/>
+        <property name="version" required="true" default="4.0.0"/>
+
+        <!-- simple type -->
+        <property name="aws_region" default="us-east-1" category="Input"/>
+        <property name="environment" default="dev" category="Input"/>
+        <property name="instance_type" default="t2.micro" category="Input"/>
+        <property name="private_key_path" default="/dev/nul" category="Input" password="true"/>
+        <property name="project_name" category="Input"/>
+        <property name="public_key_path" category="Input"/>
+        <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
+
+        <!-- output-->
+        <property name="public_ip_bdd" category="Output" required="false"/>
+        <property name="public_ip_front" required="false" category="Output"/>
+
+    </type>
+
+</synthetic>

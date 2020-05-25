@@ -74,7 +74,73 @@ Done
 ```
 ## Features
 
-### annotation to link 2 module instances
+### Structured Terraform Configured Items.
+
+Even it's possible to package `terraform.InstantiatedModuleSpec` using a generic type, it's also possible to defined new CI based typed to help the user to fill the inputs & output properties.
+
+Example. If you want to package the [jclopeza/java-bdd-project](https://registry.terraform.io/modules/jclopeza/java-bdd-project/module/4.0.0) module using a structured type, this is the definition you can add to the synthetic.xml file
+
+```
+<type type="jclopeza.JavaDBProject" extends="terraform.AbstractedInstantiatedModule"
+      deployable-type="jclopeza.JavaDBProjectSpec" container-type="terraform.Configuration">
+    <generate-deployable type="jclopeza.JavaDBProjectSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+
+    <property name="source" default="jclopeza/java-bdd-project/module" hidden="true"/>
+    <property name="version" required="true" default="4.0.0"/>
+
+    <!-- simple type -->
+    <property name="aws_region" default="us-east-1" category="Input"/>
+    <property name="environment" default="dev" category="Input"/>
+    <property name="instance_type" default="t2.micro" category="Input"/>
+    <property name="private_key_path" default="/dev/nul" category="Input" password="true"/>
+    <property name="project_name" category="Input"/>
+    <property name="public_key_path" category="Input"/>
+    <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
+
+    <!-- output-->
+    <property name="public_ip_bdd" category="Output" required="false"/>
+    <property name="public_ip_front" required="false" category="Output"/>
+
+</type>
+```
+
+It's also possible to define structured types for `terraform.EmbeddedModule` helping to manage complex inputs.
+
+```
+  <type type="myaws.ec2.VirtualMachine" extends="terraform.AbstractedInstantiatedModule"
+          deployable-type="myaws.ec2.VirtualMachineSpec" container-type="terraform.Configuration">
+        <generate-deployable type="myaws.ec2.VirtualMachineSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+
+        <!-- simple type -->
+        <property name="key_name" label="KeyName" category="Input"/>
+        <property name="subnet_id" label="SubNet Id" category="Input"/>
+        <property name="vpc_id" label="VPC Id" category="Input"/>
+        <property name="secretPassword" category="Input" password="true"/>
+        <property name="memory" category="Input" kind="integer"/>
+        <property name="highLoad" category="Input" kind="boolean" default="true"/>
+        <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
+
+        <!-- complex type -->
+        <property name="terraformTags" kind="map_string_string" category="Input" required="false"/>
+        <property name="loadBalancerZone" kind="list_of_string" category="Input" required="false"/>
+
+        <!-- output-->
+        <property name="arn" label="ARN" category="Output" required="false"/>
+        <property name="private_ip" label="Private IP" required="false" category="Output"/>
+        <property name="security_group_id" label="Security Group Id" required="false" category="Output"/>
+
+    </type>
+
+    <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"
+          container-type="terraform.InstantiatedModule" deployable-type="myaws.ec2.BlockDeviceSpec">
+        <generate-deployable type="myaws.ec2.BlockDeviceSpec" extends="terraform.MapInputVariableSpec"/>
+        <property name="device_name" label="Device Name" category="Input"/>
+        <property name="volume_size" label="Volume Size" category="Input"/>
+    </type>
+
+```
+
+### Annotation to link 2 modules
 
 Typically, using input variables (module2) whose values is the output of the other one (module1).
 ```

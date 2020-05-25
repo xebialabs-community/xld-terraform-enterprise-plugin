@@ -1,4 +1,4 @@
-samples
+
 xl-deploy-9.0.5-server
 wip
 .DS_Store
@@ -11,7 +11,6 @@ xl-deploy-9.5.1-server
 .classpath
 bin
 xl-deploy-8.5.4-server
-<<<<<<< HEAD
 deploy_key
 .idea/
 src/main/resources/hcl
