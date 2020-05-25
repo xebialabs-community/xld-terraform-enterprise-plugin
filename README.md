@@ -140,6 +140,8 @@ It's also possible to define structured types for `terraform.EmbeddedModule` hel
 
 ```
 
+Full Sample is available [samples/synthetic.xml](samples/synthetic.xml).
+
 ### Annotation to link 2 modules
 
 Typically, using input variables (module2) whose values is the output of the other one (module1).
