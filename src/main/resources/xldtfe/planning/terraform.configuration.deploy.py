@@ -205,7 +205,7 @@ class PlanGenerator:
         ))
 
         if self._is_destroy():
-            self.context.addStep(self.steps.jython(
+            self.context.addStepWithCheckpoint(self.steps.jython(
                 description="Trigger the run of DESTROY plan for {0} on {1}/{2}".format(
                     deployed.name,
                     organization.name,
@@ -213,9 +213,9 @@ class PlanGenerator:
                 order=65,
                 script="xldtfe/trigger_destroy.py",
                 jython_context=jython_context
-            ))
+            ), self.delta)
         else:
-            self.context.addStep(self.steps.jython(
+            self.context.addStepWithCheckpoint(self.steps.jython(
                 description="Trigger the run of plan for {0} on {1}/{2}".format(
                     deployed.name,
                     organization.name,
@@ -223,7 +223,7 @@ class PlanGenerator:
                 order=65,
                 script="xldtfe/trigger_run.py",
                 jython_context=jython_context
-            ))
+            ), self.delta)
 
         self.context.addStep(self.steps.jython(
             description="Wait for the end of the execution of the plan {0} on {1}/{2}".format(
