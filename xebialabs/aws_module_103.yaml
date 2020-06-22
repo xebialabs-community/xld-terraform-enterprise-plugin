@@ -2,7 +2,7 @@
 apiVersion: xl-deploy/v1
 kind: Applications
 spec:
-- name: Applications/aws stack/1.0.1
+- name: Applications/aws stack/1.0.3
   type: udm.DeploymentPackage
   deployables:
   - name: '{{env}}-stack'
@@ -37,7 +37,6 @@ spec:
       inputHCLVariables:
         private_subnets: '["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]'
         azs: '["eu-west-3a", "eu-west-3b", "eu-west-3c"]'
-        enable_nat_gateway: ""
         public_subnets: '["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]'
       outputVariables:
         vpc_id: vpc_id
@@ -58,11 +57,44 @@ spec:
         ami: ami-08c757228751c5335
         instance_type: t2.micro
         name: '{{env}} web instance'
+        key_name: 'my{{env}}pk'
       inputHCLVariables:
-        vpc_security_group_ids: '["{{vpc_id}}"]'
+        vpc_security_group_ids: '[module.web_server_sg.this_security_group_id]'
+        subnet_id: 'module.vpc.public_subnets[0]'
       mapInputVariables:
-      - name: tags
-        type: terraform.MapInputVariableSpec
-        variables:
-          Env: '{{env}}'
-          Terraform: True
+        - name: tags
+          type: terraform.MapInputVariableSpec
+          variables:
+            Env: '{{env}}'
+            Terraform: True
+            XLD_TAGS: app_server
+    - name: ec2_database
+      type: terraform.InstantiatedModuleSpec
+      source: terraform-aws-modules/ec2-instance/aws
+      version: ~> 2.0
+      inputVariables:
+        ami: ami-08c757228751c5335
+        instance_type: t2.micro
+        name: '{{env}} database instance'
+        key_name: 'my{{env}}pk'
+      inputHCLVariables:
+        vpc_security_group_ids: '[module.web_server_sg.this_security_group_id]'
+        subnet_id: 'module.vpc.public_subnets[0]'
+      mapInputVariables:
+        - name: tags
+          type: terraform.MapInputVariableSpec
+          variables:
+            Env: '{{env}}'
+            Terraform: True
+            XLD_TAGS: database
+    - name: key_pair
+      type: terraform.InstantiatedModuleSpec
+      source: mitchellh/dynamic-keys/aws
+      inputVariables:
+        name: 'my{{env}}pk'
+      outputVariables:
+        key_name: key_name
+        private_key_pem: private_key_pem
+
+
+

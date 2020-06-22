@@ -10,6 +10,10 @@
 
 from terraform.mapper.resource_mapper import ResourceMapper
 
+import os
+import stat
+import os.path
+
 
 class AWSEC2Mapper(ResourceMapper):
     def __init__(self):
@@ -28,12 +32,44 @@ class AWSEC2Mapper(ResourceMapper):
         print("Creating CI of type 'overthere.SshHost")
         host_id = "{0}/{1}".format(folder, self.attributes['tags']['Name'])
         print(host_id)
+        # deployed.mapperContext['key_pair-private_key_pem']
+        if 'XLD_TAGS' in self.attributes['tags']:
+            tags = set(self.attributes['tags']['XLD_TAGS'].split(','))
+        else:
+            tags = set("")
+            
         host_properties = {
             'os': 'UNIX',
             'address': self.attributes['public_ip'],
             'username': 'ubuntu',
-            'privateKeyFile': deployed.mapperContext['privateKeyFile']
+            'sudoUsername': 'root',
+            'privateKeyFile': self._store_private_key('./ssh-key/{0}.pem'.format(self.attributes['tags']['Name']), deployed.outputVariables['key_pair-private_key_pem']),
+            'tags': tags
         }
+        print(host_properties)
         return [
             super(AWSEC2Mapper, self)._create_ci("overthere.SshHost", host_id, host_properties),
         ]
+
+    def _store_private_key(self, pem_file_path, key_material):
+        print(pem_file_path)
+        if len(pem_file_path) > 0:
+            self._delete_pem_file(pem_file_path)
+            print("store the key in {0}".format(pem_file_path))
+            directory = os.path.abspath(os.path.join(pem_file_path, os.pardir))
+            if not os.path.isdir(directory):
+                print("create Parent Directory: {0}".format(directory))
+                os.makedirs(directory)
+
+            with open(pem_file_path, "w") as text_file:
+                text_file.write(key_material)
+            print("set the key read only {0}".format(pem_file_path))
+            os.chmod(pem_file_path, stat.S_IRUSR)
+        return pem_file_path
+
+    def _delete_pem_file(self, pem_file_path):
+        if os.path.isfile(pem_file_path):
+            print("unset the key read only {0}".format(pem_file_path))
+            os.chmod(pem_file_path, stat.S_IRUSR | stat.S_IWUSR)
+            print("remove pem file {0}".format(pem_file_path))
+            os.remove(pem_file_path)
