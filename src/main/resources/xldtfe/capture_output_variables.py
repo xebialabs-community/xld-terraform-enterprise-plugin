@@ -36,9 +36,12 @@ if output:
         var_type = output_json[key]['type']
         print("{0}:{1}/{2}".format(key, var_type, type(var_type)))
         if isinstance(var_type, list):
-            print("'{0}' output variable found but not managed because its a list.Skip!".format(key))
-            print(output_json[key]['value'])
+            for num, value in enumerate(output_json[key]['value']):
+                idx_key = "{0}_{1}".format(key, num)
+                print("   add {0}={1}".format(idx_key, value))
+                output_variables[idx_key] = value
         else:
+            print("   add {0}={1}".format(key, output_json[key]['value']))
             output_variables[key] = output_json[key]['value']
             print("new output variable found {0}:{1}".format(key, output_variables[key]))
             expression_reg_exp = re.compile("([a-zA-Z_1-9]*)-([a-zA-Z_1-9]*)")
@@ -49,11 +52,23 @@ if output:
                 print("{0} => {1}".format(module, output_var))
                 instantiated_module = [ci for ci in deployed.modules if ci.id.endswith(module)][0]
                 print("instantiated module {0}".format(instantiated_module))
-                instantiated_module.setProperty(output_var, output_json[key]['value'])
+                if deployed.removeModulePrefixNameInDictionary:
+                    print("   add {0}={1}".format(output_var, output_json[key]['value']))
+                    output_variables[output_var] = output_json[key]['value']
+                if instantiated_module.hasProperty(output_var):
+                    instantiated_module.setProperty(output_var, output_json[key]['value'])
+                else:
+                    print("{0} hasn't {1} property, can't assign the value to the CI".format(instantiated_module, output_var))
 
     deployed.outputVariables = output_variables
     context.logOutput("Output variables from Terraform captured.")
+    context.logOutput("---- outputVariables -----")
+    for k,v in sorted(deployed.outputVariables.items()):
+        print("-> {0}={1}".format(k, v))
+    context.logOutput("---- /outputVariables -----")
+
 else:
     context.logOutput("No output variables found.")
+
 
 
