@@ -179,12 +179,12 @@ class PlanGenerator:
         ))
 
         self.context.addStep(self.steps.jython(
-            description="Upload globale configuration version for {0} in {1}/{2}".format(
+            description="Upload global configuration version for {0} in {1}/{2}".format(
                 deployed.name,
                 organization.name,
                 workspace),
             order=60,
-            script="xldtfe/create_globale_configuration_version.py",
+            script="xldtfe/create_global_configuration_version.py",
             jython_context=jython_context
         ))
 
