@@ -1,0 +1,68 @@
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: Applications/aws stack/1.0.1
+  type: udm.DeploymentPackage
+  deployables:
+  - name: '{{env}}-stack'
+    type: terraform.ConfigurationSpec
+    workspaceName: aws-stack
+    automaticDictionary: True
+    modules:
+    - name: web_server_sg
+      type: terraform.InstantiatedModuleSpec
+      source: terraform-aws-modules/security-group/aws//modules/http-8080
+      version: ~> 3.0
+      inputVariables:
+        name: '{{env}}-web-server'
+        vpc_id: <<vpc
+        description: Security group for web-server with HTTP ports open within VPC
+      inputHCLVariables:
+        ingress_cidr_blocks: '["0.0.0.0/0"]'
+        ingress_rules: ' ["mysql-tcp","ssh-tcp"]'
+      outputVariables:
+        this_security_group_id: this_security_group_id
+        this_security_group_name: this_security_group_name
+        this_security_group_vpc_id: this_security_group_vpc_id
+    - name: vpc
+      type: terraform.InstantiatedModuleSpec
+      source: terraform-aws-modules/vpc/aws
+      version: 2.39.0
+      inputVariables:
+        name: '{{env}}-vpc'
+        cidr: 10.0.0.0/16
+        enable_nat_gateway: "true"
+        single_nat_gateway: "true"
+      inputHCLVariables:
+        private_subnets: '["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]'
+        azs: '["eu-west-3a", "eu-west-3b", "eu-west-3c"]'
+        enable_nat_gateway: ""
+        public_subnets: '["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]'
+      outputVariables:
+        vpc_id: vpc_id
+        private_subnets: private_subnets
+        public_subnets: public_subnets
+        nat_public_ips: nat_public_ips
+      mapInputVariables:
+      - name: tags
+        type: terraform.MapInputVariableSpec
+        variables:
+          Env: '{{env}}'
+          Terraform: True
+    - name: ec2_web
+      type: terraform.InstantiatedModuleSpec
+      source: terraform-aws-modules/ec2-instance/aws
+      version: ~> 2.0
+      inputVariables:
+        ami: ami-08c757228751c5335
+        instance_type: t2.micro
+        name: '{{env}} web instance'
+      inputHCLVariables:
+        vpc_security_group_ids: '["{{vpc_id}}"]'
+      mapInputVariables:
+      - name: tags
+        type: terraform.MapInputVariableSpec
+        variables:
+          Env: '{{env}}'
+          Terraform: True
