@@ -37,7 +37,7 @@ class AWSEC2Mapper(ResourceMapper):
             tags = set(self.attributes['tags']['XLD_TAGS'].split(','))
         else:
             tags = set("")
-            
+
         host_properties = {
             'os': 'UNIX',
             'address': self.attributes['public_ip'],

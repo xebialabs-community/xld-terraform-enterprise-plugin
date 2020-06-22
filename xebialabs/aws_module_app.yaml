@@ -1,0 +1,6 @@
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: Applications/aws stack
+  type: udm.Application
