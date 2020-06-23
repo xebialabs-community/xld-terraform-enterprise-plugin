@@ -33,10 +33,9 @@ class AWSEC2Mapper(ResourceMapper):
         host_id = "{0}/{1}".format(folder, self.attributes['tags']['Name'])
         print(host_id)
         # deployed.mapperContext['key_pair-private_key_pem']
+        tags = set("")
         if 'XLD_TAGS' in self.attributes['tags']:
             tags = set(self.attributes['tags']['XLD_TAGS'].split(','))
-        else:
-            tags = set("")
 
         host_properties = {
             'os': 'UNIX',

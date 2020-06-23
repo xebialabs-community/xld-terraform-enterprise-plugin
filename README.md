@@ -72,6 +72,12 @@ $xl apply --xl-deploy-url http://localhost:4516 -f xebialabs.yaml
 [6/6] Applying xebialabs.yaml
 Done
 ```
+
+if you look at a sample package that instantiates several Terraform modules, please look at 
+
+```
+xl apply -f xebialabs/aws_module.yaml
+```
 ## Features
 
 ### Structured Terraform Configured Items.
@@ -215,7 +221,7 @@ You may control the regexp by modifying the `mapArrayRegexp` defined in `terrafo
 The default value is : `([a-zA-Z_1-9]*)__(\d+)`
 
 ### Control task : Process Module
-On the `terraform.Module` deployable, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
+On the `terraform.Module` deployable CI, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
 it fills only with the variables that has no default value or null value or empty value ({} or []).
 
 ### How to define a new provider
@@ -236,6 +242,16 @@ Sample: for AWS.
 ```
 
 ## References
+
+## How to release a new  candidate version
+
+```
+$./gradlew candidate
+```
+
+This command automaticaly tags the version, pushes it remotely and
+trigger a release build. The script: `./buildViaTravis.sh` manages to
+run the right command.
 
 ## How to release a new version
 
