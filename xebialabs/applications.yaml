@@ -155,9 +155,9 @@ spec:
             type: terraform.InstantiatedModuleSpec
             source: s3
             inputVariables:
-              region: '##module1'
+              region: '<<module1'
             inputHCLVariables:
-              connect_string: '##module1'
+              connect_string: '<<module1'
             outputVariables:
               my_main_domain_name: bucket_domain_name
               my_main_id: bucket_id
