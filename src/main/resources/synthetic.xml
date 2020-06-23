@@ -16,8 +16,6 @@
 
     <type type="terraformEnterprise.Mappers" extends="udm.BaseConfigurationItem" virtual="true">
         <property name="aws_s3_mapper" default="xldtfe.mapper.aws_s3_mapper.AWSS3Mapper" hidden="true"/>
-        <property name="gke_cluster_mapper" default="terraform.mapper.gke_cluster_mapper.GKEClusterMapper" hidden="true"/>
-        <property name="aks_cluster_mapper" default="terraform.mapper.aks_cluster_mapper.AKSClusterMapper" hidden="true"/>
     </type>
 
     <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">

@@ -18,37 +18,39 @@ import os.path
 class AWSEC2Mapper(ResourceMapper):
     def __init__(self):
         super(AWSEC2Mapper, self).__init__(["overthere.SshHost"])
-        self.attributes = {}
 
-    def accepted_type(self):
-        return 'aws_instance'
+    def accepted_types(self):
+        return ['aws_instance']
 
-    def create_ci(self, tf_resource, folder, deployed):
-        print("-- tf_resource['type'] {0}".format(tf_resource['type']))
-        if not self.types_supported(tf_resource['type']):
-            return None
+    def create_ci(self, tf_resources, folder, deployed):
+        cis = []
+        for tf_resource in tf_resources:
+            print("-- tf_resource['type'] {0}".format(tf_resource['type']))
+            if not self.types_supported(tf_resource['type']):
+                return None
+            #print(tf_resource['attributes'])
+            attributes = tf_resource['attributes']
+            print("Creating CI of type 'overthere.SshHost")
+            host_id = "{0}/{1}".format(folder, attributes['tags']['Name'])
+            print(host_id)
+            # deployed.mapperContext['key_pair-private_key_pem']
+            tags = set("")
+            if 'XLD_TAGS' in attributes['tags']:
+                tags = set(attributes['tags']['XLD_TAGS'].split(','))
 
-        self.attributes = tf_resource['attributes']
-        print("Creating CI of type 'overthere.SshHost")
-        host_id = "{0}/{1}".format(folder, self.attributes['tags']['Name'])
-        print(host_id)
-        # deployed.mapperContext['key_pair-private_key_pem']
-        tags = set("")
-        if 'XLD_TAGS' in self.attributes['tags']:
-            tags = set(self.attributes['tags']['XLD_TAGS'].split(','))
-
-        host_properties = {
-            'os': 'UNIX',
-            'address': self.attributes['public_ip'],
-            'username': 'ubuntu',
-            'sudoUsername': 'root',
-            'privateKeyFile': self._store_private_key('./ssh-key/{0}.pem'.format(self.attributes['tags']['Name']), deployed.outputVariables['key_pair-private_key_pem']),
-            'tags': tags
-        }
-        print(host_properties)
-        return [
-            super(AWSEC2Mapper, self)._create_ci("overthere.SshHost", host_id, host_properties),
-        ]
+            host_properties = {
+                'os': 'UNIX',
+                'address': attributes['public_ip'],
+                'username': 'ubuntu',
+                'sudoUsername': 'root',
+                'privateKeyFile': self._store_private_key('./ssh-key/{0}.pem'.format(attributes['tags']['Name']), deployed.outputVariables['key_pair-private_key_pem']),
+                'tags': tags
+            }
+            print(host_properties)
+            cis.extend([
+                super(AWSEC2Mapper, self)._create_ci("overthere.SshHost", host_id, host_properties),
+            ])
+        return cis
 
     def _store_private_key(self, pem_file_path, key_material):
         print(pem_file_path)

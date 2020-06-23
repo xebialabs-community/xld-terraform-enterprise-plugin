@@ -24,24 +24,12 @@ class MapperFactory(object):
         descriptor = DescriptorRegistry.getDescriptor('terraformEnterprise', 'Mappers')
         mapper_fqns = [p.getDefaultValue() for p in descriptor.getPropertyDescriptors() if p.name.endswith('_mapper')]
         mappers = [MapperFactory.new_mapper_instance(m) for m in mapper_fqns]
-        resource_mappers = {}
-        for mapper in mappers:
-            try:
-                resource_mappers[mapper.accepted_type()] = mapper
-            except:
-                print("!! skip {0} mapper registration".format(mapper))
-        return resource_mappers
+        return mappers
 
     @staticmethod
     def mappers(dict_of_mappers):
         mappers = [MapperFactory.new_mapper_instance(m) for m in dict_of_mappers.values()]
-        resource_mappers = {}
-        for mapper in mappers:
-            try:
-                resource_mappers[mapper.accepted_type()] = mapper
-            except:
-                print("!! skip {0} mapper registration".format(mapper))
-        return resource_mappers
+        return mappers
 
     @staticmethod
     def new_mapper_instance(full_class_string):
@@ -51,6 +39,8 @@ class MapperFactory(object):
         class_str = class_data[-1]
         print(".import_module {0}".format(module_path))
         module = importlib.import_module(module_path)
+        print(".reload {0}".format(module))
+        reload(module)
         clazz = getattr(module, class_str)
         instance = clazz()
         return instance
@@ -78,7 +68,7 @@ class ManageResources(object):
         self.generated_cis = []
         self.cis_to_delete = []
         self.resource_mappers = MapperFactory.default_mappers()
-        self.resource_mappers.update(MapperFactory.mappers(self.current_deployed.container.additionalMappers))
+        self.resource_mappers.extend(MapperFactory.mappers(self.current_deployed.container.additionalMappers))
 
     def process(self, output):
         self.process_resources(output)
@@ -88,42 +78,44 @@ class ManageResources(object):
         self.delete_removed_resources()
 
     def process_resources(self, output):
-        if output:
-            output_json = output
-            if 'modules' in output_json:
-                for module in output_json['modules']:
-                    if 'resources' in module:
-                        for resourceKey in module['resources']:
-                            resource = module['resources'][resourceKey]
-                            self.process_resource(resource)
-            elif 'resources' in output_json:
-                for resource in output_json['resources']:
-                    for instance in resource['instances']:
-                        instance['type'] = resource['type']
-                        self.process_resource(instance)
-        else:
+        if not output:
             context.logOutput(
                 "No resources found for '%s', skipping Infrastructure creation." % self.current_deployed.name)
+            return
 
-    def process_resource(self, resource):
-        if resource['type'] in self.resource_mappers:
-            cis = self.resource_mappers[resource['type']].create_ci(
-                resource, self.folder, self.deployed)
-            for ci in cis:
-                if ci is not None:
-                    if self.repository.exists(ci.id):
-                        self.repository.update(ci.id, ci)
-                        print("'%s' of type '%s' updated from '%s' resource." % (
-                            ci.id, ci.type, resource['type']))
-                    else:
-                        self.repository.create(ci.id, ci)
-                        print("'%s' of type '%s' created from '%s' resource." % (
-                            ci.id, ci.type, resource['type']))
-                    self.generated_cis.append(ci)
-                    self.generated_ids.append(ci.id)
-        else:
-            context.logOutput(
-                "Skipping '%s' as it is not a candidate for infrastructure creation." % resource['type'])
+        output_json = output
+        resources = []
+        if 'modules' in output_json:
+            for module in output_json['modules']:
+                if 'resources' in module:
+                    for resourceKey in module['resources']:
+                        resource = module['resources'][resourceKey]
+                        resources.append(resource)
+        elif 'resources' in output_json:
+            for resource in output_json['resources']:
+                for instance in resource['instances']:
+                    instance['type'] = resource['type']
+                    resources.append(instance)
+
+        for mapper in self.resource_mappers:
+            candidates = [resource for resource in resources if resource['type'] in mapper.accepted_types()]
+            if len(candidates) > 0:
+                print("call {0} mapper managing {1} type(s) with {2} resource(s))".format(mapper, mapper.accepted_types(), len(candidates)))
+                cis = mapper.create_ci(candidates, self.folder, self.deployed)
+                print("{0} configuration item(s) to create or update".format(len(cis)))
+                self.process_cis(cis)
+
+    def process_cis(self, cis):
+        for ci in cis:
+            if ci is not None:
+                if self.repository.exists(ci.id):
+                    self.repository.update(ci.id, ci)
+                    print("'%s' of type '%s' updated." % (ci.id, ci.type))
+                else:
+                    self.repository.create(ci.id, ci)
+                    print("'%s' of type '%s' created." % (ci.id, ci.type))
+                self.generated_cis.append(ci)
+                self.generated_ids.append(ci.id)
 
     def process_cis_to_delete(self):
         if self.previousDeployed:
