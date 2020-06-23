@@ -130,7 +130,7 @@ class PlanGenerator:
 
         jython_context = {'workspace_name': workspace,
                           'terraform_version': deployed.terraformVersion,
-                          'organization': container.organization,
+                          'organization': organization,
                           'provider': container,
                           'work_dir': work_dir,
                           'deployed_application': deployedApplication}
@@ -141,7 +141,7 @@ class PlanGenerator:
                 order=60,
                 target_path="{0}/{1}".format(work_dir, module.name),
                 create_target_path=True,
-                target_host=deployed.container.organization.host,
+                target_host= organization.host,
                 artifact=module
             ))
 
@@ -165,14 +165,14 @@ class PlanGenerator:
                 target_path="{0}/{1}.tf".format(work_dir, module.name),
                 template_path="xldtfe/templates/module.tf.ftl",
                 create_target_path=True,
-                target_host=deployed.container.organization.host,
+                target_host= organization.host,
                 freemarker_context=freemarker_context
             ))
 
         self.context.addStep(self.steps.jython(
             description="Create or Get the Workspace {0}/{1}".format(
                 workspace,
-                container.organization.name),
+                organization.name),
             order=60,
             script="xldtfe/create_workspace.py",
             jython_context=jython_context
