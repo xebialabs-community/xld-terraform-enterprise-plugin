@@ -175,6 +175,7 @@
         <generate-deployable type="terraform.AbstractedInstantiatedModuleSpec" extends="terraform.InstantiatedModuleSpec"/>
 
         <!-- hidden TRUE -->
+        <property name="source" default="put/here/the/path/to/the/module" hidden="true"/>
         <property name="inputVariables" kind="map_string_string" required="false" hidden="true"
                   description="Input variables to be used in the Terraform configuration."/>
         <property name="inputHCLVariables" label="input HCL Variables" kind="map_string_string" required="false" hidden="true"
@@ -190,5 +191,27 @@
         <property name="outputCategory" default="Output" hidden="true"/>
     </type>
 
+
+    <type type="benoit.JavaDBProject" extends="terraform.AbstractedInstantiatedModule"
+          deployable-type="benoit.JavaDBProjectSpec" container-type="terraform.Configuration">
+        <generate-deployable type="benoit.JavaDBProjectSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+
+        <property name="source" default="benoit/java-bdd-project/module" hidden="true"/>
+        <property name="version" required="true" default="4.0.0"/>
+
+        <!-- simple type -->
+        <property name="aws_region" default="us-east-1" category="Input"/>
+        <property name="environment" default="dev" category="Input"/>
+        <property name="instance_type" default="t2.micro" category="Input"/>
+        <property name="private_key_path" default="/dev/nul" category="Input" password="true"/>
+        <property name="project_name" category="Input"/>
+        <property name="public_key_path" category="Input"/>
+        <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
+
+        <!-- output-->
+        <property name="public_ip_bdd" category="Output" required="false"/>
+        <property name="public_ip_front" required="false" category="Output"/>
+
+    </type>
 
 </synthetic>
