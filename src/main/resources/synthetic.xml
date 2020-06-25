@@ -172,7 +172,7 @@
     <type type="terraform.AbstractedInstantiatedModule" deployable-type="terraform.AbstractedInstantiatedModuleSpec"
           container-type="terraform.Configuration" extends="terraform.InstantiatedModule" virtual="true"
           description="Terraform Module">
-        <generate-deployable type="terraform.AbstractedInstantiatedModuleSpec" extends="terraform.InstantiatedModuleSpec"/>
+        <generate-deployable type="terraform.AbstractedInstantiatedModuleSpec" extends="terraform.InstantiatedModuleSpec" virtual="true"/>
 
         <!-- hidden TRUE -->
         <property name="source" default="put/here/the/path/to/the/module" hidden="true"/>
@@ -191,27 +191,22 @@
         <property name="outputCategory" default="Output" hidden="true"/>
     </type>
 
+    <type-modification type="terraform.AbstractedInstantiatedModuleSpec">
+        <property name="source" default="put/here/the/path/to/the/module" hidden="true"/>
+        <property name="inputVariables" kind="map_string_string" required="false" hidden="true"
+                  description="Input variables to be used in the Terraform configuration."/>
+        <property name="inputHCLVariables" label="input HCL Variables" kind="map_string_string" required="false" hidden="true"
+                  description="Input HCL variables(map, list, ...) to be used in the Terraform configuration."/>
+        <property name="mapInputVariables" kind="set_of_ci" as-containment="true" required="false" referenced-type="terraform.MapInputVariableSpec"/>
+        <property name="secretInputVariables" kind="map_string_string" password="true" required="false" hidden="true"
+                  description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
+        <property name="outputVariables" kind="map_string_string" required="false" category="Terraform Output" hidden="true"
+                  description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="mapArrayRegexp" default="([a-zA-Z_1-9]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
+        <property name="dependencyAnnotation" default="&lt;&lt;" hidden="true" description="the annotation used to define a variable dependency.It should be 2 characters"/>
+        <property name="inputCategory" default="Input" hidden="true"/>
+        <property name="outputCategory" default="Output" hidden="true"/>
+    </type-modification>
 
-    <type type="benoit.JavaDBProject" extends="terraform.AbstractedInstantiatedModule"
-          deployable-type="benoit.JavaDBProjectSpec" container-type="terraform.Configuration">
-        <generate-deployable type="benoit.JavaDBProjectSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
-
-        <property name="source" default="benoit/java-bdd-project/module" hidden="true"/>
-        <property name="version" required="true" default="4.0.0"/>
-
-        <!-- simple type -->
-        <property name="aws_region" default="us-east-1" category="Input"/>
-        <property name="environment" default="dev" category="Input"/>
-        <property name="instance_type" default="t2.micro" category="Input"/>
-        <property name="private_key_path" default="/dev/nul" category="Input" password="true"/>
-        <property name="project_name" category="Input"/>
-        <property name="public_key_path" category="Input"/>
-        <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
-
-        <!-- output-->
-        <property name="public_ip_bdd" category="Output" required="false"/>
-        <property name="public_ip_front" required="false" category="Output"/>
-
-    </type>
-
+    
 </synthetic>
