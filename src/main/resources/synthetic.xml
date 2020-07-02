@@ -72,6 +72,9 @@
     <type type="terraformEnterprise.ExecutedModule" extends="udm.BaseDeployedInfrastructureAsCode"
           deployable-type="terraform.Module"
           container-type="terraformEnterprise.Provider">
+
+        <icon>icons/types/terraformio-icon.svg</icon>
+
         <property name="workspaceName"/>
         <property name="terraformVersion" default="0.12.24"/>
         <property name="inputVariables" kind="map_string_string" required="false"

@@ -1,0 +1,36 @@
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: Applications/website-content
+  type: udm.Application  
+  children:
+  - name: 1.0.0
+    type: udm.DeploymentPackage
+    deployables:
+    - name: content
+      type: aws.s3.Folder
+      file: !file "content/quickstart/public"
+    - name: test
+      type: smoketest.HttpRequestTest
+      url: http://{{bucket_domain_name}}/index.html
+      expectedResponseText: My Second Post
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+  - name: Applications/website-cloud-resources
+    type: udm.Application
+    children:
+      - name: 1.0.0
+        type: udm.DeploymentPackage
+        deployables:
+          - name: resources
+            type: terraform.Module
+            inputVariables:
+              www_domain_name: "www.digital-ai.demo"
+              aws_region: "eu-west-3"
+              root_domain_name: "digital-ai.demo"
+            workspaceName: website-{{aws_region}}
+            applyDestroyOperation: "true"
+            file: !file "resources"
