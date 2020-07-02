@@ -94,7 +94,11 @@
     <type type="terraform.Configuration" extends="udm.BaseDeployed"
           deployable-type="terraform.ConfigurationSpec"
           container-type="terraformEnterprise.Provider">
+
         <generate-deployable type="terraform.ConfigurationSpec" extends="udm.BaseDeployable"/>
+
+        <icon>icons/types/terraformio-icon.svg</icon>
+
         <property name="workspaceName"/>
         <property name="terraformVersion" default="0.12.24"/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
@@ -208,5 +212,5 @@
         <property name="outputCategory" default="Output" hidden="true"/>
     </type-modification>
 
-    
+
 </synthetic>
