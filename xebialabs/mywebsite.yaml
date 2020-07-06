@@ -1,0 +1,34 @@
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- directory: Applications/MyWebSite
+  children:
+  - name: website-cloud-resources
+    type: udm.Application
+    children:
+    - name: 1.0.0
+      type: udm.DeploymentPackage
+      deployables:
+      - name: resources
+        type: terraform.Module
+        inputVariables:
+          aws_region: eu-west-3
+          root_domain_name: digital-ai.demo
+          www_domain_name: www.digital-ai.demo
+        workspaceName: website-{{aws_region}}
+        applyDestroyOperation: "true"
+        file: !file "artifacts/Applications/MyWebSite/website-cloud-resources/1.0.0/resources/resources.zip"
+  - name: website-content
+    type: udm.Application
+    children:
+    - name: 1.0.0
+      type: udm.DeploymentPackage
+      deployables:
+      - name: content
+        type: aws.s3.Folder
+        file: !file "artifacts/Applications/MyWebSite/website-content/1.0.0/content/public.zip"
+      - name: test
+        type: smoketest.HttpRequestTest
+        url: http://{{bucket_domain_name}}/index.html
+        expectedResponseText: My Second Post
