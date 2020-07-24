@@ -15,6 +15,22 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
 -->
 <rules xmlns="http://www.xebialabs.com/xl-deploy/xl-rules">
 
+    <!--
+        Shall we need to add this rules MODIFY ???
+        <rule name="benoit udm.Provision.MODIFY" scope="pre-plan">
+            <conditions>
+                <expression>
+                    specification.operation == 'MODIFY' and previousDeployedApplication.type == 'udm.DeployedApplication' and bool(previousDeployedApplication.hasProvisioned())
+                </expression>
+            </conditions>
+            <steps>
+                <validate-deprovisioning/>
+                <delete-all-provisioned-cis/>
+            </steps>
+        </rule>
+
+
+    -->
 
     <rule name="tfe.terraformEnterprise.configuration.deploy" scope="deployed">
         <conditions>

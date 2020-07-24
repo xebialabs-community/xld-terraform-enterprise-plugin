@@ -15,6 +15,7 @@ import json
 
 from com.xebialabs.deployit.provision import ProvisionHelper
 from com.xebialabs.deployit.plugin.api.reflect import DescriptorRegistry
+from com.xebialabs.deployit.plugin.api.reflect import Type
 import importlib
 
 
@@ -119,15 +120,14 @@ class ManageResources(object):
 
     def process_cis_to_delete(self):
         if self.previousDeployed:
-            for ci in self.previousDeployed.generatedConfigurationItems:
+            for ci in self.previousDeployed.getProperty(self._get_managed_ci_property()):
                 if ci.type != "udm.Environment" and ci.type != "udm.Dictionary":
                     if ci.id not in self.generated_ids:
                         self.cis_to_delete.append(ci.id)
 
     def update_environment_members(self):
         print("update_environment_members {0}".format(self.environment_id))
-        environment = ProvisionHelper.getOrCreateEnvironment(
-            self.environment_id, self.context)
+        environment = ProvisionHelper.getOrCreateEnvironment(self.environment_id, self.context)
         members = environment.members
         for ci in self.generated_cis:
             print("...generated ci {0}".format(ci.id))
@@ -148,23 +148,23 @@ class ManageResources(object):
         self.repository.update(self.environment_id, environment)
 
     def update_generated_cis(self):
-        generatedConfigurationItems = self.current_deployed.generatedConfigurationItems
+        generated_configuration_items = self.current_deployed.getProperty(self._get_managed_ci_property())
+
         for ci in self.generated_cis:
-            generatedConfigurationItems.add(ci)
+            generated_configuration_items.add(ci)
         if self.environment_id != self.deployedApplication.environment.id:
-            generatedConfigurationItems.add(
-                self.repository.read(self.environment_id))
+            generated_configuration_items.add(self.repository.read(self.environment_id))
 
         generated_to_remove = []
-        for ci in generatedConfigurationItems:
+        for ci in generated_configuration_items:
             if ci.id in self.cis_to_delete:
-                print("'%s' removed from 'generatedConfigurationItems' property of '%s'" % (
-                    ci.id, self.current_deployed.id))
+                print("'%s' removed from 'generated_configuration_items' property of '%s'" % (ci.id, self.current_deployed.id))
                 generated_to_remove.append(ci)
         for ci in generated_to_remove:
-            generatedConfigurationItems.remove(ci)
+            generated_configuration_items.remove(ci)
 
-        self.current_deployed.generatedConfigurationItems = generatedConfigurationItems
+        self.current_deployed.setProperty(self._get_managed_ci_property(), generated_configuration_items)
+
         if self.repository.exists(self.current_deployed.id):
             self.repository.update(self.current_deployed.id, self.current_deployed)
 
@@ -172,6 +172,23 @@ class ManageResources(object):
         for ci_id in self.cis_to_delete:
             self.repository.delete(ci_id)
             print("'%s' deleted" % ci_id)
+
+    def _get_managed_ci_property(self):
+        # Why do we need to manage this indirection to the list of managed_ci ?
+        # Because the DeleteAllProvisionedItems steps assumes the generatedConfigurationItems property is managed
+        # only if the type is base of udm.BaseDeployedInfrastructureAsCode else it filters out the ci.
+        # so depending of the type of the subclass the code uses generatedConfigurationItems or boundConfigurationItems
+        if self._is_sub_of_based_deployed_infructure_as_code():
+            # print(" ... _get_managed_ci_property:generatedConfigurationItems")
+            return "generatedConfigurationItems"
+        else:
+            # print(" ... _get_managed_ci_property:boundConfigurationItems")
+            return "boundConfigurationItems"
+
+    def _is_sub_of_based_deployed_infructure_as_code(self):
+        current_deployed_type = self.current_deployed.getType()
+        bdiac_type = Type.valueOf('udm.BaseDeployedInfrastructureAsCode')
+        return current_deployed_type.isSubTypeOf(bdiac_type)
 
 
 from terraxld.api import TFE
