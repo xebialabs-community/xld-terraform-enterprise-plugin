@@ -45,6 +45,8 @@ spec:
                 outputVariables:
                   my_main_domain_name: 'bucket_domain_name'
                   my_main_id: 'bucket_id'
+                secretOutputVariables:
+                  main_db_password: 'db_password'
                 source: s3
               - name: s3-bucket-backup
                 type: terraform.InstantiatedModuleSpec
@@ -54,6 +56,9 @@ spec:
                   region: '{{aws_region}}'
                 outputVariables:
                   bucket_name_backup_id: 'bucket_id'
+                  db_password: 'db_password'
+                secretOutputVariables:
+                  backup_db_password: 'db_password'
       - name: 3.0.3
         type: udm.DeploymentPackage
         deployables:
@@ -74,6 +79,8 @@ spec:
                 outputVariables:
                   my_main_domain_name: 'bucket_domain_name'
                   my_main_id: 'bucket_id'
+                secretOutputVariables:
+                  db_password: 'db_password'
                 source: s3
       - name: 3.0.5
         type: udm.DeploymentPackage

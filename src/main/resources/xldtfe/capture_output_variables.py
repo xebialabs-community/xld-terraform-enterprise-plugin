@@ -10,6 +10,7 @@
 
 from terraxld.api import TFE
 import re
+import sys
 import json
 
 
@@ -22,14 +23,27 @@ def dump_json(data, message):
         print(50 * '=')
 
 
+def is_sensitive_variable(entry):
+    return 'sensitive' in entry and entry['sensitive']
+
+
+def add_value(entry, output_key_var, output_variables, secret_output_variables):
+    if is_sensitive_variable(entry):
+        print("   add {0}={1}".format(output_key_var, '******************'))
+        secret_output_variables[output_key_var] = entry['value']
+    else:
+        print("   add {0}={1}".format(output_key_var, entry['value']))
+        output_variables[output_key_var] = entry['value']
+
+
 myapi = TFE(organization)
 ws_id = myapi.workspaces.get_id(workspace_name)
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
-# dump_json(output,"OUTPUT")
-
+# dump_json(output, "OUTPUT")
 
 if output:
     output_variables = {}
+    secret_output_variables = {}
     output_json = output['outputs']
 
     for key in output_json:
@@ -41,9 +55,8 @@ if output:
                 print("   add {0}={1}".format(idx_key, value))
                 output_variables[idx_key] = value
         else:
-            print("   add {0}={1}".format(key, output_json[key]['value']))
-            output_variables[key] = output_json[key]['value']
-            print("new output variable found {0}:{1}".format(key, output_variables[key]))
+            add_value(output_json[key], key, output_variables, secret_output_variables)
+            # print("new output variable found {0}:{1}".format(key, output_variables[key]))
             expression_reg_exp = re.compile("([a-zA-Z_1-9]*)-([a-zA-Z_1-9]*)")
             mo = expression_reg_exp.findall(key)
             if len(mo) == 1:
@@ -53,22 +66,25 @@ if output:
                 instantiated_module = [ci for ci in deployed.modules if ci.id.endswith(module)][0]
                 print("instantiated module {0}".format(instantiated_module))
                 if deployed.removeModulePrefixNameInDictionary:
-                    print("   add {0}={1}".format(output_var, output_json[key]['value']))
-                    output_variables[output_var] = output_json[key]['value']
+                    add_value(output_json[key], output_var, output_variables, secret_output_variables)
                 if instantiated_module.hasProperty(output_var):
                     instantiated_module.setProperty(output_var, output_json[key]['value'])
                 else:
                     print("{0} hasn't {1} property, can't assign the value to the CI".format(instantiated_module, output_var))
 
     deployed.outputVariables = output_variables
+    deployed.secretOutputVariables = secret_output_variables
     context.logOutput("Output variables from Terraform captured.")
+
     context.logOutput("---- outputVariables -----")
-    for k,v in sorted(deployed.outputVariables.items()):
+    for k, v in sorted(deployed.outputVariables.items()):
         print("-> {0}={1}".format(k, v))
     context.logOutput("---- /outputVariables -----")
 
+    context.logOutput("---- secretOutputVariables -----")
+    for k, v in sorted(deployed.secretOutputVariables.items()):
+        print("-> {0}={1}".format(k, '******'))
+    context.logOutput("---- /secretOutputVariables -----")
+
 else:
     context.logOutput("No output variables found.")
-
-
-

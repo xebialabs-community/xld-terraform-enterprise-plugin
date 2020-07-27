@@ -42,7 +42,14 @@ module "${deployed.name}" {
 output "${deployed.name}-${key}" {
   value = module.${deployed.name}.${outputVariables[key]}
 }
+    </#list>
 
+
+    <#list secretOutputVariables?keys as key>
+output "${deployed.name}-${key}" {
+  value = module.${deployed.name}.${secretOutputVariables[key]}
+  sensitive = true
+}
     </#list>
 </#if>
 

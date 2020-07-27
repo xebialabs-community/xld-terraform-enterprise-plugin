@@ -83,6 +83,9 @@
                   description="Secret input variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="secretOutputVariables" kind="map_string_string" password="true" required="false"
+                  description="Secret out variables." category="Output"/>
+
         <property name="applyDestroyOperation" kind="boolean" default="false" required="false" category="Advanced"/>
     </type>
 
@@ -115,7 +118,10 @@
                   required="false"/>
         <property name="mapperContext" kind="map_string_string" required="false" category="Provision"/>
 
-        <property name="outputVariables" kind="map_string_string" required="false"/>
+
+        <property name="secretOutputVariables" kind="map_string_string" password="true" required="false"
+                  description="Secret out variables." category="Output"/>
+
         <property name="environmentPath" label="Environment path and name" required="false" category="Generated Configuration Items"/>
         <property name="automaticDictionary" label="Create dictionary from output variables" kind="boolean" default="true" required="false" category="Generated Configuration Items"/>
         <property name="dictionaryPath" label="Dictionary path and name" required="false" category="Generated Configuration Items"/>
@@ -144,10 +150,14 @@
                   description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Terraform Output"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="secretOutputVariables" kind="map_string_string" required="false" category="Terraform Output"
+                  description="Sensitive Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+
         <property name="mapArrayRegexp" default="([a-zA-Z_1-9]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
         <property name="dependencyAnnotation" default="&lt;&lt;" hidden="true" description="the annotation used to define a variable dependency.It should be 2 characters"/>
         <property name="inputCategory" default="Input" hidden="true"/>
         <property name="outputCategory" default="Output" hidden="true"/>
+
     </type>
 
     <type-modification type="terraform.InstantiatedModuleSpec">
@@ -192,6 +202,9 @@
                   description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Terraform Output" hidden="true"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="secretOutputVariables" kind="map_string_string" required="false" category="Terraform Output" hidden="true"
+                  description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+
         <property name="mapArrayRegexp" default="([a-zA-Z_1-9]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
         <property name="dependencyAnnotation" default="&lt;&lt;" hidden="true" description="the annotation used to define a variable dependency.It should be 2 characters"/>
         <property name="inputCategory" default="Input" hidden="true"/>
@@ -209,6 +222,9 @@
                   description="Secret input simple (int,string) variables to be used in the Terraform configuration."/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Terraform Output" hidden="true"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+        <property name="secretOutputVariables" kind="map_string_string" required="false" category="Terraform Output" hidden="true"
+                  description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
+
         <property name="mapArrayRegexp" default="([a-zA-Z_1-9]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
         <property name="dependencyAnnotation" default="&lt;&lt;" hidden="true" description="the annotation used to define a variable dependency.It should be 2 characters"/>
         <property name="inputCategory" default="Input" hidden="true"/>

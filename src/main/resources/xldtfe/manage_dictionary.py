@@ -27,9 +27,16 @@ class ManageDictionaryStep:
         self.context.logOutput(dictionary.id)
         new_entries = {}
         for k, v in self.deployed.outputVariables.items():
-            self.context.logOutput("...add {0}:{1} to the dictionary".format(k, v))
+            self.context.logOutput("...add entry {0}:{1} to the dictionary".format(k, v))
             new_entries[k] = v
         dictionary.entries = new_entries
+
+        secret_new_entries = {}
+        for k, v in self.deployed.secretOutputVariables.items():
+            self.context.logOutput("...add encrypted entry {0}:{1} to the dictionary".format(k, '*******'))
+            secret_new_entries[k] = v
+        dictionary.encryptedEntries = secret_new_entries
+
         self.repository_service.update([dictionary])
         self.context.logOutput("Dictionary filled: '{0}'".format(dictionary))
 
@@ -103,4 +110,3 @@ step = ManageDictionaryStep(deployed=deployed,
                             repository_service=repositoryService,
                             context=context)
 getattr(step, operation)()
-

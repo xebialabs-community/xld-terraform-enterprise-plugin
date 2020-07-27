@@ -35,7 +35,7 @@
         <property name="arn" label="ARN" category="Output" required="false"/>
         <property name="private_ip" label="Private IP" required="false" category="Output"/>
         <property name="security_group_id" label="Security Group Id" required="false" category="Output"/>
-
+        <property name="secret_password" label="Sensitive Info" password="true" required="false" category="Output"/>
     </type>
 
     <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"

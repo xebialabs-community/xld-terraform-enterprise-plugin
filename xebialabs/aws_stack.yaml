@@ -58,7 +58,7 @@ spec:
             Terraform: "true"
       - name: web_server_sg
         type: terraform.InstantiatedModuleSpec
-        source: terraform-aws-modules/security-group/aws//modules/http-8080
+        source: terraform-aws-modules/security-group/aws/modules/http-8080
         version: ~> 3.0
         inputVariables:
           name: '{{env}}-web-server'

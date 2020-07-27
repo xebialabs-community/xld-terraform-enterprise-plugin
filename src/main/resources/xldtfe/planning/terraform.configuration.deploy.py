@@ -69,6 +69,7 @@ class PlanGenerator:
         properties = {'inputVariables': {},
                       'secretInputVariables': deployed.secretInputVariables,
                       'outputVariables': deployed.outputVariables,
+                      'secretOutputVariables': deployed.secretOutputVariables,
                       'inputHCLVariables': {}}
 
         for key, value in deployed.inputVariables.items():
@@ -106,7 +107,11 @@ class PlanGenerator:
                     properties['inputVariables'][pd.name] = json.dumps(deployed.getProperty(pd.name))
 
             if pd.category in deployed.outputCategory:
-                properties['outputVariables'][pd.name] = pd.name
+                if pd.kind.isSimple() and pd.isPassword():
+                    properties['secretOutputVariables'][pd.name] = pd.name
+                else:
+                    properties['outputVariables'][pd.name] = pd.name
+
         return properties
 
     def _map_to_json(self, data):
@@ -141,7 +146,7 @@ class PlanGenerator:
                 order=60,
                 target_path="{0}/{1}".format(work_dir, module.name),
                 create_target_path=True,
-                target_host= organization.host,
+                target_host=organization.host,
                 artifact=module
             ))
 
@@ -165,7 +170,7 @@ class PlanGenerator:
                 target_path="{0}/{1}.tf".format(work_dir, module.name),
                 template_path="xldtfe/templates/module.tf.ftl",
                 create_target_path=True,
-                target_host= organization.host,
+                target_host=organization.host,
                 freemarker_context=freemarker_context
             ))
 

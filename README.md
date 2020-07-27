@@ -110,7 +110,7 @@ Example. If you want to package the [jclopeza/java-bdd-project](https://registry
 </type>
 ```
 
-It's also possible to define structured types for `terraform.EmbeddedModule` helping to manage complex inputs.
+It's also possible to define structured types for `terraform.EmbeddedModule` helping to manage complex inputs & outputs.
 
 ```
   <type type="myaws.ec2.VirtualMachine" extends="terraform.AbstractedInstantiatedModule"
@@ -134,7 +134,7 @@ It's also possible to define structured types for `terraform.EmbeddedModule` hel
         <property name="arn" label="ARN" category="Output" required="false"/>
         <property name="private_ip" label="Private IP" required="false" category="Output"/>
         <property name="security_group_id" label="Security Group Id" required="false" category="Output"/>
-
+        <property name="secret_password" label="Sensitive Info" password="true" required="false" category="Output"/>
     </type>
 
     <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"
@@ -162,7 +162,7 @@ Typically, using input variables (module2) whose values is the output of the oth
         region: module.module1.region
 ```
 
-the plugin offers an annotation if the 2 variables (input/output) have the same name: "<<module"
+the plugin offers an annotation if the 2 variables (input/output) have the same name: `<<module`
 this annotation can be used with the `inputVariables` and `inputHCLVariables` properties.
 
 ```
@@ -218,7 +218,7 @@ module "s3-bucket" {
 ```
 You may control the regexp by modifying the `mapArrayRegexp` defined in `terraform.InstantiatedModule` as an hidden property.
 
-The default value is : `([a-zA-Z_1-9]*)__(\d+)`. Example: vol_1, vol_2, efs2_4,....
+The default value is : `([a-zA-Z_1-9]*)__(\d+)`. Ex: outputVariablesmple: vol_1, vol_2, efs2_4,....
 
 ### Control task : Process Module
 On the `terraform.Module` deployable CI, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
