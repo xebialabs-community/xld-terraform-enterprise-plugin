@@ -218,7 +218,7 @@ module "s3-bucket" {
 ```
 You may control the regexp by modifying the `mapArrayRegexp` defined in `terraform.InstantiatedModule` as an hidden property.
 
-The default value is : `([a-zA-Z_1-9]*)__(\d+)`
+The default value is : `([a-zA-Z_1-9]*)__(\d+)`. Example: vol_1, vol_2, efs2_4,....
 
 ### Control task : Process Module
 On the `terraform.Module` deployable CI, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.
