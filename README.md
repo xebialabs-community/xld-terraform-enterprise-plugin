@@ -80,6 +80,19 @@ xl apply -f xebialabs/aws_module.yaml
 ```
 ## Features
 
+
+### Mappers
+
+Once the cloud infrastructure generated & created, it is not over: the application needs to be deployed on top of. So the plugin offers to define customer mappers allowing creating new containers and added them to the environment.
+A mapper is a python class extending ResourceMapper with 2 methods:
+* the `accepted_types` method returns the list of the Terraform accepted_type.
+* the `create_ci` method that build the list of the new CI that need to be created and added. The plugin managed to the updates and the deletions.
+
+Then the mapper should be added to the `terraformEnterprise.Provider` using the `additionalMappers` map property. The key is a unique identifier, the value the path to the class. eg `xldtfe.mapper.aws_s3_mapper.AWSS3Mapper`
+
+see sample code : https://github.com/xebialabs-community/xld-terraform-enterprise-plugin/blob/master/src/main/resources/xldtfe/mapper/aws_s3_mapper.py
+
+
 ### Structured Terraform Configured Items.
 
 Even it's possible to package `terraform.InstantiatedModuleSpec` using a generic type, it's also possible to defined new CI based typed to help the user to fill the inputs & output properties.
