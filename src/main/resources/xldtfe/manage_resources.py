@@ -100,7 +100,13 @@ class ManageResources(object):
 
         for mapper in self.resource_mappers:
             candidates = [resource for resource in resources if resource['type'] in mapper.accepted_types()]
-            if len(candidates) > 0:
+            create = True
+            candidates_types = [candidate['type'] for candidate in candidates]
+            for accepted_type in mapper.accepted_types():
+                if accepted_type not in candidates_types:
+                    create = False
+                    
+            if create and (candidates) > 0:
                 print("call {0} mapper managing {1} type(s) with {2} resource(s))".format(mapper, mapper.accepted_types(), len(candidates)))
                 cis = mapper.create_ci(candidates, self.folder, self.deployed)
                 print("{0} configuration item(s) to create or update".format(len(cis)))
