@@ -15,7 +15,7 @@
 
 
     <type type="terraformEnterprise.Mappers" extends="udm.BaseConfigurationItem" virtual="true">
-        <property name="aws_s3_mapper" default="xldtfe.mapper.aws_s3_mapper.AWSS3Mapper" hidden="true"/>
+       
     </type>
 
     <type type="terraformEnterprise.Organization" extends="udm.BaseContainer" root="INFRASTRUCTURE">
