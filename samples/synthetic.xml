@@ -45,6 +45,12 @@
         <property name="volume_size" label="Volume Size" category="Input"/>
     </type>
 
+    <type type="myaws.ec2.VPCManager" extends="terraform.AbstractedInstantiatedModule"
+          deployable-type="myaws.ec2.VPCManagerSpec" container-type="terraform.Configuration">
+        <generate-deployable type="myaws.ec2.VPCManagerSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
+        <property name="security_groups" label="SecurityGroups" category="Input" kind="list_of_string"/>
+    </type>
+
 
     <type type="jclopeza.JavaDBProject" extends="terraform.AbstractedInstantiatedModule"
           deployable-type="jclopeza.JavaDBProjectSpec" container-type="terraform.Configuration">

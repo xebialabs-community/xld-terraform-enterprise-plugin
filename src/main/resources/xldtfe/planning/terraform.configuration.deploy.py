@@ -65,6 +65,8 @@ class PlanGenerator:
         return temporary_map
 
     def _compute_properties(self, deployed):
+        print("----------------------------------------------")
+        print("compute properties {}".format(deployed.id))
 
         properties = {'inputVariables': {},
                       'secretInputVariables': deployed.secretInputVariables,
@@ -73,6 +75,7 @@ class PlanGenerator:
                       'inputHCLVariables': {}}
 
         for key, value in deployed.inputVariables.items():
+            print("inputVariables process {}->{}".format(key, value))
             if value.startswith(deployed.dependencyAnnotation):
                 value = "module.{0}.{1}".format(value[2:], key)
             else:
@@ -80,6 +83,7 @@ class PlanGenerator:
             properties['inputVariables'][key] = value
 
         for key, value in deployed.inputHCLVariables.items():
+            print("inputHCLVariables process {}->{}".format(key, value))
             if value.startswith(deployed.dependencyAnnotation):
                 value = "module.{0}.{1}".format(value[2:], key)
             else:
@@ -94,17 +98,15 @@ class PlanGenerator:
                     else:
                         value = deployed.getProperty(pd.name)
                         if pd.kind == PropertyKind.STRING:
-                            if value.startswith(deployed.dependencyAnnotation):
-                                value = "module.{0}.{1}".format(value[2:], pd.name)
-                            else:
-                                value = json.dumps(value)
+                            value = self.__translate_dependency_annotation(deployed, pd.name, value)
                         else:
                             value = json.dumps(value)
                         properties['inputVariables'][pd.name] = value
                 elif pd.kind == PropertyKind.MAP_STRING_STRING:
                     properties['inputVariables'][pd.name] = json.dumps(deployed.getProperty(pd.name))
-                elif pd.kind == PropertyKind.LIST_OF_STRING:
-                    properties['inputVariables'][pd.name] = json.dumps(deployed.getProperty(pd.name))
+                elif pd.kind == PropertyKind.LIST_OF_STRING or pd.kind == PropertyKind.SET_OF_STRING:
+                    values = [self.__translate_dependency_annotation(deployed, pd.name, value, True) for value in deployed.getProperty(pd.name)]
+                    properties['inputVariables'][pd.name] = json.dumps(values)
 
             if pd.category in deployed.outputCategory:
                 if pd.kind.isSimple() and pd.isPassword():
@@ -113,6 +115,15 @@ class PlanGenerator:
                     properties['outputVariables'][pd.name] = pd.name
 
         return properties
+
+    def __translate_dependency_annotation(self, deployed, name, value, interpolate=False):
+        if value.startswith(deployed.dependencyAnnotation):
+            new_value = "module.{0}.{1}".format(value[2:], name)
+            if interpolate:
+                return "${" + new_value + "}"
+            return new_value
+        else:
+            return value
 
     def _map_to_json(self, data):
         new_data = {}

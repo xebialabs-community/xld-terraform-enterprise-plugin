@@ -177,6 +177,7 @@ Typically, using input variables (module2) whose values is the output of the oth
 
 the plugin offers an annotation if the 2 variables (input/output) have the same name: `<<module`
 this annotation can be used with the `inputVariables` and `inputHCLVariables` properties.
+this annotation is also manage to new types inheriting from `terraform.MapInputVariable` type. (cf [samples/synthetic.xm](samples/synthetic.xml))
 
 ```
  modules:
@@ -276,3 +277,4 @@ This command automaticaly tags the version, pushes it remotely and
 trigger a release build. The script: `./buildViaTravis.sh` manages to
 run the right command.
 
+Icons made by <a href="https://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave Gandy</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
