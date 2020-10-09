@@ -232,7 +232,57 @@ module "s3-bucket" {
 ```
 You may control the regexp by modifying the `mapArrayRegexp` defined in `terraform.InstantiatedModule` as an hidden property.
 
-The default value is : `([a-zA-Z_1-9]*)__(\d+)`. Ex: outputVariablesmple: vol_1, vol_2, efs2_4,....
+The default value is : `([a-zA-Z_1-9]*)__(\d+)`. Ex: outputVariablesample: vol_1, vol_2, efs2_4,....
+
+It's possible to control the name of the variable with the `useTfVariableName` and `tfVariableName` properties
+Ex 
+```
+mapInputVariables:
+  - name: ec2_block_device__2
+    type: terraform.MapInputVariableSpec
+    useTfVariableName: True
+    tfVariableName: myVariableName
+    variables:
+      size: 500Mo
+      fs: FAT32
+  - name: ec2_block_device__1
+    type: terraform.MapInputVariableSpec
+    useTfVariableName: True
+    tfVariableName: myVariableName
+    variables:
+      size: 2G
+      fs: NTFS
+  - name: tags
+    type: terraform.MapInputVariableSpec
+    variables:
+      app: petportal
+      version: 12.1.2
+```
+
+the plugin generates the following content:
+```
+module "s3-bucket" {
+    source = "./s3"
+    name="benoit.moussaud.bucket"
+    region="eu-west-3"
+
+    myVariableName=[{"fs": "NTFS", "size": "2G"}, {"fs": "FAT32", "size": "500Mo"}]
+    tags={"app": "petportal", "version": "12.1.2"}
+}
+```
+
+These 2 properties can be set and set as `hidden=true` if you extend the type.
+```
+ <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"
+          container-type="terraform.InstantiatedModule" deployable-type="myaws.ec2.BlockDeviceSpec">
+        <generate-deployable type="myaws.ec2.BlockDeviceSpec" extends="terraform.MapInputVariableSpec" copy-default-values="true"/>
+        <property name="tfVariableName" hidden="true" default="tf_block_device" />
+        <property name="useTfVariableName" kind="boolean" default="true" required="false" hidden="true"/>
+
+        <property name="device_name" label="Device Name" category="Input"/>
+        <property name="volume_size" label="Volume Size" category="Input"/>
+    </type>
+```
 
 ### Control task : Process Module
 On the `terraform.Module` deployable CI, a `Process Module` control task allows to automatically fills the terraform modules with the variables defined in.

@@ -48,7 +48,11 @@ class PlanGenerator:
         temporary_map = {}
         expression_reg_exp = re.compile(regexp)
 
-        all_keys = [var.name for var in map_variables]
+        map_of_ci = {}
+        for var in map_variables:
+            map_of_ci[var.name]=var
+
+        all_keys = list(map_of_ci.keys())
         all_keys.sort()
 
         for k in all_keys:
@@ -57,6 +61,9 @@ class PlanGenerator:
                 temporary_map[k] = self._extract_entry(map_variables, k)
             else:
                 key = mo[0][0]
+                if map_of_ci[k].useTfVariableName:
+                    key=map_of_ci[k].tfVariableName
+
                 number = int(mo[0][1]) - 1
                 if key not in temporary_map:
                     temporary_map[key] = []

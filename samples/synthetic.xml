@@ -27,6 +27,7 @@
         <property name="highLoad" category="Input" kind="boolean" default="true"/>
         <property name="instance_type" label="InstanceType" default="t2.micro" category="Input"/>
 
+        <property name="block_devices" label="blockDevices" kind="list_of_ci" referenced-type="myaws.ec2.BlockDevice" required="false"/>
         <!-- complex type -->
         <property name="terraformTags" kind="map_string_string" category="Input" required="false"/>
         <property name="loadBalancerZone" kind="list_of_string" category="Input" required="false"/>
@@ -38,9 +39,16 @@
         <property name="secret_password" label="Sensitive Info" password="true" required="false" category="Output"/>
     </type>
 
+    <type-modification type="myaws.ec2.VirtualMachineSpec">
+        <property name="block_devices" label="blockDevices" kind="list_of_ci" referenced-type="myaws.ec2.BlockDeviceSpec" required="false"/>
+    </type-modification>
+
     <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"
           container-type="terraform.InstantiatedModule" deployable-type="myaws.ec2.BlockDeviceSpec">
-        <generate-deployable type="myaws.ec2.BlockDeviceSpec" extends="terraform.MapInputVariableSpec"/>
+        <generate-deployable type="myaws.ec2.BlockDeviceSpec" extends="terraform.MapInputVariableSpec" copy-default-values="true"/>
+        <property name="tfVariableName" hidden="true" default="tf_block_device" />
+        <property name="useTfVariableName" kind="boolean" default="true" required="false" hidden="true"/>
+
         <property name="device_name" label="Device Name" category="Input"/>
         <property name="volume_size" label="Volume Size" category="Input"/>
     </type>
