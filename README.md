@@ -327,4 +327,3 @@ This command automaticaly tags the version, pushes it remotely and
 trigger a release build. The script: `./buildViaTravis.sh` manages to
 run the right command.
 
-Icons made by <a href="https://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave Gandy</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
