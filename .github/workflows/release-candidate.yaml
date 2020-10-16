@@ -6,7 +6,7 @@ on:
       - "v*-rc*"
 jobs:
   tagged-release:
-    name: "Tagged Release"
+    name: "Tagged Release Candidate"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v2
