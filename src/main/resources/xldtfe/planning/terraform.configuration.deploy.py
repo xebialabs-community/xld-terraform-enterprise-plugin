@@ -72,9 +72,6 @@ class PlanGenerator:
         return temporary_map
 
     def _compute_properties(self, deployed):
-        print("----------------------------------------------")
-        print("compute properties {}".format(deployed.id))
-
         properties = {'inputVariables': {},
                       'secretInputVariables': deployed.secretInputVariables,
                       'outputVariables': deployed.outputVariables,
