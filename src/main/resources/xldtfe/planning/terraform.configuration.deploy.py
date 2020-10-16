@@ -105,7 +105,7 @@ class PlanGenerator:
                     else:
                         value = deployed.getProperty(pd.name)
                         if pd.kind == PropertyKind.STRING:
-                            value = self.__translate_dependency_annotation(deployed, pd.name, value)
+                            value = json.dumps(self.__translate_dependency_annotation(deployed, pd.name, value))
                         else:
                             value = json.dumps(value)
                         properties['inputVariables'][pd.name] = value
