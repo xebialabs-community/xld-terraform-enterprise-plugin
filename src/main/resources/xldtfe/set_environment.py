@@ -13,7 +13,7 @@ reload(terraxld.api)
 from terraxld.api import TFE
 
 myapi = TFE(organization)
-ws_id = myapi.workspaces.get_id(workspace_name)
+ws_id = myapi.workspaces.get_id(workspace)
 
 basics=dict()
 basics['TF_CLI_ARGS']='-no-color'
@@ -38,6 +38,6 @@ for cpm_key in provider.credentialsPropertyMapping:
         non_secured_items[key]=value
 
 
-myapi.load_variables_in_workspace(non_secured_items, workspace_name, False, scope='env')
-myapi.load_variables_in_workspace(secured_items, workspace_name, True, scope='env')
+myapi.load_variables_in_workspace(non_secured_items, workspace, False, scope='env')
+myapi.load_variables_in_workspace(secured_items, workspace, True, scope='env')
 

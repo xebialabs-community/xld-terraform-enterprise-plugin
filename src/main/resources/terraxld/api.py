@@ -35,12 +35,12 @@ class TFE():
     Super class for access to all TFE Endpoints.
     """
 
-    def __init__(self, organization):
+    def __init__(self, organization, debug=False):
         self.organization = organization
         if self.organization.token is None:
             raise InvalidTFETokenException
 
-        TFE.configure_logger_stdout(self.organization.debug)
+        TFE.configure_logger_stdout(debug)
 
         self._instance_url = "{url}/api/v2".format(url=self.organization.url)
         self._token = self.organization.token
@@ -97,9 +97,9 @@ class TFE():
             root.setLevel(logging.INFO)
             handler.setLevel(logging.INFO)
 
-    def load_variables_in_workspace(self, input, ws_name, secret, scope):
-        ws_id = self.workspaces.get_id(ws_name)
-        data = self.variables.lst(workspace_name=ws_name)
+    def load_variables_in_workspace(self, input, workspace, secret, scope):
+        ws_id = self.workspaces.get_id(workspace)
+        data = self.variables.lst(workspace_name=self._get_workspace_name(workspace))
         existing_variables = {}
         for variable_info in data['data']:
             existing_variables[variable_info['attributes']['key']] = variable_info['id']
@@ -123,3 +123,8 @@ class TFE():
             return 'xxxxxxxxxxxxxx'
         else:
             return value
+
+    def _get_workspace_name(self, workspace):
+        if workspace.workspaceName is not None:
+            return workspace.workspaceName
+        return workspace.name

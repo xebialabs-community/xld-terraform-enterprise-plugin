@@ -19,14 +19,15 @@ def format_error_message(run):
 
 
 myapi = TFE(organization)
-ws_id = myapi.workspaces.get_id(workspace_name)
-cv_id = context.getAttribute(workspace_name + "_cv_id")
+
+ws_id = myapi.workspaces.get_id(workspace)
+cv_id = context.getAttribute(ws_id + "_cv_id")
 print("cv_id {0}".format(cv_id))
 task_id = context.getTask().getId()
 run = myapi.runs.destroy(ws_id, cv_id, "Trigger Destroy by XLDeploy {0}".format(task_id))
 if 'data' in run:
     run_id = run['data']['id']
-    context.setAttribute(workspace_name + "_run_id", run_id)
+    context.setAttribute(ws_id + "_run_id", run_id)
     print("run id is {0}".format(run_id))
 else:
     print(format_error_message(run))

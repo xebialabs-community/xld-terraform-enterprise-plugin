@@ -55,6 +55,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
     </rule>
 
 
+    <!--
     <rule name="tfe.destroy.workspace" scope="deployed">
         <conditions>
             <type>terraformEnterprise.ExecutedModule</type>
@@ -71,7 +72,7 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
             </jython>
         </steps>
     </rule>
-
+    -->
 
     <rule name="tfe.ExecutedModule.CREATE_resources" scope="deployed">
         <conditions>
@@ -88,9 +89,9 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
                 <description expression="true">"Create infrastructure items from resources deployed"</description>
                 <script>xldtfe/manage_resources.py</script>
                 <jython-context>
-                    <organization expression="true">deployed.container.organization</organization>
-                    <workspace_name expression="true">deployed.workspaceName</workspace_name>
-                    <debug expression="true">deployed.container.organization.debug</debug>
+                    <organization expression="true">deployed.container.workspace.organization</organization>
+                    <workspace expression="true">deployed.container.workspace</workspace>
+                    <debug expression="true">deployed.container.workspace.debug</debug>
                     <deployedApplication expression="true">deployedApplication</deployedApplication>
                 </jython-context>
             </jython>
@@ -109,9 +110,9 @@ Note: If you modify this file and automatic reloading is disabled in `planner.co
                 <description expression="true">"Delete infrastructure items from resources deployed"</description>
                 <script>xldtfe/manage_resources.py</script>
                 <jython-context>
-                    <organization expression="true">previousDeployed.container.organization</organization>
-                    <workspace_name expression="true">previousDeployed.workspaceName</workspace_name>
-                    <debug expression="true">previousDeployed.container.organization.debug</debug>
+                    <organization expression="true">previousDeployed.container.workspace.organization</organization>
+                    <workspace expression="true">previousDeployed.container.workspace</workspace>
+                    <debug expression="true">previousDeployed.container.workspace.debug</debug>
                     <deployedApplication expression="true">previousDeployedApplication</deployedApplication>
                 </jython-context>
             </jython>

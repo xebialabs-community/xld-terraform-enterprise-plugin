@@ -2,40 +2,44 @@
 apiVersion: xl-deploy/v1
 kind: Infrastructure
 spec:
+  - name: Infrastructure/localhost
+    type: overthere.LocalHost
+    os: UNIX
+---
+apiVersion: xl-deploy/v1
+kind: Infrastructure
+spec:
 - name: Infrastructure/myOrganization
   type: terraformEnterprise.Organization
   organizationName: xebialabs-france
   url: https://app.terraform.io
-  token: !value "tfe_token"   
-  deleteWorkspace: true
+  token: !value "tfe_token"
   host: ~Infrastructure/localhost
   children:
-  - name: AWSProvider
-    type: terraformEnterprise.Provider
-    credentials:      
-      AWS_SECRET_ACCESS_KEY: !value "aws_secret_access_key"
-      AWS_ACCESS_KEY_ID: !value "aws_access_key_id"
-  - name: aws
-    type: terraformEnterprise.AwsProvider
-    credentials:     
-    accessSecret: !value "aws_secret_access_key"
-    accessKey: !value "aws_access_key_id"
-    defaultRegion: "eu-west-3"
----
-apiVersion: xl-deploy/v1
-kind: Infrastructure
-spec:
-- name: Infrastructure/myOrganization/azure-xl
-  type: terraformEnterprise.AzureProvider
-  subscriptionId: !value "subscriptionId"
-  tenantId: !value "tenantId"
-  clientId: !value "clientId"
-  clientKey: !value "clientKey"
----
-apiVersion: xl-deploy/v1
-kind: Infrastructure
-spec:
-  - name: Infrastructure/localhost
-    type: overthere.LocalHost
-    os: WINDOWS
+  - name: MyAnotherWorkspace
+    type: terraformEnterprise.Workspace
+    deleteWorkspace: false
+    workspaceName: Benoit-975
+    terraformVersion: 0.12.24
+    children:
+    - name: AWSProvider
+      type: terraformEnterprise.Provider
+      credentials:
+        AWS_SECRET_ACCESS_KEY: !value "aws_secret_access_key"
+        AWS_ACCESS_KEY_ID: !value "aws_access_key_id"
+    - name: aws
+      type: terraformEnterprise.AwsProvider
+      credentials:
+      accessSecret: !value "aws_secret_access_key"
+      accessKey: !value "aws_access_key_id"
+      defaultRegion: "eu-west-3"
+      additionalMappers:
+        aws_s3_mapper: xldtfe.mapper.aws_s3_mapper.AWSS3Mapper
+    - name: azure-xl
+      type: terraformEnterprise.AzureProvider
+      subscriptionId: !value "subscriptionId"
+      tenantId: !value "tenantId"
+      clientId: !value "clientId"
+      clientKey: !value "clientKey"
+
 

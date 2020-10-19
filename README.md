@@ -18,7 +18,7 @@ This document describes the functionality provided by the XL Deploy Terraform En
 
 ## Installation
 
-* requirement xl-deploy-server 9.0.0+
+* requirement xl-deploy-server 9.5.0+
 * Copy the latest JAR file from the [releases page](https://github.com/xebialabs-community/xld-helm-plugin/releases) into the `XL_DEPLOY_SERVER/plugins` directory.
 * Restart the XL Deploy server.
 
@@ -73,12 +73,24 @@ $xl apply --xl-deploy-url http://localhost:4516 -f xebialabs.yaml
 Done
 ```
 
-if you look at a sample package that instantiates several Terraform modules, please look at 
+if you look for sample packages that instantiates several Terraform modules, please look at 
 
 ```
 xl apply -f xebialabs/aws_module.yaml
 ```
 ## Features
+
+
+### Infrastructure
+
+1. Describe the connection to Terraform Enterprise using `terraformEnterprise.Organization` 
+2. Add the workspace definition using `terraformEnterprise.Workspace` as a child of the Organization.
+3. Add a provider using `terraformEnterprise.Provider` or dedicated Cloud Public Provider `
+    * Amazon Web Service `terraformEnterprise.AwsProvider`
+    * Microsoft Azure `terraformEnterprise.AzureProvider`
+    * Google Cloud `terraformEnterprise.GCPProvider`
+
+Note: it's possible to create your own provider. 
 
 
 ### Mappers

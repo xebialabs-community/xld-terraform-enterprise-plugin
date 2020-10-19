@@ -24,23 +24,29 @@
         <property name="organizationName" required="false" description="organization's name in terraform enterprise"/>
         <property name="proxyServer" required="false" kind="ci" referenced-type="credentials.ProxyServer"/>
         <property name="host" required="false" kind="ci" referenced-type="overthere.Host"/>
-        <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
-        <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>
         <property name="downloadMethod" kind="enum" required="false" default="JAVA" category="Advanced" hidden="false">
             <enum-values>
                 <value>PYTHON</value>
                 <value>JAVA</value>
             </enum-values>
         </property>
+        <method name="checkConnection" label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
+    </type>
+
+    <type type="terraformEnterprise.Workspace" extends="udm.BaseContainer">
+        <property name="organization" kind="ci" as-containment="true" referenced-type="terraformEnterprise.Organization"/>
+        <property name="workspaceName" required="false"/>
+        <property name="terraformVersion" required="false"/>
+        <property name="debug" kind="boolean" default="false" required="false" category="Advanced"/>
+        <property name="deleteWorkspace" kind="boolean" default="false" required="false" category="Advanced"/>
     </type>
 
     <type type="terraformEnterprise.Provider" extends="udm.BaseContainer">
-        <property name="organization" kind="ci" as-containment="true" referenced-type="terraformEnterprise.Organization"/>
+        <property name="workspace" kind="ci" as-containment="true" referenced-type="terraformEnterprise.Workspace"/>
         <property name="variables" kind="map_string_string" required="false" category="Advanced"/>
         <property name="credentials" kind="map_string_string" password="true" required="false" category="Advanced"/>
         <property name="additionalMappers" kind="map_string_string" required="false" category="Parameters"/>
         <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="empty:empty" category="Parameters"/>
-        <method name="checkConnection" label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
     </type>
 
     <type type="terraformEnterprise.AwsProvider" extends="terraformEnterprise.Provider">
@@ -75,8 +81,6 @@
 
         <icon>icons/types/terraformio-icon.svg</icon>
 
-        <property name="workspaceName"/>
-        <property name="terraformVersion" default="0.12.24"/>
         <property name="inputVariables" kind="map_string_string" required="false"
                   description="Input variables to be used in the Terraform configuration."/>
         <property name="secretInputVariables" kind="map_string_string" password="true" required="false"
@@ -90,8 +94,6 @@
     </type>
 
     <type-modification type="terraform.Module">
-        <property name="workspaceName"/>
-        <property name="terraformVersion" default="0.12.24"/>
         <property name="applyDestroyOperation" kind="string" default="false" required="false" category="Advanced"/>
         <method name="process" label="Process Module" delegate="jythonScript" script="xldtfe/process.py"/>
     </type-modification>
@@ -105,8 +107,6 @@
 
         <icon>icons/types/terraformio-icon.svg</icon>
 
-        <property name="workspaceName"/>
-        <property name="terraformVersion" default="0.12.24"/>
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
                   description="Output variables captured in deployed"/>
 

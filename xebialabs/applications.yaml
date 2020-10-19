@@ -14,7 +14,6 @@ spec:
             inputVariables:
               bucket_name: '{{bucket_name}}'
               aws_region: '{{aws_region}}'
-            workspaceName: multi-{{aws_region}}
             applyDestroyOperation: "true"
             file: !file "artifacts/2.0.1/bucket-1"
           - name: s3-bucket-backup
@@ -22,7 +21,6 @@ spec:
             inputVariables:
               bucket_name: '{{bucket_name}}'
               aws_region: '{{aws_region}}'
-            workspaceName: multi-{{aws_region}}
             applyDestroyOperation: "true"
             file: !file "artifacts/2.0.1/bucket-2"
       - name: 3.0.4
@@ -30,7 +28,6 @@ spec:
         deployables:
           - name: stack
             type: terraform.ConfigurationSpec
-            workspaceName: multi-{{aws_region}}
             applyDestroyOperation: "true"
             embeddedModules:
               - name: s3
@@ -64,7 +61,6 @@ spec:
         deployables:
           - name: stack
             type: terraform.ConfigurationSpec
-            workspaceName: multi-{{aws_region}}
             applyDestroyOperation: "true"
             embeddedModules:
               - name: s3
@@ -87,7 +83,6 @@ spec:
         deployables:
           - name: stack
             type: terraform.ConfigurationSpec
-            workspaceName: multi-{{aws_region}}
             applyDestroyOperation: "true"
             embeddedModules:
               - name: s3
@@ -114,7 +109,6 @@ spec:
     deployables:
       - name: stack
         type: terraform.ConfigurationSpec
-        workspaceName: multi-{{aws_region}}
         applyDestroyOperation: "true"
         modules:
           - name: s3-bucket
@@ -155,7 +149,6 @@ spec:
     deployables:
       - name: stack
         type: terraform.ConfigurationSpec
-        workspaceName: multi-{{aws_region}}
         applyDestroyOperation: "true"
         modules:
           - name: module2

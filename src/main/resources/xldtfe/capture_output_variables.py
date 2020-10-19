@@ -37,7 +37,7 @@ def add_value(entry, output_key_var, output_variables, secret_output_variables):
 
 
 myapi = TFE(organization)
-ws_id = myapi.workspaces.get_id(workspace_name)
+ws_id = myapi.workspaces.get_id(workspace)
 output = myapi.state_versions.get_current_state_content_workspace(ws_id)
 # dump_json(output, "OUTPUT")
 

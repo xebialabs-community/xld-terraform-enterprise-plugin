@@ -14,9 +14,7 @@ spec:
         aws_region: '{{aws_region}}'
         instance_type: '{{instance_type}}'
         ami_id: '{{ami_id}}'
-      workspaceName: ec2-{{aws_region}}
-      applyDestroyOperation: "true"
-      file: !file "artifacts/Applications/micro-vm/1.0.3/ec2/ec2.zip"  
+      file: !file "artifacts/Applications/micro-vm/1.0.3/ec2/ec2.zip"
   - name: 1.0.0
     type: udm.DeploymentPackage
     deployables:
@@ -26,6 +24,4 @@ spec:
         aws_region: '{{aws_region}}'
         instance_type: '{{instance_type}}'
         ami_id: '{{ami_id}}'
-      workspaceName: ec2-{{aws_region}}
-      applyDestroyOperation: "true"
       file: !file "artifacts/Applications/micro-vm/1.0.0/ec2/ec2.zip"

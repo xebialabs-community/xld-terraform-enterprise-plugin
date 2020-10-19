@@ -54,8 +54,7 @@ def stream_plan_output(myapi, run_id, message):
         [sys.stderr.write(line + "\n") for line in myapi.runs.show_plan_log(run_id).split('\n')]
         raise Exception("Error during the plan phase")
     if status == 'finished':
-        print
-        myapi.runs.show_plan_log(run_id)
+        print(myapi.runs.show_plan_log(run_id))
     print(50 * '=')
 
 
@@ -68,8 +67,7 @@ def stream_apply_output(myapi, run_id, message):
     status = s_apply['data']['attributes']['status']
     archivist_url = s_apply['data']['attributes']['log-read-url']
     while status == 'running':
-        print
-        "--> status {0}".format(status)
+        print("--> status {0}".format(status))
         time.sleep(5)
         s_apply = myapi.runs.show_apply(run_id)
         status = s_apply['data']['attributes']['status']
@@ -79,13 +77,13 @@ def stream_apply_output(myapi, run_id, message):
         [sys.stderr.write(line + "\n") for line in myapi.runs.show_apply_log(run_id).split('\n')]
         raise Exception("Error during the Apply phase")
     if status == 'finished':
-        print
-        myapi.runs.show_apply_log(run_id)
+        print(myapi.runs.show_apply_log(run_id))
     print(50 * '=')
 
 
 myapi = TFE(organization)
-run_id = context.getAttribute(workspace_name + "_run_id")
+ws_id = myapi.workspaces.get_id(workspace)
+run_id = context.getAttribute(ws_id + "_run_id")
 print(run_id)
 while True:
     show_result = myapi.runs.show(run_id)

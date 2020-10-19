@@ -50,7 +50,7 @@ class PlanGenerator:
 
         map_of_ci = {}
         for var in map_variables:
-            map_of_ci[var.name]=var
+            map_of_ci[var.name] = var
 
         all_keys = list(map_of_ci.keys())
         all_keys.sort()
@@ -65,7 +65,7 @@ class PlanGenerator:
             else:
                 key = mo[0][0]
                 if map_of_ci[k].useTfVariableName:
-                    key=map_of_ci[k].tfVariableName
+                    key = map_of_ci[k].tfVariableName
 
                 number = int(mo[0][1]) - 1
                 if key not in temporary_map:
@@ -142,23 +142,23 @@ class PlanGenerator:
         else:
             deployed = self.delta.deployed
 
-        container = deployed.container
-        organization = container.organization
-        workspace = deployed.workspaceName
+        provider = deployed.container
+        organization = deployed.container.workspace.organization
+        workspace = deployed.container.workspace
 
         work_dir = tempfile.mkdtemp()
         print("work_directory:{0}".format(work_dir))
 
-        jython_context = {'workspace_name': workspace,
-                          'terraform_version': deployed.terraformVersion,
+        jython_context = {'workspace': workspace,
+                          'terraform_version': workspace.terraformVersion,
                           'organization': organization,
-                          'provider': container,
+                          'provider': provider,
                           'work_dir': work_dir,
                           'deployed_application': deployedApplication}
 
         for module in deployed.embeddedModules:
             self.context.addStep(self.steps.upload(
-                description="Upload a module content {0} for {1}/{2}".format(module.name, organization.name, workspace),
+                description="Upload a module content {0} for {1}".format(module.name, self.to_desc(provider)),
                 order=60,
                 target_path="{0}/{1}".format(work_dir, module.name),
                 create_target_path=True,
@@ -181,7 +181,7 @@ class PlanGenerator:
                                        "hcl_variables": hcl_variables})
 
             self.context.addStep(self.steps.template(
-                description="Generate a module instance {0} for {1}/{2}".format(module.name, organization.name, workspace),
+                description="Generate a module instance {0} for {1}".format(module.name, self.to_desc(provider)),
                 order=60,
                 target_path="{0}/{1}.tf".format(work_dir, module.name),
                 template_path="xldtfe/templates/module.tf.ftl",
@@ -191,19 +191,18 @@ class PlanGenerator:
             ))
 
         self.context.addStep(self.steps.jython(
-            description="Create or Get the Workspace {0}/{1}".format(
-                workspace,
+            description="Check whether the Workspace {0}/{1} exists".format(
+                workspace.name,
                 organization.name),
             order=60,
-            script="xldtfe/create_workspace.py",
+            script="xldtfe/check_workspace.py",
             jython_context=jython_context
         ))
 
         self.context.addStep(self.steps.jython(
-            description="Upload global configuration version for {0} in {1}/{2}".format(
+            description="Upload global configuration version for {0} in {1}".format(
                 deployed.name,
-                organization.name,
-                workspace),
+                self.to_desc(provider)),
             order=60,
             script="xldtfe/create_global_configuration_version.py",
             jython_context=jython_context
@@ -216,10 +215,9 @@ class PlanGenerator:
         ))
 
         self.context.addStep(self.steps.jython(
-            description="Set the environment {0} in {1}/{2}".format(
-                container.name,
-                organization.name,
-                workspace),
+            description="Set the environment {0} in {1}".format(
+                provider.name,
+                self.to_desc(provider)),
             order=60,
             script="xldtfe/set_environment.py",
             jython_context=jython_context
@@ -227,30 +225,27 @@ class PlanGenerator:
 
         if self._is_destroy():
             self.context.addStepWithCheckpoint(self.steps.jython(
-                description="Trigger the run of DESTROY plan for {0} on {1}/{2}".format(
+                description="Trigger the run of DESTROY plan for {0} on {1}".format(
                     deployed.name,
-                    organization.name,
-                    workspace),
+                    self.to_desc(provider)),
                 order=65,
                 script="xldtfe/trigger_destroy.py",
                 jython_context=jython_context
             ), self.delta)
         else:
             self.context.addStepWithCheckpoint(self.steps.jython(
-                description="Trigger the run of plan for {0} on {1}/{2}".format(
+                description="Trigger the run of plan for {0} on {1}".format(
                     deployed.name,
-                    organization.name,
-                    workspace),
+                    self.to_desc(provider)),
                 order=65,
                 script="xldtfe/trigger_run.py",
                 jython_context=jython_context
             ), self.delta)
 
         self.context.addStep(self.steps.jython(
-            description="Wait for the end of the execution of the plan {0} on {1}/{2}".format(
+            description="Wait for the end of the execution of the plan {0} on {1}".format(
                 deployed.name,
-                organization.name,
-                workspace),
+                self.to_desc(provider)),
             order=65,
             script="xldtfe/wait_for_run.py",
             jython_context=jython_context
@@ -259,8 +254,7 @@ class PlanGenerator:
         if self._is_create():
             jython_context['deployed'] = deployed
             self.context.addStep(self.steps.jython(
-                description="Capture output variables for {0} for {1}/{2}".format(deployed.name, organization.name,
-                                                                                  workspace),
+                description="Capture output variables for {0} for {1}".format(deployed.name, self.to_desc(provider)),
                 order=66,
                 script="xldtfe/capture_output_variables.py",
                 jython_context=jython_context
@@ -270,9 +264,8 @@ class PlanGenerator:
             jython_context['deployed'] = deployed
             jython_context['operation'] = 'fill'
             self.context.addStep(self.steps.jython(
-                description="Fill Dictionary with captured output variables for '{0}' for {1}/{2}".format(deployed.name,
-                                                                                                          organization.name,
-                                                                                                          workspace),
+                description="Fill Dictionary with captured output variables for '{0}' for {1}".format(deployed.name,
+                                                                                                      self.to_desc(provider)),
                 order=90,
                 script="xldtfe/manage_dictionary.py",
                 jython_context=jython_context
@@ -282,13 +275,15 @@ class PlanGenerator:
             jython_context['operation'] = 'delete'
             jython_context['deployed_application'] = previousDeployedApplication
             self.context.addStep(self.steps.jython(
-                description="Delete Dictionary associated for '{0}' for {1}/{2}".format(deployed.name,
-                                                                                        organization.name,
-                                                                                        workspace),
+                description="Delete Dictionary associated for '{0}' for {1}".format(deployed.name,
+                                                                                    self.to_desc(provider)),
                 order=90,
                 script="xldtfe/manage_dictionary.py",
                 jython_context=jython_context
             ))
+
+    def to_desc(self, provider):
+        return "{0}/{1}[{2}]".format(provider.workspace.organization.name, provider.workspace.name, provider.name)
 
 
 PlanGenerator(context, steps, delta).generate()

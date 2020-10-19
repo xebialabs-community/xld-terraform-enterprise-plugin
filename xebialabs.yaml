@@ -8,4 +8,4 @@ metadata:
    - xebialabs/applications-bucket.yaml
    - xebialabs/applications-content.yaml
    - xebialabs/azure-vm.yaml
-   - xebialabs/microvm.yaml
+   - xebialabs/aws_stack.yaml

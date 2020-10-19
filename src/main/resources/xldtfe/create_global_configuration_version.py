@@ -37,7 +37,7 @@ print("TGZ:" + archive_file.path)
 helper.dump(archive_file.path)
 
 myapi = TFE(organization)
-ws_id = myapi.workspaces.get_id(workspace_name)
+ws_id = myapi.workspaces.get_id(workspace)
 
 config_version = myapi.config_versions.create(ws_id)
 if 'data' not in config_version:
@@ -50,7 +50,7 @@ print("New configuration version {0}".format(cv_id))
 
 print("Upload the tgz")
 myapi.config_versions.upload(archive_file.path, cv_id)
-context.setAttribute(workspace_name + "_cv_id", cv_id)
+context.setAttribute(ws_id + "_cv_id", cv_id)
 
 print("Clean up {0}".format(work_dir))
 LocalConnection.getLocalConnection().getFile(work_dir).deleteRecursively()

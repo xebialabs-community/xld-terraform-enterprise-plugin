@@ -104,16 +104,15 @@ class TFEEndpoint(object):
         """
         Implementation of the common show resource pattern for the TFE API.
         """
-        results = None
         req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
             results = json.loads(req.content)
+            return results
         else:
             err = json.loads(req.content.decode("utf-8"))
             self._logger.error(err)
-
-        return results
+            return err
 
     def _update(self, url, payload):
         """
@@ -136,6 +135,7 @@ class TFEEndpoint(object):
         # the "JAVA"  alternative implementation solves this and becomes the default implementation.
         # To control the download_method value modify the value in type system,
         # terraformEnterprise.Organization.downloadMethod set as hidden="true"
+        # TODO: Java implementation should be the only one.
         if self._organization.downloadMethod == "PYTHON":
             req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
             if req.status_code == 200:
@@ -169,6 +169,9 @@ class TFEEndpoint(object):
         return req
 
     def format_error_message(self, run):
+        if run is None:
+            return "None"
+
         if 'errors' in run:
             return ",".join(['{title} ({status})'.format(**error) for error in run['errors']])
         else:

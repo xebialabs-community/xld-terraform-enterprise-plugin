@@ -12,7 +12,7 @@ from terraxld.api import TFE
 import sys
 
 print(thisCi)
-myapi = TFE(thisCi.organization)
+myapi = TFE(thisCi)
 print("Organization: {0}".format(myapi._current_organization))
 data = myapi.workspaces.lst()
 if data is None:

@@ -37,6 +37,7 @@ class TFEStateVersions(TFEEndpoint):
         """
         results = None
         url = "{0}/{1}/current-state-version".format(self._workspace_base_url, workspace_id)
+        self._logger.debug(url)
         req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
 
         if req.status_code == 200:
@@ -59,6 +60,7 @@ class TFEStateVersions(TFEEndpoint):
 
     def get_current_state_content_workspace(self, ws_id):
         sv_current = self.get_current(ws_id)
+        print(sv_current)
         if 'errors' in sv_current:
             raise Exception("error when getting the state of the workspace {0}".format(sv_current))
 

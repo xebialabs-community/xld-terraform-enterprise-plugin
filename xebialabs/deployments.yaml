@@ -1,0 +1,37 @@
+---
+apiVersion: xl-deploy/v1
+kind: Deployment
+spec:
+  package: Applications/s3-bucket/1.0.1
+  environment: Environments/dev.aws
+  onSuccessPolicy: ARCHIVE
+  orchestrators:
+    - sequential-by-deployed
+---
+apiVersion: xl-deploy/v1
+kind: Deployment
+spec:
+  package: Applications/s3-content/1.0.1
+  environment: Environments/dev.aws
+  onSuccessPolicy: ARCHIVE
+  orchestrators:
+    - sequential-by-deployed
+---
+apiVersion: xl-deploy/v1
+kind: Deployment
+spec:
+  package: Applications/s3-content/0.0.0
+  environment: Environments/dev.aws
+  onSuccessPolicy: ARCHIVE
+  orchestrators:
+    - sequential-by-deployed
+---
+apiVersion: xl-deploy/v1
+kind: Deployment
+spec:
+  package: Applications/s3-bucket/0.0.0
+  environment: Environments/dev.aws
+  onSuccessPolicy: ARCHIVE
+  orchestrators:
+    - sequential-by-deployed
+

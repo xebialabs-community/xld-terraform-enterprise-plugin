@@ -7,7 +7,6 @@ spec:
   deployables:
   - name: '{{env}}-stack'
     type: terraform.ConfigurationSpec
-    workspaceName: aws-stack
     automaticDictionary: True
     modules:
     - name: web_server_sg

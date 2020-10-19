@@ -10,6 +10,4 @@ spec:
     deployables:
     - name: azure-vm
       type: terraform.Module
-      workspaceName: benoit-azure-vm
-      applyDestroyOperation: "true"
       file: !file "artifacts/Applications/azure-vm/1.0.2/azure-vm/azurevm.zip"
