@@ -1,5 +1,4 @@
-name: "tagged-release"
-
+name: "release-candidate"
 on:
   push:
     tags:
