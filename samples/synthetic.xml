@@ -57,6 +57,7 @@
           deployable-type="myaws.ec2.VPCManagerSpec" container-type="terraform.Configuration">
         <generate-deployable type="myaws.ec2.VPCManagerSpec" extends="terraform.AbstractedInstantiatedModuleSpec" copy-default-values="true"/>
         <property name="security_groups" label="SecurityGroups" category="Input" kind="list_of_string"/>
+        <property name="elb_sec" label="ELV Sec Group" category="Input" kind="string"/>
     </type>
 
 
