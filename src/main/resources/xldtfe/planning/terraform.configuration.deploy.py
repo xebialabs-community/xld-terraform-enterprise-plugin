@@ -58,7 +58,10 @@ class PlanGenerator:
         for k in all_keys:
             mo = expression_reg_exp.findall(k)
             if len(mo) == 0:
-                temporary_map[k] = self._extract_entry(map_variables, k)
+                key=k
+                if map_of_ci[k].useTfVariableName:
+                    key=map_of_ci[k].tfVariableName
+                temporary_map[key] = self._extract_entry(map_variables, k)
             else:
                 key = mo[0][0]
                 if map_of_ci[k].useTfVariableName:
