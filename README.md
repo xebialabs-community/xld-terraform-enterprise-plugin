@@ -83,15 +83,14 @@ xl apply -f xebialabs/aws_module.yaml
 
 ### Infrastructure
 
-1. Describe the connection to Terraform Enterprise using `terraformEnterprise.Organization` 
-2. Add the workspace definition using `terraformEnterprise.Workspace` as a child of the Organization.
+1. Describe the connection to Terraform Enterprise using `terraformEnterprise.Organization` Configuration Item.
+2. Then add the workspace definition using `terraformEnterprise.Workspace` configuration item as a child of the create Organization.
 3. Add a provider using `terraformEnterprise.Provider` or dedicated Cloud Public Provider `
     * Amazon Web Service `terraformEnterprise.AwsProvider`
     * Microsoft Azure `terraformEnterprise.AzureProvider`
     * Google Cloud `terraformEnterprise.GCPProvider`
 
-Note: it's possible to create your own provider. 
-
+Note: it's possible to create your own provider or to enhance the default types to add or to remove properties   
 
 ### Mappers
 

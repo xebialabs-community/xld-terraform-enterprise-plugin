@@ -75,6 +75,18 @@
                   category="Parameters"/>
     </type>
 
+    <type type="terraformEnterprise.GcpProvider" extends="terraformEnterprise.Provider">
+        <property name="project" description="The project (GOOGLE_PROJECT)."/>
+        <property name="region" required="false" description="The default region where to apply the configuration (GOOGLE_REGION)."/>
+        <property name="zone" required="false" description="The default region where to apply the configuration (GOOGLE_ZONE)."/>
+        <property name="jsonKeyFile" label="JSON Key File" size="large" required="true"
+                  description="The json keyfile content using json format to connect to GCP (GOOGLE_CLOUD_KEYFILE_JSON)."/>
+
+        <property name="credentialsPropertyMapping" kind="map_string_string" hidden="true"
+                  default="project:GOOGLE_PROJECT,region:GOOGLE_REGION,zone:GOOGLE_ZONE,jsonKeyFile:GOOGLE_CLOUD_KEYFILE_JSON" category="Parameters"/>
+    </type>
+
+
     <type type="terraformEnterprise.ExecutedModule" extends="udm.BaseDeployedInfrastructureAsCode"
           deployable-type="terraform.Module"
           container-type="terraformEnterprise.Provider">
