@@ -16,14 +16,19 @@ This document describes the functionality provided by the XL Deploy Terraform En
 
 ## Overview
 
+* the plugin deploys the `terraform.Module` on Terraform Enterprise as the same manner as targeting `terraform.TerraformClient`
+* the plugin defines the `terraform.ConfigurationSpec`. It gathers references on Terraform modules and manages the output->input connections between them.
+* the plugin offers a new extension point to define new structured-type CI based on existing Terraform modules.
+* the plugin exposes the mapper API to allow creating new Infrastructure CI based on the execution of the `terraform.Configuration`.
+
 ## Installation
 
 * requirement xl-deploy-server 9.5.0+
-* Copy the latest JAR file from the [releases page](https://github.com/xebialabs-community/xld-helm-plugin/releases) into the `XL_DEPLOY_SERVER/plugins` directory.
+* Copy the latest JAR file from the [releases page](https://github.com/xebialabs-community/xld-terraform-enterprise-plugin/releases) into the `XL_DEPLOY_SERVER/plugins` directory.
 * Restart the XL Deploy server.
 
 ## Sample Configuration
-A sample configuration is available in the project.
+sample configurations are available in the project.
 
 store you azure credentials into ~/.xebialabs/azure.secrets.xlvals (you can use dummy values)
 ````
@@ -86,9 +91,9 @@ xl apply -f xebialabs/aws_module.yaml
 1. Describe the connection to Terraform Enterprise using `terraformEnterprise.Organization` Configuration Item.
 2. Then add the workspace definition using `terraformEnterprise.Workspace` configuration item as a child of the create Organization.
 3. Add a provider using `terraformEnterprise.Provider` or dedicated Cloud Public Provider `
-    * Amazon Web Service `terraformEnterprise.AwsProvider`
-    * Microsoft Azure `terraformEnterprise.AzureProvider`
-    * Google Cloud `terraformEnterprise.GCPProvider`
+    * Amazon Web Service `terraformEnterprise.AwsProvider` and fill the associated properties
+    * Microsoft Azure `terraformEnterprise.AzureProvider` and fill the associated properties
+    * Google Cloud `terraformEnterprise.GCPProvider` and fill the associated properties
 
 Note: it's possible to create your own provider or to enhance the default types to add or to remove properties   
 
