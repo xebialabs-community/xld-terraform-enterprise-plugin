@@ -37,13 +37,11 @@ class PlanGenerator:
         return map
 
     def _process_map_variables(self, module):
-        map_variables = list(module.mapInputVariables)
-
-        regexp = module.mapArrayRegexp
         # group by the map_variables by tfVariableName
         # merge the entries having the same tfVariableName following this pattern
         # [foo,bar,dude] =>'tfVariableName'=>[(...),(...),(...)]
 
+        map_variables = list(module.mapInputVariables)
         map_variables.sort(key=lambda x: x.tfVariableName)
 
         temp = groupby(map_variables, key=lambda x: x.tfVariableName)
