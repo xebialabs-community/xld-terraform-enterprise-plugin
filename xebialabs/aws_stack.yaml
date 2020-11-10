@@ -52,6 +52,7 @@ spec:
         mapInputVariables:
         - name: tags
           type: terraform.MapInputVariableSpec
+          tfVariableName: tags
           variables:
             Env: '{{env}}'
             Terraform: "true"
@@ -121,6 +122,7 @@ spec:
         mapInputVariables:
         - name: tags
           type: terraform.MapInputVariableSpec
+          tfVariableName: tags
           variables:
             Env: '{{env}}'
             Terraform: "true"
@@ -146,6 +148,7 @@ spec:
         mapInputVariables:
         - name: tags
           type: terraform.MapInputVariableSpec
+          tfVariableName: tags
           variables:
             Env: '{{env}}'
             Terraform: "true"
@@ -188,6 +191,7 @@ spec:
         mapInputVariables:
         - name: tags
           type: terraform.MapInputVariableSpec
+          tfVariableName: tags
           variables:
             Env: '{{env}}'
             XLD_TAGS: database
@@ -213,6 +217,7 @@ spec:
         mapInputVariables:
         - name: tags
           type: terraform.MapInputVariableSpec
+          tfVariableName: tags
           variables:
             Env: '{{env}}'
             Terraform: "true"

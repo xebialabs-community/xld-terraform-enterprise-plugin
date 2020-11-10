@@ -83,8 +83,8 @@ if you look for sample packages that instantiates several Terraform modules, ple
 ```
 xl apply -f xebialabs/aws_module.yaml
 ```
-## Features
 
+## Features
 
 ### Infrastructure
 
@@ -211,65 +211,27 @@ this annotation is also manage to new types inheriting from `terraform.MapInputV
 
 Often it's necessary to provide complex values as input variables. Either it's possible to use 
 * `InstantiatedModule.inputHCLVariables` to provide the value as text.
-* `terraform.MapInputVariableSpec` to provide values as ,easier to display and to manage values using dictionaries.
-    * if an item has `name` that ends with '__' and a number, it will be merged the others to turn the value into a array of map "[{...},{....}]"
-    * the number should start with 0 (zero) 
-
+* `terraform.MapInputVariableSpec` to provide values as, easier to display and to manage values using dictionaries.
+    * all item sharing the same value of the `tfVariableName` will be merged the others to turn the value into a array of map "[{...},{....}]"
+    
 #### Example
-if you package this
 ```
 mapInputVariables:
-  - name: ec2_block_device__2
+  - name: anotherBlock
     type: terraform.MapInputVariableSpec
-    variables:
-      size: 500Mo
-      fs: FAT32
-  - name: ec2_block_device__1
-    type: terraform.MapInputVariableSpec
-    variables:
-      size: 2G
-      fs: NTFS
-  - name: tags
-    type: terraform.MapInputVariableSpec
-    variables:
-      app: petportal
-      version: 12.1.2
-```
-the plugin generates the following content:
-```
-module "s3-bucket" {
-    source = "./s3"
-    name="benoit.moussaud.bucket"
-    region="eu-west-3"
-
-    ec2_block_device=[{"fs": "NTFS", "size": "2G"}, {"fs": "FAT32", "size": "500Mo"}]
-    tags={"app": "petportal", "version": "12.1.2"}
-}
-```
-You may control the regexp by modifying the `mapArrayRegexp` defined in `terraform.InstantiatedModule` as an hidden property.
-
-The default value is : `([a-zA-Z_1-9]*)__(\d+)`. Ex: outputVariablesample: vol_1, vol_2, efs2_4,....
-
-It's possible to control the name of the variable with the `useTfVariableName` and `tfVariableName` properties
-Ex 
-```
-mapInputVariables:
-  - name: ec2_block_device__2
-    type: terraform.MapInputVariableSpec
-    useTfVariableName: True
     tfVariableName: myVariableName
     variables:
       size: 500Mo
       fs: FAT32
-  - name: ec2_block_device__1
-    type: terraform.MapInputVariableSpec
-    useTfVariableName: True
+  - name: aBlock
+    type: terraform.MapInputVariableSpec   
     tfVariableName: myVariableName
     variables:
       size: 2G
       fs: NTFS
   - name: tags
     type: terraform.MapInputVariableSpec
+    tfVariableName: tags
     variables:
       app: petportal
       version: 12.1.2
@@ -292,8 +254,7 @@ These 2 properties can be set and set as `hidden=true` if you extend the type.
  <type type="myaws.ec2.BlockDevice" extends="terraform.MapInputVariable"
           container-type="terraform.InstantiatedModule" deployable-type="myaws.ec2.BlockDeviceSpec">
         <generate-deployable type="myaws.ec2.BlockDeviceSpec" extends="terraform.MapInputVariableSpec" copy-default-values="true"/>
-        <property name="tfVariableName" hidden="true" default="tf_block_device" />
-        <property name="useTfVariableName" kind="boolean" default="true" required="false" hidden="true"/>
+        <property name="tfVariableName" hidden="true" default="tf_block_device" />        
 
         <property name="device_name" label="Device Name" category="Input"/>
         <property name="volume_size" label="Volume Size" category="Input"/>

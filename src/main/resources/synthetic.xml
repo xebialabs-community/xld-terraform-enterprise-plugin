@@ -186,8 +186,7 @@
           container-type="terraform.InstantiatedModule" deployable-type="terraform.MapInputVariableSpec">
         <generate-deployable type="terraform.MapInputVariableSpec" extends="udm.BaseEmbeddedDeployable"/>
         <property name="variables" kind="map_string_string" category="Input" required="false"/>
-        <property name="useTfVariableName" kind="boolean" default="false" required="false"/>
-        <property name="tfVariableName" hidden="false" default="tf_deploy_MapInputVariable"/>
+        <property name="tfVariableName" default="tf_deploy_MapInputVariable"/>
     </type>
 
     <type-modification type="terraform.ConfigurationSpec">
@@ -218,7 +217,6 @@
         <property name="secretOutputVariables" kind="map_string_string" required="false" category="Terraform Output" hidden="true"
                   description="Output variables captured in deployed. Key is the alias name and value is the terraform output property value for a given resource."/>
 
-        <property name="mapArrayRegexp" default="([a-zA-Z_1-9]*)__(\d+)" hidden="true" description="the regexp used to detect items that should be merge to define an array of map"/>
         <property name="dependencyAnnotation" default="&lt;&lt;" hidden="true" description="the annotation used to define a variable dependency.It should be 2 characters"/>
         <property name="inputCategory" default="Input" hidden="true"/>
         <property name="outputCategory" default="Output" hidden="true"/>

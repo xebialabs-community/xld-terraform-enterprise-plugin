@@ -10,6 +10,7 @@
 
 from com.xebialabs.deployit.plugin.api.deployment.specification import Operation
 from com.xebialabs.deployit.plugin.api.reflect import PropertyKind
+from itertools import groupby
 import tempfile
 import json
 import re
@@ -28,49 +29,27 @@ class PlanGenerator:
     def _is_destroy(self):
         return not self._is_create()
 
-    def _extract_entry(self, map_variables, k):
-        for map_var in map_variables:
-            if k == map_var.name:
-                map = dict(map_var.variables)
-                for pd in map_var.type.descriptor.propertyDescriptors:
-                    if pd.category in "Input" and pd.kind.isSimple():
-                        map[pd.name] = map_var.getProperty(pd.name)
-                return map
-        raise Exception("{0} not found in {1}".format(k, map_variables))
+    def _extract_entry(self, map_var):
+        map = dict(map_var.variables)
+        for pd in map_var.type.descriptor.propertyDescriptors:
+            if pd.category in "Input" and pd.kind.isSimple():
+                map[pd.name] = map_var.getProperty(pd.name)
+        return map
 
     def _process_map_variables(self, module):
-        map_variables = module.mapInputVariables
+        map_variables = list(module.mapInputVariables)
 
         regexp = module.mapArrayRegexp
-        # return a map map_variable.name => map_variables.variables
-        # merge the entries that follows this patern
-        # [xxxx__0,xxxx__1,xxx__2] =>'xxxx'=>[(...),(...),(...)]
+        # group by the map_variables by tfVariableName
+        # merge the entries having the same tfVariableName following this pattern
+        # [foo,bar,dude] =>'tfVariableName'=>[(...),(...),(...)]
+
+        map_variables.sort(key=lambda x: x.tfVariableName)
+
+        temp = groupby(map_variables, key=lambda x: x.tfVariableName)
         temporary_map = {}
-        expression_reg_exp = re.compile(regexp)
-
-        map_of_ci = {}
-        for var in map_variables:
-            map_of_ci[var.name] = var
-
-        all_keys = list(map_of_ci.keys())
-        all_keys.sort()
-
-        for k in all_keys:
-            mo = expression_reg_exp.findall(k)
-            if len(mo) == 0:
-                key=k
-                if map_of_ci[k].useTfVariableName:
-                    key=map_of_ci[k].tfVariableName
-                temporary_map[key] = self._extract_entry(map_variables, k)
-            else:
-                key = mo[0][0]
-                if map_of_ci[k].useTfVariableName:
-                    key = map_of_ci[k].tfVariableName
-
-                number = int(mo[0][1]) - 1
-                if key not in temporary_map:
-                    temporary_map[key] = []
-                temporary_map[key].insert(number, self._extract_entry(map_variables, k))
+        for k, v in temp:
+            temporary_map[k] = [self._extract_entry(ci) for ci in list(v)]
 
         return temporary_map
 

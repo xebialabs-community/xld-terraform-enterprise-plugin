@@ -35,6 +35,7 @@ spec:
       defaultRegion: "eu-west-3"
       additionalMappers:
         aws_s3_mapper: xldtfe.mapper.aws_s3_mapper.AWSS3Mapper
+        aws_ec2_mapper: samplemapper.aws_ec2_mapper.AWSEC2Mapper
     - name: azure-xl
       type: terraformEnterprise.AzureProvider
       subscriptionId: !value "subscriptionId"
