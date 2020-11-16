@@ -30,6 +30,7 @@
                 <value>JAVA</value>
             </enum-values>
         </property>
+        <property name="defaultLogLevel" kind="integer" default="30" category="Advanced" hidden="false"/>
         <method name="checkConnection" label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
     </type>
 

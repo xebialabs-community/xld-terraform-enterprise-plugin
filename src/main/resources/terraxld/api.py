@@ -40,7 +40,7 @@ class TFE():
         if self.organization.token is None:
             raise InvalidTFETokenException
 
-        TFE.configure_logger_stdout(debug)
+        TFE.configure_logger_stdout(defaultLogLevel=self.organization.defaultLogLevel, debug=debug)
 
         self._instance_url = "{url}/api/v2".format(url=self.organization.url)
         self._token = self.organization.token
@@ -77,7 +77,7 @@ class TFE():
     log_handler = None
 
     @staticmethod
-    def configure_logger_stdout(debug):
+    def configure_logger_stdout(defaultLogLevel, debug):
         import logging
         import sys
         root = logging.getLogger()
@@ -94,8 +94,8 @@ class TFE():
             root.setLevel(logging.DEBUG)
             handler.setLevel(logging.DEBUG)
         else:
-            root.setLevel(logging.INFO)
-            handler.setLevel(logging.INFO)
+            root.setLevel(defaultLogLevel)
+            handler.setLevel(defaultLogLevel)
 
     def load_variables_in_workspace(self, input, workspace, secret, scope):
         ws_id = self.workspaces.get_id(workspace)
