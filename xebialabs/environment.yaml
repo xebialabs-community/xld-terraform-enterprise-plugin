@@ -2,11 +2,16 @@
 apiVersion: xl-deploy/v1
 kind: Environments
 spec:
+  - name: Environments/dev.gcp
+    type: udm.Environment
+    members:
+      - Infrastructure/myOrganization
+      - Infrastructure/myOrganization/myOtherWorkspace/myGCPProject
   - name: Environments/dev.aws
     type: udm.Environment
     members:
       - Infrastructure/myOrganization
-      - Infrastructure/myOrganization/MyAnotherWorkspace/aws
+      - Infrastructure/myOrganization/myWorkspace/aws
     dictionaries:
       - Environments/dev.conf
       - Environments/ec2-dictionary
@@ -25,6 +30,6 @@ spec:
     type: udm.Environment
     members:
       - Infrastructure/myOrganization
-      - Infrastructure/myOrganization/MyAnotherWorkspace/azure-xl
+      - Infrastructure/myOrganization/myWorkspace/azure-xl
     dictionaries:
       - Environments/dev.conf

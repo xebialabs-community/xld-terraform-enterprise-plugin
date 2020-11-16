@@ -16,9 +16,19 @@ spec:
   token: !value "tfe_token"
   host: ~Infrastructure/localhost
   children:
-  - name: MyAnotherWorkspace
+  - name: myOtherWorkspace
     type: terraformEnterprise.Workspace
-    deleteWorkspace: false
+    workspaceName: Benoit-975
+    terraformVersion: 0.12.24
+    children:
+    - name: myGCPProject
+      type: terraformEnterprise.GcpProvider
+      project: mySecretProject
+      region: ouest
+      zone: 1
+      jsonKeyFile: "{}"
+  - name: myWorkspace
+    type: terraformEnterprise.Workspace
     workspaceName: Benoit-975
     terraformVersion: 0.12.24
     children:

@@ -17,3 +17,4 @@ src/main/resources/hcl
 .idea/
 config-win.yaml
 xl-deploy-9.7.5-server
+xl-deploy-9.8.0-server
