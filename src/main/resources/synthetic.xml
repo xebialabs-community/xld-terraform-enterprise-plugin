@@ -50,6 +50,7 @@
     </type>
 
     <type type="terraformEnterprise.AwsProvider" extends="terraformEnterprise.Provider">
+        <icon>icons/types/amazon-web-services-icon.svg</icon>
         <property name="accessKey" kind="string" label="Access Key ID"
                   description="The access key to use when connecting to AWS(AWS_ACCESS_KEY_ID)."/>
         <property name="accessSecret" kind="string" label="Secret Access Key" password="true"
@@ -61,6 +62,7 @@
     </type>
 
     <type type="terraformEnterprise.AzureProvider" extends="terraformEnterprise.Provider">
+        <icon>icons/types/microsoft-azure-icon.svg</icon>
         <property name="subscriptionId" kind="string" required="true" password="false"
                   description="Subscription ID (ARM_SUBSCRIPTION_ID)"/>
         <property name="tenantId" kind="string" required="true" password="false"
@@ -76,6 +78,7 @@
     </type>
 
     <type type="terraformEnterprise.GcpProvider" extends="terraformEnterprise.Provider">
+        <icon>icons/types/google-cloud-icon.svg</icon>
         <property name="project" description="The project (GOOGLE_PROJECT)."/>
         <property name="region" required="false" description="The default region where to apply the configuration (GOOGLE_REGION)."/>
         <property name="zone" required="false" description="The default region where to apply the configuration (GOOGLE_ZONE)."/>
