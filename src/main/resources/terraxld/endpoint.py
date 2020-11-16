@@ -130,34 +130,18 @@ class TFEEndpoint(object):
 
     def _download(self, url):
         self._logger.debug("_download {0}".format(url))
-        # if XLD runs on Windows the (j)ython implementation raises an exception "java.util.zip.DataFormatException: invalid code lengths"
-        # the bug seems coming from an error in the Local.
-        # the "JAVA"  alternative implementation solves this and becomes the default implementation.
-        # To control the download_method value modify the value in type system,
-        # terraformEnterprise.Organization.downloadMethod set as hidden="true"
-        # TODO: Java implementation should be the only one.
-        if self._organization.downloadMethod == "PYTHON":
-            req = requests.get(url, headers=self._headers, verify=self._verify, proxies=self._proxies)
-            if req.status_code == 200:
-                results = req.content
-            else:
-                err = req.content.decode("utf-8")
-                self._logger.error(err)
-            return results
 
-        if self._organization.downloadMethod == "JAVA":
-            http_client_builder = HttpClientBuilder.create()
-            http_client_builder.setProxy(self._java_proxy)
+        http_client_builder = HttpClientBuilder.create()
+        http_client_builder.setProxy(self._java_proxy)
 
-            ssl_context = SSLContextBuilder().loadTrustMaterial(None, TrustSelfSignedStrategy()).build()
-            http_client_builder.setSSLContext(ssl_context).setSSLHostnameVerifier(NoopHostnameVerifier())
+        ssl_context = SSLContextBuilder().loadTrustMaterial(None, TrustSelfSignedStrategy()).build()
+        http_client_builder.setSSLContext(ssl_context).setSSLHostnameVerifier(NoopHostnameVerifier())
 
-            client = http_client_builder.build()
-            http_response = client.execute(HttpGet(url))
-            content = IOUtils.toString(http_response.getEntity().getContent(), Charset.forName("UTF-8"))
-            return content
+        client = http_client_builder.build()
+        http_response = client.execute(HttpGet(url))
+        content = IOUtils.toString(http_response.getEntity().getContent(), Charset.forName("UTF-8"))
+        return content
 
-        raise Exception("{0} unknown ".format(dowload_method))
 
     def _stream(self, url):
         """

@@ -24,12 +24,6 @@
         <property name="organizationName" required="false" description="organization's name in terraform enterprise"/>
         <property name="proxyServer" required="false" kind="ci" referenced-type="credentials.ProxyServer"/>
         <property name="host" required="false" kind="ci" referenced-type="overthere.Host"/>
-        <property name="downloadMethod" kind="enum" required="false" default="JAVA" category="Advanced" hidden="false">
-            <enum-values>
-                <value>PYTHON</value>
-                <value>JAVA</value>
-            </enum-values>
-        </property>
         <property name="defaultLogLevel" kind="integer" default="30" category="Advanced" hidden="false"/>
         <method name="checkConnection" label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
     </type>
