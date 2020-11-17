@@ -47,7 +47,11 @@ class PlanGenerator:
         temp = groupby(map_variables, key=lambda x: x.tfVariableName)
         temporary_map = {}
         for k, v in temp:
-            temporary_map[k] = [self._extract_entry(ci) for ci in list(v)]
+            list_of_ci = list(v)
+            if len(list_of_ci) == 1 and list_of_ci[0].reduceSingleToMap:
+                temporary_map[k] = self._extract_entry(list_of_ci[0])
+            else:
+                temporary_map[k] = [self._extract_entry(ci) for ci in list_of_ci]
 
         return temporary_map
 

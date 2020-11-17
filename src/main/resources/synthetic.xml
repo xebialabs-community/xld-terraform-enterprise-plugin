@@ -151,7 +151,7 @@
           container-type="terraform.Configuration" extends="udm.BaseEmbeddedDeployed"
           description="Terraform Module">
         <generate-deployable type="terraform.InstantiatedModuleSpec" extends="udm.BaseEmbeddedDeployable"/>
-        
+
         <icon>icons/types/terraform-modules-icons.svg</icon>
         <property name="source"/>
         <property name="version" required="false"/>
@@ -190,6 +190,7 @@
         <generate-deployable type="terraform.MapInputVariableSpec" extends="udm.BaseEmbeddedDeployable"/>
         <property name="variables" kind="map_string_string" category="Input" required="false"/>
         <property name="tfVariableName" default="tf_deploy_MapInputVariable"/>
+        <property name="reduceSingleToMap" kind="boolean" default="true" required="false" description="reduce single item array into a map"/>
     </type>
 
     <type-modification type="terraform.ConfigurationSpec">

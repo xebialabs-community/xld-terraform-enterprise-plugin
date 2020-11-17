@@ -223,7 +223,8 @@ this annotation is also manage to new types inheriting from `terraform.MapInputV
 Often it's necessary to provide complex values as input variables. Either it's possible to use 
 * `InstantiatedModule.inputHCLVariables` to provide the value as text.
 * `terraform.MapInputVariableSpec` to provide values as, easier to display and to manage values using dictionaries.
-    * all item sharing the same value of the `tfVariableName` will be merged the others to turn the value into a array of map "[{...},{....}]"
+    * all item sharing the same value of the `tfVariableName` will be merged the others to turn the value into a array of map `[{...},{....}]`
+    * if you have one single item matching the `tfVariableName`, the output will be transformed to a single map `"{...}"` instead of an array containing only one item  `[{...}]`. If you don't want this behavior, set `reduceSingleToMap` to `False` 
     
 #### Example
 ```
