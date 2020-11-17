@@ -93,7 +93,7 @@
           deployable-type="terraform.Module"
           container-type="terraformEnterprise.Provider">
 
-        <icon>icons/types/terraformio-icon.svg</icon>
+        <icon>icons/types/terraform-icon.svg</icon>
 
         <property name="inputVariables" kind="map_string_string" required="false"
                   description="Input variables to be used in the Terraform configuration."/>
@@ -119,7 +119,7 @@
 
         <generate-deployable type="terraform.ConfigurationSpec" extends="udm.BaseDeployable"/>
 
-        <icon>icons/types/terraformio-icon.svg</icon>
+        <icon>icons/types/terraform-icon.svg</icon>
 
         <property name="outputVariables" kind="map_string_string" required="false" category="Output"
                   description="Output variables captured in deployed"/>
@@ -151,6 +151,8 @@
           container-type="terraform.Configuration" extends="udm.BaseEmbeddedDeployed"
           description="Terraform Module">
         <generate-deployable type="terraform.InstantiatedModuleSpec" extends="udm.BaseEmbeddedDeployable"/>
+        
+        <icon>icons/types/terraform-modules-icons.svg</icon>
         <property name="source"/>
         <property name="version" required="false"/>
         <property name="injectCIProperties" default="false" required="false" hidden="true"
