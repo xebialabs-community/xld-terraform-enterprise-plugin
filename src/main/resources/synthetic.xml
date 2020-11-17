@@ -24,8 +24,12 @@
         <property name="organizationName" required="false" description="organization's name in terraform enterprise"/>
         <property name="proxyServer" required="false" kind="ci" referenced-type="credentials.ProxyServer"/>
         <property name="host" required="false" kind="ci" referenced-type="overthere.Host"/>
-        <property name="defaultLogLevel" kind="integer" default="30" category="Advanced" hidden="false"/>
+        <property name="defaultLogLevel" kind="integer" default="30" category="Advanced"/>
+        <property name="verifyCertificates" kind="boolean" default="False" category="Advanced" description="Verify certificates on HTTPS connections"/>
+        <property name="pathToCAFile" label="Path to the CA File" default="./plugins/my-certificates.jar/certifi/cacert.pem" category="Advanced"
+                  description="if verifyCertificates property value is true, Path to the CA pem file. If the pem file is in archive file (zip,jar),use this syntax. /a/b/to/myarchive.jar/path/to/ca/foo.pem"/>
         <method name="checkConnection" label="Check Connection" delegate="jythonScript" script="xldtfe/check_connection.py"/>
+
     </type>
 
     <type type="terraformEnterprise.Workspace" extends="udm.BaseContainer">

@@ -37,7 +37,14 @@ class TFEEndpoint(object):
         self._organization = organization
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.INFO)
-        self._verify = False
+        if self._organization.verifyCertificates:
+            from requests.utils import extract_zipped_paths
+            path_to_cert = extract_zipped_paths(self._organization.pathToCAFile)
+            self._logger.debug("CA File:" + path_to_cert)
+            self._verify = path_to_cert
+        else:
+            self._verify = False
+
         if self._organization.proxyServer is not None:
             proxy_server = self._organization.proxyServer
             proxy_url = "{}://{}:{}".format(str(proxy_server.protocol).lower(), proxy_server.hostname, proxy_server.port)
@@ -51,10 +58,6 @@ class TFEEndpoint(object):
             self._organization_name = self._organization.organizationName
         else:
             self._organization_name = self._organization.name
-
-        if self._verify == False:
-            import urllib3
-            urllib3.disable_warnings()
 
     def _create(self, url, payload):
         """
@@ -141,7 +144,6 @@ class TFEEndpoint(object):
         http_response = client.execute(HttpGet(url))
         content = IOUtils.toString(http_response.getEntity().getContent(), Charset.forName("UTF-8"))
         return content
-
 
     def _stream(self, url):
         """

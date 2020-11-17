@@ -97,6 +97,17 @@ xl apply -f xebialabs/aws_module.yaml
 
 Note: it's possible to create your own provider or to enhance the default types to add or to remove properties   
 
+
+### Manage Certificates
+
+By Default, the certificates aren't verified on HTTPS connexion (`terraformEnterprise.Organization.verifyCertificates` property). In this case, on each connection to Terraform, you'll get the following display:
+```
+__pyclasspath__/urllib3/connectionpool.py:846: InsecureRequestWarning: Unverified HTTPS request is being made. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#ssl-warnings
+```
+To remove this message and enforce the certificates validation:
+1. set `terraformEnterprise.Organization.verifyCertificates` to `True`
+2. set `terraformEnterprise.Organization.pathToCAFile` to a file `./ca/certifi/cacert.pem` or to an archive (zip or jar)  using this pattern `./plugins/my-certificates.jar/certifi/cacert.pem`. If you are using Terraform Cloud, the CA PEM file is stored in the GitHub Repository: https://github.com/certifi/python-certifi/blob/master/certifi/cacert.pem
+
 ### Mappers
 
 Once the cloud infrastructure generated & created, it is not over: the application needs to be deployed on top of. So the plugin offers to define customer mappers allowing creating new containers and added them to the environment.

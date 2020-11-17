@@ -13,10 +13,6 @@ Module for container class of all TFE endpoints and high level exceptions around
 API access.
 """
 
-import terraxld.variables
-
-reload(terraxld.variables)
-
 from .workspaces import TFEWorkspaces
 from .organizations import TFEOrganizations
 from .config_versions import TFEConfigVersions
@@ -29,11 +25,6 @@ from .hclparser import HclParser
 class InvalidTFETokenException(Exception):
     """Cannot instantiate TFE Api class without a valid TFE_TOKEN."""
 
-
-# TODO: manage the certificates correctly
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-# /TODO: manage the certificates correctly
 
 class TFE():
     """
