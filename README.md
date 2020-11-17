@@ -283,10 +283,11 @@ Workflow:
 1. create a new CI extending `terraformEnterprise.Provider`
 2. add properties. Using the `password` attribut to control if it's a sensitive value or not.
 3. fill the `credentialsPropertyMapping` default value that map each property name wth the environment variable name.
-
+4. Optionally you can set a dedicated <icon/> an SVG file
 Sample: for AWS.
 ```
  <type type="terraformEnterprise.AwsProvider" extends="terraformEnterprise.Provider">
+    <icon>icons/types/amazon-web-services-icon.svg</icon>
     <property name="accesskey" kind="string"  label="Access Key ID"  description="The access key to use when connecting to AWS(AWS_ACCESS_KEY_ID)."/>
     <property name="accessSecret" kind="string"   label="Secret Access Key" password="true"  description="The access secret key to use when connecting to AWS (AWS_SECRET_ACCESS_KEY)." />
     <property name="credentialsPropertyMapping" kind="map_string_string" hidden="false" default="accesskey:AWS_ACCESS_KEY_ID, accessSecret:AWS_SECRET_ACCESS_KEY" category="Parameters"/>
