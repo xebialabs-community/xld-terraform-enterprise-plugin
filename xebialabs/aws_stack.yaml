@@ -153,7 +153,9 @@ spec:
           variables:
             Env: '{{env}}'
             Terraform: "true"
-            XLD_TAGS: app_server
+            XLD_TAGS: tomcat
+        outputVariables:
+          public_ip: public_ip
       - name: web_server_sg
         type: terraform.InstantiatedModuleSpec
         source: terraform-aws-modules/security-group/aws//modules/http-8080
@@ -190,6 +192,8 @@ spec:
         inputHCLVariables:
           subnet_id: module.vpc.public_subnets[0]
           vpc_security_group_ids: '[module.web_server_sg.this_security_group_id]'
+        outputVariables:
+          public_ip: public_ip
         mapInputVariables:
         - name: tags
           type: terraform.MapInputVariableSpec
