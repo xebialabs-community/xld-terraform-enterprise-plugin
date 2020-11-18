@@ -74,6 +74,7 @@ spec:
       - name: key_pair
         type: terraform.InstantiatedModuleSpec
         source: mitchellh/dynamic-keys/aws
+        version: 2.0.0
         inputVariables:
           name: my{{env}}pk
         outputVariables:
@@ -171,6 +172,7 @@ spec:
       - name: key_pair
         type: terraform.InstantiatedModuleSpec
         source: mitchellh/dynamic-keys/aws
+        version: 2.0.0
         inputVariables:
           name: my{{env}}pk
         outputVariables:
