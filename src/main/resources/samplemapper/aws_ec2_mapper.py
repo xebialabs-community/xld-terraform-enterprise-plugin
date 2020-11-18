@@ -28,7 +28,7 @@ class AWSEC2Mapper(ResourceMapper):
             print("-- tf_resource['type'] {0}".format(tf_resource['type']))
             if not self.types_supported(tf_resource['type']):
                 return None
-            #print(tf_resource['attributes'])
+            # print(tf_resource['attributes'])
             attributes = tf_resource['attributes']
             print("Creating CI of type 'overthere.SshHost")
             host_id = "{0}/{1}".format(folder, attributes['tags']['Name'])
@@ -41,6 +41,7 @@ class AWSEC2Mapper(ResourceMapper):
             host_properties = {
                 'os': 'UNIX',
                 'address': attributes['public_ip'],
+                'connectionType': 'SUDO',
                 'username': 'ubuntu',
                 'sudoUsername': 'root',
                 'privateKeyFile': self._store_private_key('./ssh-key/{0}.pem'.format(attributes['tags']['Name']), deployed.outputVariables['key_pair-private_key_pem']),
