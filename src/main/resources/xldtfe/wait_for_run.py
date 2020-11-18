@@ -102,7 +102,7 @@ while True:
     if run_status == 'applied' or run_status == 'planned_and_finished':
         print("done")
         break
-    elif run_status == 'errored' or run_status == 'canceled':
+    elif run_status == 'errored' or run_status == 'canceled' or run_status == 'policy_soft_failed':
         stream_plan_output(myapi, run_id, "Plan Log {0}/{1}".format(run_status, run_id))
         raise Exception("An error occured in  {0}".format(run_id))
 
