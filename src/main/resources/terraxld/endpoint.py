@@ -14,6 +14,9 @@ Module containing class for common endpoint implementations across all TFE Endpo
 
 import json
 import logging
+import os
+import zipfile
+import tempfile
 import requests
 from org.apache.http import HttpHost
 from org.apache.commons.io import IOUtils
@@ -38,7 +41,7 @@ class TFEEndpoint(object):
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.INFO)
         if self._organization.verifyCertificates:
-            path_to_cert = requests.utils.extract_zipped_paths(self._organization.pathToCAFile)
+            path_to_cert = self.local_extract_zipped_paths(self._organization.pathToCAFile)
             self._logger.debug("CA File:" + path_to_cert)
             self._verify = path_to_cert
         else:
@@ -164,3 +167,34 @@ class TFEEndpoint(object):
                 "Empty Error Message"
             else:
                 return run
+
+    def local_extract_zipped_paths(self, path):
+        """Replace nonexistent paths that look like they refer to a member of a zip
+        archive with the location of an extracted copy of the target, or else
+        just return the provided path unchanged.
+        """
+        if os.path.exists(path):
+            # this is already a valid path, no need to do anything further
+            return path
+
+        # find the first valid part of the provided path and treat that as a zip archive
+        # assume the rest of the path is the name of a member in the archive
+        archive, member = os.path.split(path)
+        while archive and not os.path.exists(archive):
+            archive, prefix = os.path.split(archive)
+            member = '/'.join([prefix, member])
+
+        if not zipfile.is_zipfile(archive):
+            return path
+
+        zip_file = zipfile.ZipFile(archive)
+        if member not in zip_file.namelist():
+            return path
+
+        # we have a valid zip archive and a valid member of that archive
+        tmp = tempfile.gettempdir()
+        extracted_path = os.path.join(tmp, *member.split('/'))
+        if not os.path.exists(extracted_path):
+            extracted_path = zip_file.extract(member, path=tmp)
+
+        return extracted_path
