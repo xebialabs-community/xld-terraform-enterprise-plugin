@@ -38,7 +38,6 @@ class TFEEndpoint(object):
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.INFO)
         if self._organization.verifyCertificates:
-            from requests.utils import extract_zipped_paths
             path_to_cert = requests.utils.extract_zipped_paths(self._organization.pathToCAFile)
             self._logger.debug("CA File:" + path_to_cert)
             self._verify = path_to_cert
