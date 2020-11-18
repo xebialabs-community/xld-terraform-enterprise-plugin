@@ -21,7 +21,7 @@ spec:
           key_name: my{{env}}pk
           ami: ami-08c757228751c5335
           instance_type: t2.micro
-          name: '{{env}} web instance'
+          name: '{{env}}_web_instance'
         inputHCLVariables:
           subnet_id: module.vpc.public_subnets[0]
           vpc_security_group_ids: '[module.web_server_sg.this_security_group_id]'
@@ -141,7 +141,7 @@ spec:
           key_name: my{{env}}pk
           ami: ami-08c757228751c5335
           instance_type: t2.micro
-          name: '{{env}} web instance'
+          name: '{{env}}_web_instance'
         inputHCLVariables:
           subnet_id: module.vpc.public_subnets[0]
           vpc_security_group_ids: '[module.web_server_sg.this_security_group_id]'
@@ -182,7 +182,7 @@ spec:
         version: ~> 2.0
         inputVariables:
           key_name: my{{env}}pk
-          name: '{{env}} database instance'
+          name: '{{env}}_database_instance'
           ami: ami-08c757228751c5335
           instance_type: t2.micro
         inputHCLVariables:
