@@ -18,3 +18,4 @@ src/main/resources/hcl
 config-win.yaml
 xl-deploy-9.7.5-server
 xl-deploy-9.8.0-server
+xl-release-9.8.0-server
